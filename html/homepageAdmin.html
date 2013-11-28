@@ -31,21 +31,38 @@
     </script>
 </head>
 <body>
+	<table>
+		<tr>
+			<td style="width:50%"> 
+				Current date: 
+			</td>
+			<td> 
+				You are logged in as:
+				<br>
+				Job: Administrator
+				<button id="homeBtn">Home</button>
+				<button id="settingsBtn">Settings</button>
+				<button id="logoutBtn">Logout</button>
+			</td>
+		</tr>
+		<tr>
+		</tr>
+	</table>
+	
 	<ul class="tabs" data-persist="true">
-		<li><a href="#view1">Tab1</a></li>
-		<li><a href="#view2" class="selected">Tab2</a></li>
-		<li><a href="#view3">Tab3</a></li>
+		<li><a href="#view1">Audit Mechanism</a></li>
+		<li><a href="#view2">Manage Departments/Divisions</a></li>
 	</ul>
 	<div class="tabcontents">
 		<div id="view1">
-			content 1
+			<br><br>
+			Current state:   
+			<h3><font color="red">INACTIVE</font></h3>
+			<button id="auditStateBtn">Change</button>
 		</div>
 		<div id="view2">
 			content 2
 		</div>
-		<div id="view3">
-			content 3
-		</div>
-	</div>
+	</div>	
 </body>
 </html>
