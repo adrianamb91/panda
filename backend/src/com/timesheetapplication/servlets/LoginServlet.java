@@ -2,20 +2,13 @@ package com.timesheetapplication.servlets;
 
 import java.io.IOException;
 
-import javax.persistence.MappedSuperclass;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.timesheetapplication.dao.GenericDao;
-import com.timesheetapplication.daoImpl.GenericDaoImpl;
-import com.timesheetapplication.model.Clerk;
-import com.timesheetapplication.model.Employee;
 
 /**
  * Servlet implementation class LoginServlet
@@ -42,10 +35,12 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("Merge!");
+
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		System.out.println("Username: " + username + "\nPassword: " + password);
+		
+		//TODO: check if username/password is valid and send response message
 		
 		//Employee e = new Clerk();
 		//e.setFirstName(username);
@@ -61,7 +56,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("Merge!");
+
 	}
 
 }
