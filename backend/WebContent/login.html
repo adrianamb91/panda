@@ -22,11 +22,25 @@
 			$.ajax({
 				type: "GET",
 				url: "LoginServlet",
-				data: {username: "" + un, password: "" + pswd}
-			}) .done(function(msg) {
-				console.log("login info sent");
-			}) .fail(function(msg) {
-				console.log("login info not sent");
+				data: {username: "" + un, password: "" + pswd},
+				success: function(data, textStatus, jqXHR){
+		            console.log("request submitted successfully");
+		            console.log("Response: " + data);
+		            if (data.response === 'OK') {
+		            	console.log("We should open homepage");
+		            	window.open('http://localhost:8080/TimesheetManagement/homepageAdmin.html', '_self', false);
+		            } else {
+		            	console.log("We should print error message");
+		            	var errorMsg = document.getElementById('error_message');
+		            	errorMsg.style.color = 'Red';
+		            	errorMsg.style.fontSize = "large";
+		            	errorMsg.innerText = "Username/password are no good!";
+		            }
+		        },
+				error:function(){
+		            alert("failure");
+		            console.log('There is an error');
+		        }
 			});
 		}
 		
@@ -34,9 +48,6 @@
 			$('#signInBtn').click(function() {
 				var username = document.getElementById('username');
 				var password = document.getElementById('password');
-				
-				console.log(username.value);
-				console.log(password.value);
 				
 				sendLoginInfoToServer(username.value, password.value);
 			});
@@ -66,5 +77,7 @@
 			</td>
 		</tr>
 	</table>
+	<br>
+	<center><div id="error_message"><font color="red"></font></div></center>
 </body>
 </html>

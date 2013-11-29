@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -15,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @WebServlet("/LoginServlet")
 @RequestMapping("/Login")
+
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
-	//GenericDao<Clerk> dao = new GenericDaoImpl<Clerk>();
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -42,13 +43,16 @@ public class LoginServlet extends HttpServlet {
 		
 		//TODO: check if username/password is valid and send response message
 		
-		//Employee e = new Clerk();
-		//e.setFirstName(username);
-		//e.setLastName(username);
+		JSONObject jObj = new JSONObject();
+		try {
+			jObj.put("response", "OK");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		//dao.saveOrUpdate(e);
-	
-		//System.out.println("presumably persisted");
+		response.setContentType("application/json; charset=UTF-8");
+		response.getWriter().write(jObj.toString());
 	}
 
 	/**
