@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title> Timesheet Management </title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+		body { 
+			height: 1000px; 
+			width: 1110px;
+			margin: 10px; 
+			padding: 0;
+			background-image:url('images/background1.jpg');
+			background-size: 100%;
+		}
+		td {
+			width: 50%;
+			table-layout:fixed;
+		    }
+		table {
+				width: 500px;
+				table-layout:fixed;
+			 }
+		
+    </style>
+	<link href="tabcontent/template1/tabcontent.css" rel="stylesheet" type="text/css" />
+	<script src="tabcontent/tabcontent.js" type="text/javascript"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1.js">
+	</script>
+    <script type="text/javascript">
+		
+		
+		$(document).ready(function() {
+		
+			
+		});
+		
+
+		
+    </script>
+</head>
+<body>
+	
+<table style="width:100%">
+	<tr>
+		<td align="left" style="width:100%">
+			<p>Current date: Saturday November 30, 2013</p>
+		</td>
+
+		<td align="right" style="width:100%">
+			<p>You are logged in as: Popescu Ion</p>
+			<p>Job: Administrator</p>
+			
+			<button id="homeBtn">Home</button>
+			<button id="settingsBtn">Settings</button>
+			<button id="logoutBtn">Logout</button>
+		</td>
+	</tr>
+</table>		
+	
+	<br>
+	
+	<ul class="tabs" data-persist="true">
+		<li><a href="#view1">Audit Mechanism</a></li>
+		<li><a href="#view2">Manage Departments/Divisions</a></li>
+	</ul>
+	<div class="tabcontents">
+		<div id="view1">
+			<br><br>
+			Current state:   
+			<h3><font color="red">INACTIVE</font></h3>
+			<button id="auditStateBtn">Change</button>
+		</div>
+		<div id="view2">
+			content 2
+		</div>
+	</div>	
+</body>
+</html>
