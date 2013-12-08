@@ -37,10 +37,10 @@
 			<value>org.postgresql.Driver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:postgresql://localhost:5432/isidb</value>
+			<value>jdbc:postgresql://localhost:5432/tsm_db</value>
 		</property>
 		<property name="username">
-			<value>postgres</value>
+			<value>admin</value>
 		</property>
 		<property name="password">
 			<value>admin</value>
@@ -56,6 +56,7 @@
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
 		p:entityManagerFactory-ref="entityManagerFactory" />
+
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 

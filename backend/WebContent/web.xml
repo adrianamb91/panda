@@ -4,10 +4,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	
-	<display-name>bookStore</display-name>
+	<display-name>TimesheetBS</display-name>
 
 	<welcome-file-list>
-		<welcome-file>testDB.jsp</welcome-file>
+		<welcome-file>login.html</welcome-file>
 	</welcome-file-list>
 
 	<context-param>
@@ -19,4 +19,14 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
+<!-- 
+	<servlet>
+    	<servlet-name>LoginServlet</servlet-name>
+    	<servlet-class>com.timesheetapplication.servlets.LoginServlet</servlet-class>
+  	</servlet>
+  	<servlet-mapping>
+    	<servlet-name>LoginServlet</servlet-name>
+    	<url-pattern>/LoginServlet</url-pattern>
+  	</servlet-mapping>
+ -->	
 </web-app>

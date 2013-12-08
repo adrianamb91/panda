@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title> Timesheet Management </title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+		body { 
+			height: 1000px; 
+			width: 1110px;
+			margin: 10px; 
+			padding: 0;
+			background-image:url('images/background1.jpg');
+			background-size: 100%;
+		}
+		
+    </style>
+	<script src="http://code.jquery.com/jquery-1.9.1.js">
+	</script>
+    <script type="text/javascript">
+		function sendLoginInfoToServer(un, pswd) {
+			$.ajax({
+				type: "GET",
+				url: "LoginServlet",
+				data: {username: "" + un, password: "" + pswd},
+				success: function(data, textStatus, jqXHR){
+		            console.log("request submitted successfully");
+		            console.log("Response: " + data);
+		            if (data.response === 'OK') {
+		            	console.log("We should open homepage");
+		            	window.open('http://localhost:8080/TimesheetManagement/homepageAdmin.html', '_self', false);
+		            } else {
+		            	console.log("We should print error message");
+		            	var errorMsg = document.getElementById('error_message');
+		            	errorMsg.style.color = 'Red';
+		            	errorMsg.style.fontSize = "large";
+		            	errorMsg.innerText = "Username/password are no good!";
+		            }
+		        },
+				error:function(){
+		            alert("failure");
+		            console.log('There is an error');
+		        }
+			});
+		}
+		
+		$(document).ready(function() {
+			$('#signInBtn').click(function() {
+				var username = document.getElementById('username');
+				var password = document.getElementById('password');
+				
+				sendLoginInfoToServer(username.value, password.value);
+			});
+			
+		});
+		
+
+		
+    </script>
+</head>
+<body>
+	<center><h1> Welcome to the Timesheet Management Application! </h1></center>
+	<table border="1" align="center">
+		<tr>
+			<td width="70%" align="center" style="padding-left: 10px; padding-right: 10px;font-family:Arial; font-size: 16px;">
+				<p><h2> Sign in </h2></p>
+				<b> Username </b> <input type="text" id="username">
+				<br>
+				<b> Password </b> <input type="password" id="password">
+				<br><br>
+				<input type="checkbox" id="savepasswd"> Remember username/password
+				<br><br>
+				<button id="signInBtn"> Sign in </button>
+			</td>
+			<td>
+				<img src="images/logo.jpg" alt="timesheet_logo">
+			</td>
+		</tr>
+	</table>
+	<br>
+	<center><div id="error_message"><font color="red"></font></div></center>
+</body>
+</html>
