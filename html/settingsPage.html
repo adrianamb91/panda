@@ -15,11 +15,12 @@
 		td {
 			width: 50%;
 			table-layout:fixed;
-		    }
+		}
 		table {
 				width: 500px;
 				table-layout:fixed;
-			 }
+		}
+
 		
     </style>
 	<link href="tabcontent/template1/tabcontent.css" rel="stylesheet" type="text/css" />
@@ -48,10 +49,10 @@
 
 		<td align="right" style="width:100%">
 			<p>You are logged in as: Popescu Ion</p>
-			<p>Job: Administrator</p>
+			<p>Job: Head of Department X</p>
 			
 			<button id="homeBtn">Home</button>
-			<button id="settingsBtn">Settings</button>
+			<button id="settingsBtn" style="background-color:lightblue;border-style:inset;">Settings</button>
 			<button id="logoutBtn">Logout</button>
 		</td>
 	</tr>
@@ -59,21 +60,35 @@
 	
 	<br>
 	
-	<ul class="tabs" data-persist="true">
-		<li><a href="#view1">Audit Mechanism</a></li>
-		<li><a href="#view2">Manage Departments/Divisions</a></li>
-	</ul>
-	<div class="tabcontents">
+	
 		<div id="view1">
-			<br><br>
-			Current state:   
-			<h3><font color="red">INACTIVE</font></h3>
-			<button id="auditStateBtn">Change</button>
-		</div>
-		<div id="view2">
-			content 2
-		</div>
-	</div>	
+
+			<br>
+			<p><font color="red">Changing your password:</font></p>
+
+			<form>
+				<table>
+					<tr>
+						<td>Current password:</td>
+						<td><input type="password" name="currentpassword"><br></td>
+					</tr>
+					<tr>
+						<td>New password:</td>
+						<td><input type="password" name="newpassword"><br></td>
+					</tr>
+					<tr>
+						<td>Confirm new password:</td>
+						<td><input type="password" name="confirmnewpassword"><br></td>
+					</tr>
+				</table>
+
+				<br>
+
+				<button id="saveBtn">Save</button>
+
+			</form>
+
+		</div> 
+
 </body>
 </html>
-
