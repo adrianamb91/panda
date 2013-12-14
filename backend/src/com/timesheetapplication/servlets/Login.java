@@ -7,13 +7,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.service.EmployeeService;
-
 
 @WebServlet("/Login")
 public class Login extends HttpServlet {
@@ -37,13 +37,16 @@ public class Login extends HttpServlet {
 
 		System.out.println("access= " + accessGranted);
 		Boolean isAdmin = (accessGranted == 2);
-		Employee loggedInUser = employeeService.findEmployeeByUsername(username);
+		Employee loggedInUser = employeeService
+				.findEmployeeByUsername(username);
+
+		HttpSession session = request.getSession();
+		session.setAttribute("loggedInUser", loggedInUser);
 
 		JSONObject responseMessage = new JSONObject();
 		try {
 			responseMessage.put("access", "granted");
 			responseMessage.put("isAdmin", isAdmin);
-			responseMessage.put("job", loggedInUser.getJob());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

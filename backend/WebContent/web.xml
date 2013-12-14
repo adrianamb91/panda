@@ -10,13 +10,13 @@
 		<welcome-file>login.html</welcome-file>
 	</welcome-file-list>
 
-	<servlet>
-		<servlet-name>Login</servlet-name>
-		<servlet-class>com.timesheetapplication.servlets.Login</servlet-class>
+<!-- 	<servlet>
+		<servlet-name>HomepageServlet</servlet-name>
+		<servlet-class>com.timesheetapplication.servlets.HomepageServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Login</servlet-name>
-		<url-pattern>/Login</url-pattern>
-	</servlet-mapping>
+		<servlet-name>HomepageServlet</servlet-name>
+		<url-pattern>/HomepageServlet</url-pattern>
+	</servlet-mapping> -->
 
 </web-app>

@@ -31,12 +31,30 @@ table {
 
 
 <script type="text/javascript">
-	function populateHeaderData() {
-		document.getElementById('loggedUserName').innerHTML="";
+	function populateHeaderData(name, date, job) {
+		document.getElementById('loggedUserName').innerHTML = name;
+		document.getElementById('date').innerHTML= date;
+		document.getElementById('loggedUserJob').innerHTML = job;
 	}
 	
+	function getLoginDataFromServer() {
+		$.ajax({
+			type: "GET",
+			url: "HomepageServlet",
+			data: {phase: "init"},
+			success: function(data, textStatus, jqXHR){
+				console.log("ok ok ok");
+				populateHeaderData(data.name, data.date, data.job);
+			},
+			error:function(){
+	            alert("failure");
+	            console.log('There is an error');
+	        }
+		});
+	}
 	
 	$(document).ready(function() {
+		getLoginDataFromServer();
 	});
 
 	</script>
@@ -46,12 +64,12 @@ table {
 	<table style="width: 100%">
 		<tr>
 			<td align="left" style="width: 100%">
-				<p id="date">Current date: </p>
+				<label>Current date: </label><p id="date"></p>
 			</td>
 
 			<td align="right" style="width: 100%">
-				<p id="loggedUserName">You are logged in as: </p>
-				<p id="loggedUserJob">Job:</p>
+				<label>You are logged in as: </label><p id="loggedUserName"></p>
+				<label>You work here as: </label><p id="loggedUserJob"></p>
 
 				<button id="homeBtn"
 					style="background-color: lightblue; border-style: inset;">Home</button>
