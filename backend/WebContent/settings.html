@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title> Timesheet Management </title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <style type="text/css">
+		body { 
+			height: 1000px; 
+			width: 1110px;
+			margin: 10px; 
+			padding: 0;
+			background-image:url('images/background1.jpg');
+			background-size: 100%;
+		}
+		td {
+			width: 50%;
+			table-layout:fixed;
+		}
+		table {
+				width: 500px;
+				table-layout:fixed;
+		}
+
+		
+    </style>
+	<link href="tabcontent/template1/tabcontent.css" rel="stylesheet" type="text/css" />
+	<script src="tabcontent/tabcontent.js" type="text/javascript"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript">
+		
+		
+	    $(document).ready(function() {
+			$('#homeBtn').click(function() {
+				console.log('We should open homepage');
+				window.open('http://localhost:8080/TimesheetManagement/homepageEmployee.html', '_self', false);
+			});
+			$('#settingsBtn').click(function() {
+				console.log('We should open settings page');
+				window.open('http://localhost:8080/TimesheetManagement/settings.html', '_self', false);
+			});
+			$('#logoutBtn').click(function() {
+				console.log('We should logout');
+				window.open('http://localhost:8080/TimesheetManagement/login.html', '_self', false);
+			});
+			
+		});
+		
+
+		
+    </script>
+</head>
+<body>
+	
+<table style="width:100%">
+	<tr>
+		<td align="left" style="width:100%">
+			<p>Current date: Saturday November 30, 2013</p>
+		</td>
+
+		<td align="right" style="width:100%">
+			<p>You are logged in as: Popescu Ion</p>
+			<p>Job: Head of Department X</p>
+			
+			<button class="general-button" id="homeBtn">Home</button>
+			<button class="general-button" id="settingsBtn" style="background-color:lightblue;border-style:inset;">Settings</button>
+			<button class="general-button" id="logoutBtn">Logout</button>
+		</td>
+	</tr>
+</table>		
+	
+	<br>
+	
+	
+		<div id="view1">
+
+			<br>
+			<p><font color="red">Changing your password:</font></p>
+
+			<form>
+				<table>
+					<tr>
+						<td>Current password:</td>
+						<td><input type="password" name="currentpassword"><br></td>
+					</tr>
+					<tr>
+						<td>New password:</td>
+						<td><input type="password" name="newpassword"><br></td>
+					</tr>
+					<tr>
+						<td>Confirm new password:</td>
+						<td><input type="password" name="confirmnewpassword"><br></td>
+					</tr>
+				</table>
+
+				<br>
+
+				<button id="saveBtn">Save</button>
+
+			</form>
+
+		</div> 
+
+</body>
+</html>
