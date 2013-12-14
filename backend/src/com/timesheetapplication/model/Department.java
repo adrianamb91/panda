@@ -1,10 +1,18 @@
 package com.timesheetapplication.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "department")
 public class Department extends AbstractEntity {
 
+	@Column(name = "name")
 	private String name;
 
-	private Integer deptId;
+	@Column(name = "manager")
+	private Employee manager;
 
 	public String getName() {
 		return name;
@@ -14,12 +22,12 @@ public class Department extends AbstractEntity {
 		this.name = name;
 	}
 
-	public Integer getDeptId() {
-		return deptId;
+	public Employee getManager() {
+		return manager;
 	}
 
-	public void setDeptId(Integer deptId) {
-		this.deptId = deptId;
+	public void setManager(Employee manager) {
+		this.manager = manager;
 	}
 
 }

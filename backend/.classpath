@@ -13,5 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="C:/Users/ktaDinca/Desktop/hibernate-3.2.7.ga.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ktaDinca/Desktop/hibernate-core-3.3.2.GA.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -2,16 +2,12 @@ package com.timesheetapplication.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-@Entity
 @MappedSuperclass
-public abstract class AbstractEntity implements Serializable {
-
-	private static final long serialVersionUID = -403061900482309972L;
+public class AbstractEntity implements Serializable {
 
 	@Id
 	@GeneratedValue

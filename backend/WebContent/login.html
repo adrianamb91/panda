@@ -21,16 +21,23 @@
 		function sendLoginInfoToServer(un, pswd) {
 			$.ajax({
 				type: "GET",
-				url: "LoginServlet",
+				url: "Login",
 				data: {username: "" + un, password: "" + pswd},
 				success: function(data, textStatus, jqXHR){
-		            console.log("request submitted successfully");
-		            console.log("Response: " + data);
-		            if (data.response === 'OK') {
-		            	console.log("We should open homepage");
-		            	window.open('http://localhost:8080/TimesheetManagement/homepageAdmin.html', '_self', false);
+		            console.log("LOGIN : request submitted successfully");
+		            console.log("LOGIN : Response: " + data);
+		            if (data.access === 'granted') {
+		            	if (data.job == 'CLERK') {
+		            		window.open('http://localhost:8080/TimesheetManagement/homepageEmployee.html', '_self', false);									            		
+		            	}
+		            	else if (data.job == 'ADMIN') {
+		            		window.open('http://localhost:8080/TimesheetManagement/homepageAdmin.html', '_self', false);
+		            	}
+		            	else if (data.job == 'DEPT_MANAGER') {
+		            		window.open('http://localhost:8080/TimesheetManagement/homepageDeptManager.html', '_self', false);
+		            	}
 		            } else {
-		            	console.log("We should print error message");
+		            	console.log("LOGIN : We should print error message");
 		            	var errorMsg = document.getElementById('error_message');
 		            	errorMsg.style.color = 'Red';
 		            	errorMsg.style.fontSize = "large";
@@ -78,6 +85,6 @@
 		</tr>
 	</table>
 	<br>
-	<center><div id="error_message"><font color="red"></font></div></center>
+	<div id="error_message" style="text-align: center;color: red"></div>
 </body>
 </html>
