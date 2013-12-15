@@ -47,6 +47,7 @@ public class Login extends HttpServlet {
 		try {
 			responseMessage.put("access", "granted");
 			responseMessage.put("isAdmin", isAdmin);
+			responseMessage.put("job", loggedInUser.getJob());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

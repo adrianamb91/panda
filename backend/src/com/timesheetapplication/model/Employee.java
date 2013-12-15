@@ -2,6 +2,7 @@ package com.timesheetapplication.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -28,6 +29,7 @@ public class Employee extends AbstractEntity {
 	private String lastName;
 
 	@ManyToOne
+	@JoinColumn(name = "deptno")
 	private Department department;
 
 	@Column(name = "job")
