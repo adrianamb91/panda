@@ -55,21 +55,17 @@ table {
 			}
 		});
 	}
+	
+	function showAddDailyTimesheetScreen() {
+		addTS = window.open('http://localhost:8080/TimesheetManagement/addDailyTimesheet.html', 'height=200,width=150', false);
+		if (addTS.focus) {
+			addTS.focus();
+		}
+	}
 
 	$(document).ready(function() {
 		getLoginDataFromServer();
 	});
-</script>
-
-<script type="text/javascript">
-
-function showAddDailyTimesheetScreen() {
-	addTS = window.open('http://localhost:8080/TimesheetManagement/addDailyTimesheet.html', 'height=200,width=150', false);
-	if (addTS.focus) {
-		addTS.focus();
-	}
-}
-
 </script>
 
 </head>
@@ -93,7 +89,7 @@ function showAddDailyTimesheetScreen() {
 	</table>
 	<br>
 	
-	<button id="addDailyTimesheet" onclick="showAddDailyTimesheetScreen()">Settings</button>
+	<button id="addDailyTimesheet" onclick="showAddDailyTimesheetScreen()">Add daily timesheet</button>
 	
 	<div id="view1">
 		<br>

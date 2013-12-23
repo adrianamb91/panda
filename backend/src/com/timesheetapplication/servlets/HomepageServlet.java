@@ -46,7 +46,7 @@ public class HomepageServlet extends HttpServlet {
 			try {
 				responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
 				responseMessage.put("job", loggedInUser.getJob());
-				responseMessage.put("date", TSMUtil.formatDate(new Date()));
+				//responseMessage.put("date", TSMUtil.formatDate(new Date()));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
