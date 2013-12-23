@@ -46,7 +46,6 @@ table {
 				phase : "init"
 			},
 			success : function(data, textStatus, jqXHR) {
-				console.log("ok ok ok");
 				populateHeaderData(data.name, data.date, data.job);
 			},
 			error : function() {

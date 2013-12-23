@@ -2,26 +2,90 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+		<link type="text/css" href="../demoengine/demoengine.css" rel="stylesheet">
+	<script type="text/javascript" src="../demoengine/demoengine.js" async defer></script>
+	<title>jQuery UI Datepicker: Parse and Format Dates</title>
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			loadProjectsForUser();
+		});
+
+		function loadProjectsForUser() {
+			$.ajax({
+				type : "GET",
+				url : "HomepageServlet",
+				data : {
+					phase : "loadProjectsForCurrentUser"
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					populateProjectDropdown(data);
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+
+		function populateProjectDropdown(data) {
+			var projDrop = document.getElementById("projectDrop");
+			console.log(data.projects.length);
+
+			for (var i = 0; i < data.projects.length; i++) {
+				var elem = document.createElement("option");
+				elem.textContent = data.projects[i];
+				elem.value = data[i];
+				projDrop.appendChild(elem);
+			}
+		}
+	</script>
 </head>
 <body>
 	<div>
 		<table>
 			<tr>
 				<td><label>date: </label></td>
-				<td><input type="text" id="date"></td>
+				<td>
+				
+				<input id="datepicker" type="text">
+					<p id="dateoutput"></p>
+					<script type="text/javascript">
+						/*
+						 * jQuery UI Datepicker: Parse and Format Dates
+						 * http://salman-w.blogspot.com/2013/01/jquery-ui-datepicker-examples.html
+						 */
+						$(function() {
+							$("#datepicker").datepicker({
+								dateFormat: "dd-mm-yy",
+								onSelect: function(dateText, inst) {
+									var date = $.datepicker.parseDate(inst.settings.dateFormat || $.datepicker._defaults.dateFormat, dateText, inst.settings);
+									var dateText1 = $.datepicker.formatDate("D, d M yy", date, inst.settings);
+								}
+							});
+						});
+					</script>
+				
+				</td>
 			</tr>
 			<tr>
 				<td><label>duration: </label></td>
-				<td><input type="text" id="date"></td>
+				<td><input type="text" id="duration"></td>
 			</tr>
 			<tr>
 				<td><label>description: </label></td>
-				<td><input type="text" id="date"></td>
+				<td><input type="text" id="description"></td>
 			</tr>
 			<tr>
 				<td><label>project: </label></td>
-				<td><input type="text" id="date"></td>
+				<td>
+					<select id="projectDrop">
+						<option>Choose a project</option>
+					</select>
+				</td>
 			</tr>
 		</table>
 	</div>

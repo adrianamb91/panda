@@ -8,7 +8,7 @@
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
-		<class>com.timesheetapplication.model.Employee</class>
+		<class>com.timesheetapplication.model.Project</class>
 		
 		<properties>
 			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/isidb" />

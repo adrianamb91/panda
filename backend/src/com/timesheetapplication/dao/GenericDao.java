@@ -1,5 +1,7 @@
 package com.timesheetapplication.dao;
 
+import java.util.List;
+
 import com.timesheetapplication.model.AbstractEntity;
 
 
@@ -10,5 +12,7 @@ import com.timesheetapplication.model.AbstractEntity;
 public interface GenericDao<E extends AbstractEntity> {
 
 	public void saveOrUpdate(AbstractEntity e);
+	
+	public List<E> loadAll();
 
 }

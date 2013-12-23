@@ -1,7 +1,9 @@
 package com.timesheetapplication.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.timesheetapplication.model.Employee;
+import com.timesheetapplication.model.Project;
+import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
 
 @WebServlet("/HomepageServlet")
@@ -22,6 +27,8 @@ public class HomepageServlet extends HttpServlet {
 
 	HttpSession session;
 
+	private ProjectService projectService = new ProjectService(); 
+	
 	public HomepageServlet() {
 		super();
 	}
@@ -46,14 +53,32 @@ public class HomepageServlet extends HttpServlet {
 			try {
 				responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
 				responseMessage.put("job", loggedInUser.getJob());
-				//responseMessage.put("date", TSMUtil.formatDate(new Date()));
+				responseMessage.put("date", TSMUtil.formatDate(new Date()));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			response.setContentType("application/json; charset=UTF-8");
 			response.getWriter().write(responseMessage.toString());
 		}
-
+		else if (phase.equalsIgnoreCase("loadProjectsForCurrentUser")) {
+			List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
+			
+			ArrayList<String> projectNames = new ArrayList<String>();
+			for (Project p : projects) {
+				projectNames.add(p.getName());
+			}
+			try {
+				JSONArray array = new JSONArray(projectNames);
+				responseMessage.put ("projects", array);
+				System.out.println("sent back:" + array.toString());
+			} 
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		}
+		
 	}
 
 	protected void doPost(HttpServletRequest request,

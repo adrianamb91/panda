@@ -1,10 +1,14 @@
 package com.timesheetapplication.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import com.timesheetapplication.dao.GenericDao;
 import com.timesheetapplication.model.AbstractEntity;
 
+@Transactional
 public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
 
 	protected EntityManager em;
@@ -25,6 +29,13 @@ public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
 			em.merge(e);
 		}
 		em.getTransaction().commit();
+	}
+
+	@Override
+	public List<E> loadAll() {
+		System.err
+				.println("GenericDaoImp.loadAll() shouldn't have been called!!!");
+		return null;
 	}
 
 }

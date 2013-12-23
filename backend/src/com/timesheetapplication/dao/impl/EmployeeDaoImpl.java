@@ -31,5 +31,10 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements
 		}
 		return null;
 	}
+	
+	@Override
+	public List<Employee> loadAll() {
+		return this.em.createQuery("Select e from Employee e").getResultList();
+	}
 
 }
