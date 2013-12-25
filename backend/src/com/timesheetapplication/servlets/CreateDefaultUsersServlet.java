@@ -73,30 +73,30 @@ public class CreateDefaultUsersServlet extends HttpServlet {
 
 		out.println("<h2>Adding Projects to database<h2>");
 
-//		Employee emp1;
-//		Employee emp2;
-//		Project p;
-//
-//		p = projectService.findProjectByName("Intel");
-//		if (p == null) {
-//			emp1 = employeeService.findEmployeeByUsername("cdinca");
-//			
-//			p = new Project();
-//			p.setName("Intel");
-//			p.getEmployees().add(emp1);
-//			
-//			emp2 = employeeService.findEmployeeByUsername("dmorar");
-//			p.getEmployees().add(emp2);
-//			
-//			projectService.saveOrUpdate(p);
-//			
-//			emp1.getProjects().add(p);
-//			employeeService.saveOrUpdate(emp1);
-//			
-//			emp2.getProjects().add(p);
-//			employeeService.saveOrUpdate(emp2);
-//
-//		}
+		Employee emp1;
+		Employee emp2;
+		Project p;
+
+		p = projectService.findProjectByName("Intel");
+		if (p == null) {
+			emp1 = employeeService.findEmployeeByUsername("cdinca");
+			
+			p = new Project();
+			p.setName("Intel");
+			p.getEmployees().add(emp1);
+			
+			emp2 = employeeService.findEmployeeByUsername("dmorar");
+			p.getEmployees().add(emp2);
+			
+			projectService.saveOrUpdate(p);
+			
+			emp1.getProjects().add(p);
+			employeeService.saveOrUpdate(emp1);
+			
+			emp2.getProjects().add(p);
+			employeeService.saveOrUpdate(emp2);
+
+		}
 
 	}
 
