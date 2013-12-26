@@ -1,10 +1,13 @@
 package com.timesheetapplication.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -15,11 +18,12 @@ public class DailyTimeSheet extends AbstractEntity {
 	@Column(name = "date")
 	private Date date;
 
-	@Column(name = "owner")
+	@ManyToOne
+	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
 	@OneToMany (mappedBy = "timesheet")
-	private List<Activity> activities;
+	private List<Activity> activities = new ArrayList<Activity>();
 
 	public Date getDate() {
 		return date;

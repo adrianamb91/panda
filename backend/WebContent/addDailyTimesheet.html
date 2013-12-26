@@ -43,6 +43,38 @@
 			}
 		}
 	</script>
+	
+	<script>
+		function saveActivity() {
+			
+			var duration = document.getElementById('duration').value;
+			var description = document.getElementById('description').value;
+			var isExtra = document.getElementById('isExtra').checked;
+			var date = document.getElementById('datepicker').value;
+			
+			var projectDropdown = document.getElementById('projectDrop');
+			var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
+
+			$.ajax({
+				type: "GET",
+				url : "HomepageServlet",
+				data : {phase : "saveActivity",
+						duration : "" + duration,
+						description : "" + description,
+						isExtra : "" + isExtra,
+						date : "" + date,
+						project : "" + projectName
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+	</script>
 </head>
 <body>
 	<div>
@@ -87,7 +119,13 @@
 					</select>
 				</td>
 			</tr>
+			<tr>
+				<td><label>is extra</label>
+				<td><input id="isExtra" type="checkbox"></td>
+			</tr>
 		</table>
+		
+		<button id="saveActiivty" onclick="saveActivity()">Save activity</button>
 	</div>
 </body>
 </html>

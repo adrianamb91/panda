@@ -2,6 +2,7 @@ package com.timesheetapplication.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -21,11 +22,16 @@ public class Activity extends AbstractEntity {
 	private String description;
 
 	@ManyToOne
+	@JoinColumn(name = "dtimesheet_id")
 	private DailyTimeSheet timesheet;
 
 	@Column(name = "is_extra")
 	private Boolean isExtra;
-
+	
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project project;
+	
 	public String getName() {
 		return name;
 	}
@@ -60,6 +66,14 @@ public class Activity extends AbstractEntity {
 
 	public Boolean getIsExtra() {
 		return isExtra;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public void setIsExtra(Boolean isExtra) {
