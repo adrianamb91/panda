@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	
+	<script>
+	
+		// enable onclick only when the page finished loading
+		$(document).ready(function() {
+			loadAllDivisions();
+		});
+		
+		function saveNewDepartment() {
+			var departmentName = document.getElementById('name').value;
+			var depManagername = document.getElementById('manager').value;
+			var divisionName = divisionDrop.options[divisionDrop.selectedIndex].text;
+			
+			$.ajax({
+				type: "GET",
+				url : "ManagementServlet",
+				data : {phase : "saveDepartment",
+						name : "" + departmentName,
+						manager : "" + depManagername,
+						division: "" + divisionName
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+		
+		function loadAllDivisions() {
+			$.ajax({
+				type : "GET",
+				url : "ManagementServlet",
+				data : {
+					phase : "loadAllDivisions"
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					populateDropdown(data, "divisionDrop");
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+		
+		function populateDropdown(data, elementId) {
+			var projDrop = document.getElementById(elementId);
+			console.log(data.elements.length);
+
+			for (var i = 0; i < data.elements.length; i++) {
+				var elem = document.createElement("option");
+				elem.textContent = data.elements[i];
+				elem.value = data[i];
+				projDrop.appendChild(elem);
+			}
+		}
+		
+		
+	</script>
+</head>
+<body>
+
+<div id="addDepartment">
+	<table>
+		<tr>
+			<td><label>name: </label></td>
+			<td><input type="text" id="name"></td>
+		</tr>
+		<tr>
+			<td><label>manager: </label></td>
+			<td><input type="text" id="manager" onchange="processChangedLetter()"></td>
+		</tr>
+		<tr>
+			<td><label>division: </label>
+			<td><select id="divisionDrop"></select></td>
+		</tr>
+	</table>
+	
+	<button id="saveNewDepartment" onclick="saveNewDepartment()">Save</button>
+	
+</div>
+</body>
+</html>

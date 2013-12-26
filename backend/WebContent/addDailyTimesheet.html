@@ -2,12 +2,14 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-		<link type="text/css" href="../demoengine/demoengine.css" rel="stylesheet">
+	
+	<link type="text/css" href="../demoengine/demoengine.css" rel="stylesheet">
 	<script type="text/javascript" src="../demoengine/demoengine.js" async defer></script>
 	<title>jQuery UI Datepicker: Parse and Format Dates</title>
 	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	
 	<script>
 		$(document).ready(function() {
 			loadProjectsForUser();
@@ -114,9 +116,7 @@
 			<tr>
 				<td><label>project: </label></td>
 				<td>
-					<select id="projectDrop">
-						<option>Choose a project</option>
-					</select>
+					<select id="projectDrop"></select>
 				</td>
 			</tr>
 			<tr>
@@ -125,7 +125,7 @@
 			</tr>
 		</table>
 		
-		<button id="saveActiivty" onclick="saveActivity()">Save activity</button>
+		<button id="saveActivity" onclick="saveActivity()">Save activity</button>
 	</div>
 </body>
 </html>

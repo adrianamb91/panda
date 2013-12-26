@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.timesheetapplication.enums.Job;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Employee;
@@ -67,7 +68,7 @@ public class HomepageServlet extends HttpServlet {
 		}
 		
 		String phase = new String(request.getParameter("phase").toString());
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = new Date();
 		switch (phase) {
 			case "init":
@@ -101,12 +102,17 @@ public class HomepageServlet extends HttpServlet {
 				response.setContentType("application/json; charset=UTF-8");
 				response.getWriter().write(responseMessage.toString());
 				break;
+			case "loadAllProjects":
+				processLoadAllProjects(responseMessage, response);
+				break;
+			case "loadAllJobs" : 
+				processLoadAllJobs(responseMessage, response);
+				break;
 			case "done":
 				session.invalidate();
 				break;
 			case "changepassword":
 				break;
-				
 			case "saveActivity" :
 				processSaveActivity(request);
 				break;
@@ -115,6 +121,50 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 	
+	private void processLoadAllJobs(JSONObject responseMessage,
+			HttpServletResponse response) {
+		ArrayList<String> jobNames = new ArrayList<String>();
+		
+		for (Job j : Job.values()) {
+			jobNames.add(j.name());
+		}
+		
+		try {
+			responseMessage.put("ok", true);
+			JSONArray array = new JSONArray(jobNames);
+			responseMessage.put ("elements", array);
+			System.out.println("sent back:" + array.toString());
+			
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private void processLoadAllProjects(JSONObject responseMessage, HttpServletResponse response) {
+		List<Project> projects = projectService.loadAllProjects();
+		
+		ArrayList<String> projectNames = new ArrayList<String>();
+		for (Project p : projects) {
+			projectNames.add(p.getName());
+		}
+		try {
+			responseMessage.put("ok", true);
+			JSONArray array = new JSONArray(projectNames);
+			responseMessage.put ("elements", array);
+			System.out.println("sent back:" + array.toString());
+			
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void processSaveActivity(HttpServletRequest request) {
 
 		String duration = request.getParameter("duration");

@@ -2,7 +2,7 @@ package com.timesheetapplication.service;
 
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.EmployeeDaoImpl;
-import com.timesheetapplication.enums.Roles;
+import com.timesheetapplication.enums.Job;
 import com.timesheetapplication.model.Employee;
 
 public class EmployeeService {
@@ -16,7 +16,7 @@ public class EmployeeService {
 			return -1;
 		}
 		if (emp.getPassword().equals(password)) {
-			if (emp.getJob().equals(Roles.ADMIN.name())) {
+			if (emp.getJob().equals(Job.ADMIN.name())) {
 				return 2;
 			}
 			return 1;
