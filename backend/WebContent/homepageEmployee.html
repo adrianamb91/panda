@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Timesheet Management</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/overlay.css">
+    <link rel="stylesheet" type="text/css" href="css/style-buttons.css">
+    <link rel="stylesheet" type="text/css" href="css/homepage-style.css">
     <style type="text/css">
         body {
-            height: 1000px;
-            width: 1110px;
             margin: 10px;
             padding: 0;
             background-image: url('images/background1.jpg');
@@ -23,11 +24,29 @@
             table-layout: fixed;
         }
     </style>
-    <link href="tabcontent/template1/tabcontent.css" rel="stylesheet"
-          type="text/css" />
+    <link href="tabcontent/template1/tabcontent.css" rel="stylesheet" type="text/css" />
     <script src="tabcontent/tabcontent.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/ui-lightness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css" />
+
+    <style>
+        body { font-size: 100%; }
+        label, input { display:block; }
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+        h1 { font-size: 1em; margin: .6em 0; }
+        div#entries-contain { width: 500px; margin: 20px 0; }
+        div#entries-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+        div#entries-contain table td, div#entries-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        .ui-dialog .ui-state-error { padding: .3em; }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    </style>
 
     <script type="text/javascript">
         var serverIp = "localhost:8080";
@@ -35,9 +54,14 @@
         var loginData;
 
         function populateHeaderData(name, date, job) {
-            document.getElementById('loggedUserName').innerHTML = name;
-            document.getElementById('date').innerHTML = date;
-            document.getElementById('loggedUserJob').innerHTML = job;
+            //document.getElementById('loggedUserName').innerHTML = name;
+            //document.getElementById('date').innerHTML = "Current date:" + date;
+            //document.getElementById('loggedUserJob').innerHTML = job;
+
+            document.getElementById('topBarInfo').innerHTML = date +
+                    "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp You are logged in as:" +
+                    name +
+                    "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Job:" + job;
         }
 
         function getLoginDataFromServer() {
@@ -91,12 +115,44 @@
 
         function changePassword() {
 
-
         }
 
+        function loadProjectsForUser() {
+            $.ajax({
+                type : "GET",
+                url : "HomepageServlet",
+                data : {
+                    phase : "loadProjectsForCurrentUser"
+                },
+                success : function(data, textStatus, jqXHR) {
+                    console.log(data);
+                    populateProjectDropdown(data);
+                },
+                error : function() {
+                    alert("failure");
+                    console.log('There is an error');
+                }
+            });
+        }
+
+        function populateProjectDropdown(data) {
+            var projDrop = document.getElementById("projectDrop");
+            console.log(data.projects.length);
+
+            for (var i = 0; i < data.projects.length; i++) {
+                var elem = document.createElement("option");
+                elem.textContent = data.projects[i];
+                elem.value = data[i];
+                projDrop.appendChild(elem);
+            }
+        }
+        
         $(document).ready(function() {
             getLoginDataFromServer();
             mainContent = document.getElementById('view_page').innerHTML;
+
+            loadProjectsForUser();
+
             $('#settingsBtn').click(function() {
                 //$('#view_page').load("settings.html #view_settings");
                 $('#view_page').hide();
@@ -110,70 +166,267 @@
             $('#logoutBtn').click(function() {
                 endSession();
             });
+            $("#addDailyTimesheet").click(function() {
+                showAddDailyTimesheetScreen();
+            });
         });
+
+        //form function
+        $(function () {
+            var form = $('#new_entry'),
+                    allFields = $(':text', form);
+            $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 320,
+                width: 350,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                buttons: {
+                    "Create new entry": function () {
+                        allFields.removeClass("ui-state-error");
+                        console.log(validateFields(form));
+                        //if (validateFields(form)) {
+                        //    addToUsers(form);
+                        //}
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                close: function () {
+                    allFields.val("").removeClass("ui-state-error");
+                }
+            });
+
+            $("#add-entry").button().click(function () {
+                $("#dialog-form").dialog("open");
+            });
+
+            // Form validation
+
+            function updateTips(t) {
+                var tips = $(".validateTips");
+
+                tips.text(t).addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+
+            function checkLength(o, n, min, max) {
+                var isValid = true;
+                if (o.val().length > max || o.val().length < min) {
+                    o.addClass("ui-state-error");
+                    updateTips("Length of " + n + " must be between " + min + " and " + max + " characters.");
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            function checkRegexp(o, regexp, n) {
+                var isValid = true;
+                if (!(regexp.test(o.val()))) {
+                    o.addClass("ui-state-error");
+                    updateTips(n);
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            function validateSelectedProject(o, n) {
+                var isValid = true;
+                console.log(o.selectedIndex);
+                if (o.selectedIndex == 0) {
+                    console.log("N-ai selectat proiect");
+                    updateTips(n);
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            function validateFields(form) {
+                var bValid = true,
+                        date = $('[name="selection_date"]', form),
+                        duration = $('[name="duration"]', form),
+                        description = $('[name="description"]', form);
+
+                bValid = bValid && checkLength(description, "description", 1, 250);
+                bValid = bValid && checkRegexp(duration, /^([0-9.])+$/i, "Duration should be expressed in number of hours");
+
+                var project = document.getElementById('projectDrop');
+                bValid = bValid && validateSelectedProject(project, "You must select a project");
+
+                return bValid;
+            }
+
+            function addToUsers(form) {
+                var name = $('[name="name"]', form),
+                        email = $('[name="email"]', form),
+                        password = $('[name="password"]', form);
+                $("#users tbody").append("<tr>" + "<td>" + name.val() + "</td>" + "<td>" + email.val() + "</td>" + "<td>" + password.val() + "</td>" + "</tr>");
+                $(this).dialog("close");
+            }
+        });
+
+        $(function() {
+            $(".datepicker").datepicker({
+                dateFormat: "dd/mm/yy",
+                onSelect: function(dateText, inst) {
+                    var date = $.datepicker.parseDate(inst.settings.dateFormat || $.datepicker._defaults.dateFormat, dateText, inst.settings);
+                    var dateText1 = $.datepicker.formatDate("dd/mm/yy", date, inst.settings);
+                }
+            });
+        });
+
     </script>
 
 </head>
 <body>
-<table style="width: 100%">
+<div id="topBar" style="font-size: 20px; text-align: center">
+    <div id="topBarInfo" style=" margin-left: 5px; margin-right: 5px; margin-top: 3px; color:whitesmoke;
+                                    font-family: arial"></div>
+</div>
+<table style="width: 100%; margin-top: 35px">
     <tr>
-        <td align="left" style="width: 100%"><label>Current
-            date: </label>
-            <p id="date"></p></td>
+        <td align="left" style="width: 100%">
+            <div id="date">Current date:</div>
+            <div class="datepicker" id="default_datepicker"></div>
+            
+            <script>
+            	$("#default_datepicker").datepicker({ disabled: true});
+            	//$("#default_datepicker").datepicker("option", "disabled", true);
+            	//$("#default_datepicker").datepicker( "option", "hideIfNoPrevNext", true );
+			</script>
 
-        <td align="right" style="width: 100%"><label>You are
-            logged in as: </label>
-            <p id="loggedUserName"></p> <label>You work here as: </label>
-            <p id="loggedUserJob"></p>
+        <td align="right" style="width: 100%">
+            <button class="button-style2-orange" id="homeBtn">Home</button>
+            <button class="button-style2-orange" id="settingsBtn">Settings</button>
+            <button class="button-style2-orange" id="logoutBtn">Logout</button>
 
-            <button id="homeBtn">Home</button>
-            <button id="settingsBtn">Settings</button>
-            <button id="logoutBtn">Logout</button></td>
+            <br><br>
+
+            <!--
+            <div style="margin-right: 20px">
+                <div>You are logged in as: </div>
+                <div id="loggedUserName"></div>
+                <br>
+                <div>You work here as: </div>
+                <div id="loggedUserJob"></div>
+            </div>
+            -->
+        </td>
     </tr>
 </table>
+
 <br>
 
 <div id="view_page">
-    <button id="addDailyTimesheet" onclick="showAddDailyTimesheetScreen()">Add
-        daily timesheet</button>
 
-    <br>
-    <p>
-        Last monthly timesheet status: <font color="blue">SUBMITTED
-        (static)</font>
-    </p>
-    <p>Status of past monthly timesheets:</p>
-    <table border="1" bgcolor="#5D7B9D" cellpadding="0" cellspacing="0">
-        <tr>
-            <td>Monthly timesheets<br>(date submitted)
-            </td>
-            <td>Status</td>
-        </tr>
-    </table>
+    <ul class="tabs" data-persist="true">
+        <li><a href="#view1">Daily Timesheet</a></li>
+        <li><a href="#view2">Monthly Timesheet</a></li>
+    </ul>
+    <div class="tabcontents">
+        <div id="view1">
 
-    <div style="overflow: auto; height: 125px; width: 525px;">
-        <table border="1" cellpadding="0" cellspacing="0">
-            <tr>
-                <td>August 2013 <br> 1.09.2013
-                </td>
-                <td>APPROVED</td>
-            </tr>
-            <tr>
-                <td>September 2013 <br> 1.10.2013
-                </td>
-                <td>APPROVED</td>
-            </tr>
-            <tr>
-                <td>October 2013 <br> 1.11.2013
-                </td>
-                <td><font color="blue"><u>SUBMITTED</u></font></td>
-            </tr>
-            <tr>
-                <td>November 2013</td>
-                <td><font color="blue"><u>OPEN</u></font></td>
-            </tr>
-        </table>
+            
+            <button id="addDailyTimesheet" >
+                Add daily timesheet
+            </button>
+
+            <br>
+
+            <div id="dialog-form" title="Add new entry">
+                <p class="validateTips">All form fields are required.</p>
+
+                <form id="new_entry">
+                    <fieldset>
+                        <label for="date">Date</label>
+                        <!-- input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" /> -->
+                        <input class="datepicker" id="selection_date" type="text">
+                        <p id="date+output"></p>
+                        <label for="duration">Duration</label>
+                        <input type="number" name="duration" id="duration" min="0.5" max="12" step="0.5" class="text ui-widget-content ui-corner-all">
+                        <label for="description">Description</label>
+                        <input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" />
+                        <label for="project">Project</label>
+                        <select id="projectDrop">
+                            <option>Choose a project</option>
+                        </select>
+                        <input type="submit" style="display: none" />
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="entries-contain" class="ui-widget">
+                <h1>Existing Entries:</h1>
+                <table id="entries" class="ui-widget ui-widget-content">
+                    <thead>
+                    <tr class="ui-widget-header ">
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Description</th>
+                        <th>Project</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>23/01/2014</td>
+                        <td>2</td>
+                        <td>johndoe1</td>
+                        <td>Intel</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button id="add-entry">Create new entry</button>
+
+        </div>
+        <div id="view2">
+            <br>
+            <p>
+                Last monthly timesheet status:
+                <font color="blue">SUBMITTED (static)</font>
+            </p>
+
+            <p>Status of past monthly timesheets:</p>
+
+            <table border="1" bgcolor="#5D7B9D" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>Monthly timesheets<br>(date submitted)
+                    </td>
+                    <td>Status</td>
+                </tr>
+            </table>
+
+            <div style="overflow: auto; height: 125px; width: 525px;">
+                <table border="1" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>August 2013 <br> 1.09.2013
+                        </td>
+                        <td>APPROVED</td>
+                    </tr>
+                    <tr>
+                        <td>September 2013 <br> 1.10.2013
+                        </td>
+                        <td>APPROVED</td>
+                    </tr>
+                    <tr>
+                        <td>October 2013 <br> 1.11.2013
+                        </td>
+                        <td><font color="blue"><u>SUBMITTED</u></font></td>
+                    </tr>
+                    <tr>
+                        <td>November 2013</td>
+                        <td><font color="blue"><u>OPEN</u></font></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
+
 </div>
 
 <div id="view_settings" style="display: none">
@@ -200,9 +453,8 @@
         <br>
 
         <input type="submit" value="Save" disabled="disabled">
-
     </form>
-
 </div>
+
 </body>
 </html>

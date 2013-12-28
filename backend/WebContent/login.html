@@ -55,7 +55,13 @@
 		}
 		
 		$(document).ready(function() {
-			$('#signInBtn').click(function() {
+            $("#password").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#signInBtn").click();
+                }
+            });
+
+            $('#signInBtn').click(function() {
 				var username = document.getElementById('username');
 				var password = document.getElementById('password');
 				

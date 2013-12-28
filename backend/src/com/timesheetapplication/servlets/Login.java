@@ -36,6 +36,9 @@ public class Login extends HttpServlet {
 				username, password);
 
 		System.out.println("access= " + accessGranted);
+		if (accessGranted == -1) {
+			return;
+		}
 		Boolean isAdmin = (accessGranted == 2);
 		Employee loggedInUser = employeeService
 				.findEmployeeByUsername(username);
