@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+	<title>Add Employee</title>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	<script type="text/javascript">
+
+	// on document ready, load all possible projects and departments and jobs
+	$(document).ready(function() {
+		loadAllProjects();
+		loadAllJobs();
+		loadAllDeps();
+		
+		// todo: load departments and divisions
+	});
+	
+
+		function saveNewEmployee() {
+			var name = document.getElementById('username').value;
+			var pass = document.getElementById('password').value;
+			var retypePass = document.getElementById('passwordRetype').value;
+
+			var firstName = document.getElementById('firstName').value;
+			var lastName = document.getElementById('lastName').value;
+			var email = document.getElementById('email').value;
+			
+			var job = jobDrop.options[jobDrop.selectedIndex].text;
+			var project = projectDrop.options[projectDrop.selectedIndex].text;
+			var depart = departmentDrop.options[departmentDrop.selectedIndex].text;
+
+			$.ajax({
+				type : "GET",
+				url : "ManagementServlet",
+				data : {
+					phase : "saveNewEmployee",
+					name : "" + name,
+					pass : "" + pass,
+					firstName : "" + firstName,
+					lastName : "" + lastName,
+					email : "" + email,
+					job : "" + job,
+					project: "" + project,
+					depart: "" + depart
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+
+		function loadAllProjects() {
+			$.ajax({
+				type : "GET",
+				url : "HomepageServlet",
+				data : {
+					phase : "loadAllProjects"
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					populateDropdown(data, "projectDrop");
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+
+		function loadAllJobs() {
+			$.ajax({
+				type : "GET",
+				url : "HomepageServlet",
+				data : {
+					phase : "loadAllJobs"
+				},
+				success : function(data, textSataus, jqXHR) {
+					console.log(data), populateDropdown(data, "jobDrop");
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
+
+		function loadAllDeps() {
+			$
+					.ajax({
+						type : "GET",
+						url : "ManagementServlet",
+						data : {
+							phase : "loadAllDepartments"
+						},
+						success : function(data, textSataus, jqXHR) {
+							console.log(data), populateDropdown(data,
+									"departmentDrop");
+						},
+						error : function() {
+							alert("failure");
+							console.log('There is an error');
+						}
+					});
+		}
+
+		function populateDropdown(data, elementId) {
+			var projDrop = document.getElementById(elementId);
+			console.log(data.elements.length);
+
+			for (var i = 0; i < data.elements.length; i++) {
+				var elem = document.createElement("option");
+				elem.textContent = data.elements[i];
+				elem.value = data[i];
+				projDrop.appendChild(elem);
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div id="addEmployee">
+		<table>
+			<tr>
+				<td><label>username: </label></td>
+				<td><input type="text" id="username"></td>
+			</tr>
+
+			<tr>
+				<td><label>password: </label></td>
+				<td><input type="password" id="password"></input></td>
+			</tr>
+
+			<tr>
+				<td><label>retype password: </label></td>
+				<td><input type="password" id="passwordRetype"></input></td>
+			</tr>
+
+			<tr>
+				<td><label>first name: </label></td>
+				<td><input type="text" id="firstName"></input></td>
+			</tr>
+
+			<tr>
+				<td><label>last name: </label></td>
+				<td><input type="text" id="lastName"></input></td>
+			</tr>
+
+			<tr>
+				<td><label>email: </label></td>
+				<td><input type="text" id="email"></input></td>
+			</tr>
+
+			<tr>
+				<td><label>job: </label></td>
+				<td><select id="jobDrop"></select></td>
+			</tr>
+			<tr>
+				<td><label>project: </label></td>
+				<td><select id="projectDrop"></select></td>
+			</tr>
+			<tr>
+				<td><label>departament: </label></td>
+				<td><select id="departmentDrop"></select></td>
+			</tr>
+
+		</table>
+		
+		<button id="saveNewEmployee" onclick="saveNewEmployee()">Save</button>
+	</div>
+
+</body>
+</html>

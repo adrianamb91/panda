@@ -18,41 +18,44 @@
     </style>
 	<script src="http://code.jquery.com/jquery-1.9.1.js">
 	</script>
-    <script type="text/javascript">
-        var serverIp = "localhost:8080";
+	
+	<script src="login_kta.js"></script>
+	
+     <script type="text/javascript">
+         var serverIp = "localhost:8080";
 
-		function sendLoginInfoToServer(un, pswd) {
-			$.ajax({
-				type: "GET",
-				url: "Login",
-				data: {username: "" + un, password: "" + pswd},
-				success: function(data, textStatus, jqXHR){
-		            console.log("LOGIN : request submitted successfully");
+ 		function sendLoginInfoToServer(un, pswd) {
+ 			$.ajax({
+ 				type: "POST",
+ 				url: "Login",
+ 				data: {username: "" + un, password: "" + pswd},
+ 				success: function(data, textStatus, jqXHR){
+ 		            console.log("LOGIN : request submitted successfully");
 		            console.log("LOGIN : Response: " + data);
-		            if (data.access === 'granted') {
-		            	if (data.job == 'CLERK') {
-		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageEmployee.html', '_self', false);
-		            	}
-		            	else if (data.job == 'ADMIN') {
-		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageAdmin.html', '_self', false);
-		            	}
-		            	else if (data.job == 'DEPT_MANAGER') {
-		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageDeptManager.html', '_self', false);
-		            	}
-		            } else {
+ 		            if (data.access === 'granted') {
+ 		            	if (data.job == 'CLERK') {
+ 		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageEmployee.html', '_self', false);
+ 		            	}
+ 		            	else if (data.job == 'ADMIN') {
+ 		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageAdmin.html', '_self', false);
+ 		            	}
+ 		            	else if (data.job == 'DEPT_MANAGER') {
+ 		            		window.open('http://' + serverIp + '/TimesheetManagement/homepageDeptManager.html', '_self', false);
+ 		            	}
+ 		            } else {
 		            	console.log("LOGIN : We should print error message");
-		            	var errorMsg = document.getElementById('error_message');
-		            	errorMsg.style.color = 'Red';
-		            	errorMsg.style.fontSize = "large";
-		            	errorMsg.innerText = "Username/password are no good!";
-		            }
-		        },
-				error:function(){
-		            alert("failure");
-		            console.log('There is an error');
-		        }
-			});
-		}
+ 		            	var errorMsg = document.getElementById('error_message');
+ 		            	errorMsg.style.color = 'Red';
+ 		            	errorMsg.style.fontSize = "large";
+ 		            	errorMsg.innerText = "Username/password are no good!";
+ 		            }
+ 		        },
+ 				error:function(){
+ 		            alert("failure");
+ 		            console.log('There is an error');
+ 		        }
+ 			});
+ 		}
 		
 		$(document).ready(function() {
             $("#password").keyup(function(event){
@@ -63,31 +66,28 @@
 
             $('#signInBtn').click(function() {
 				var username = document.getElementById('username');
-				var password = document.getElementById('password');
-				
-				sendLoginInfoToServer(username.value, password.value);
-			});
+				var password = document.getElementById('password');				
+ 				sendLoginInfoToServer(username.value, password.value);
+ 			});
 			
-		});
+ 		});
 		
-
-		
-    </script>
+     </script>
 </head>
-<body>
+<body style="font-family: Segoe UI WPC Semilight','Segoe UI Semilight','Segoe UI',Tahoma,'Microsoft Sans Serif',Verdana,sans-serif">
 	<center><h1> Welcome to the Timesheet Management Application! </h1></center>
 	<br><br><br>
-	<table border="1" align="center">
+	<table border="3" align="center" style="font-family: Segoe UI WPC Semilight','Segoe UI Semilight','Segoe UI',Tahoma,'Microsoft Sans Serif',Verdana,sans-serif">
 		<tr>
-			<td width="70%" align="center" style="padding-left: 10px; padding-right: 10px;font-family:Arial; font-size: 16px;">
+			<td width="70%" align="center" style="padding-left: 10px; padding-right: 10px; font-size: 16px;">
 				<p><h2> Sign in </h2></p>
-				<b> Username </b> <input type="text" id="username">
+				<b> username </b> <input type="text" id="username">
 				<br>
-				<b> Password </b> <input type="password" id="password">
+				<b> password </b> <input type="password" id="password">
 				<br><br>
 				<input type="checkbox" id="savepasswd"> Remember username/password
 				<br><br>
-				<button class="button-style1" id="signInBtn" style="padding: 9px 80px;"> Sign in </button>
+				<button class="action blue" id="signInBtn" style="padding: 9px 80px;"> Sign in </button>
 			</td>
 			<td>
 				<img src="images/logo.jpg" alt="timesheet_logo">

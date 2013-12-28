@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+<link type="text/css" href="../demoengine/demoengine.css"
+	rel="stylesheet">
+<script type="text/javascript" src="../demoengine/demoengine.js" async
+	defer></script>
+<title>jQuery UI Datepicker: Parse and Format Dates</title>
+<link type="text/css"
+	href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css"
+	rel="stylesheet">
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	});
+
+	function saveNewDivision() {
+		var divName = document.getElementById('name').value;
+		var divManagername = document.getElementById('manager').value;
+
+		if (divManagername == "")
+
+			console.log(divName);
+		console.log(divManagername);
+
+		$.ajax({
+			type : "GET",
+			url : "ManagementServlet",
+			data : {
+				phase : "saveDivision",
+				name : "" + divName,
+				manager : "" + divManagername
+			},
+			success : function(data, textStatus, jqXHR) {
+				console.log(data);
+			},
+			error : function() {
+				alert("failure");
+				console.log('There is an error');
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<div id="addDivision">
+		<table>
+			<tr>
+				<td><label>name: </label></td>
+				<td><input type="text" id="name"></td>
+			</tr>
+			<tr>
+				<td><label>manager: </label></td>
+				<td><input type="text" id="manager"
+					onchange="processChangedLetter()"></td>
+			</tr>
+		</table>
+		<button id="saveNewDivision" onclick="saveNewDivision()">Save</button>
+	</div>
+</body>
+</html>

@@ -28,6 +28,14 @@ public class Login extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		JSONObject responseMessage = new JSONObject();
+
+		System.out.println("---post request---");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		System.out.println("Username: " + username + "\nPassword: " + password);
@@ -40,15 +48,26 @@ public class Login extends HttpServlet {
 			return;
 		}
 		Boolean isAdmin = (accessGranted == 2);
+
 		Employee loggedInUser = employeeService
 				.findEmployeeByUsername(username);
 
-		HttpSession session = request.getSession();
-		session.setAttribute("loggedInUser", loggedInUser);
-
-		JSONObject responseMessage = new JSONObject();
+		if (loggedInUser != null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("loggedInUser", loggedInUser);
+		}
 		try {
-			responseMessage.put("access", "granted");
+			switch (accessGranted) {
+			case -1:
+				responseMessage.put("access", "wrong_user");
+				break;
+			case -2:
+				responseMessage.put("access", "wrong_passwor");
+				break;
+			default:
+				responseMessage.put("access", "granted");
+				break;
+			}
 			responseMessage.put("isAdmin", isAdmin);
 			responseMessage.put("job", loggedInUser.getJob());
 		} catch (JSONException e) {
@@ -56,10 +75,6 @@ public class Login extends HttpServlet {
 		}
 		response.setContentType("application/json; charset=UTF-8");
 		response.getWriter().write(responseMessage.toString());
+		System.out.println("---/post request---");
 	}
-
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-	}
-
 }

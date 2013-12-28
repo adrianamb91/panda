@@ -6,11 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.timesheetapplication.enums.Job;
 
 @Entity
 @Table(name = "employee")
@@ -37,8 +41,9 @@ public class Employee extends AbstractEntity {
 	@JoinColumn(name = "deptno")
 	private Department department;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "job")
-	private String job;
+	private Job job;
 
 	@ManyToMany(cascade = {CascadeType.ALL})
 	@JoinTable(name = "employee_project_map", joinColumns = @JoinColumn(name = "proj_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
@@ -100,11 +105,11 @@ public class Employee extends AbstractEntity {
 		this.department = department;
 	}
 
-	public String getJob() {
+	public Job getJob() {
 		return job;
 	}
 
-	public void setJob(String job) {
+	public void setJob(Job job) {
 		this.job = job;
 	}
 

@@ -1,12 +1,11 @@
-package com.timesheetapplication.dao;
+package com.timesheetapplication.dao.impl;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import com.timesheetapplication.dao.impl.GenericDaoImpl;
-import com.timesheetapplication.dao.impl.ProjectDao;
+import com.timesheetapplication.dao.ProjectDao;
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.model.Project;
 
@@ -18,6 +17,9 @@ public class ProjectDaoImpl extends GenericDaoImpl<Project> implements
 		this.em = em;
 	}
 
+	/*
+	 * returns all projects
+	 */
 	@Override
 	public List<Project> loadAll() {
 		return this.em.createQuery("Select p from Project p").getResultList();

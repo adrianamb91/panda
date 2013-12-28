@@ -8,10 +8,11 @@
     <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            loadProjectsForUser();
-        });
+	
+	<script>
+		$(document).ready(function() {
+			loadProjectsForUser();
+		});
 
         function loadProjectsForUser() {
             $.ajax({
@@ -42,52 +43,86 @@
                 projDrop.appendChild(elem);
             }
         }
+        
+		function saveActivity() {
+			
+			var duration = document.getElementById('duration').value;
+			var description = document.getElementById('description').value;
+			var isExtra = document.getElementById('isExtra').checked;
+			var date = document.getElementById('datepicker').value;
+			
+			var projectDropdown = document.getElementById('projectDrop');
+			var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
+
+			$.ajax({
+				type: "GET",
+				url : "HomepageServlet",
+				data : {phase : "saveActivity",
+						duration : "" + duration,
+						description : "" + description,
+						isExtra : "" + isExtra,
+						date : "" + date,
+						project : "" + projectName
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+				},
+				error : function() {
+					alert("failure");
+					console.log('There is an error');
+				}
+			});
+		}
     </script>
 </head>
 <body>
-<div>
-    <table>
-        <tr>
-            <td><label>date: </label></td>
-            <td>
-
-                <input id="datepicker" type="text">
-                <p id="dateoutput"></p>
-                <script type="text/javascript">
-                    /*
-                     * jQuery UI Datepicker: Parse and Format Dates
-                     * http://salman-w.blogspot.com/2013/01/jquery-ui-datepicker-examples.html
-                     */
-                    $(function() {
-                        $("#datepicker").datepicker({
-                            dateFormat: "dd-mm-yy",
-                            onSelect: function(dateText, inst) {
-                                var date = $.datepicker.parseDate(inst.settings.dateFormat || $.datepicker._defaults.dateFormat, dateText, inst.settings);
-                                var dateText1 = $.datepicker.formatDate("D, d M yy", date, inst.settings);
-                            }
-                        });
-                    });
-                </script>
-
-            </td>
-        </tr>
-        <tr>
-            <td><label>duration: </label></td>
-            <td><input type="text" id="duration"></td>
-        </tr>
-        <tr>
-            <td><label>description: </label></td>
-            <td><input type="text" id="description"></td>
-        </tr>
-        <tr>
-            <td><label>project: </label></td>
-            <td>
-                <select id="projectDrop">
-                    <option>Choose a project</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-</div>
+	<div>
+		<table>
+			<tr>
+				<td><label>date: </label></td>
+				<td>
+				
+				<input id="datepicker" type="text">
+					<p id="dateoutput"></p>
+					<script type="text/javascript">
+						/*
+						 * jQuery UI Datepicker: Parse and Format Dates
+						 * http://salman-w.blogspot.com/2013/01/jquery-ui-datepicker-examples.html
+						 */
+						$(function() {
+							$("#datepicker").datepicker({
+								dateFormat: "dd-mm-yy",
+								onSelect: function(dateText, inst) {
+									var date = $.datepicker.parseDate(inst.settings.dateFormat || $.datepicker._defaults.dateFormat, dateText, inst.settings);
+									var dateText1 = $.datepicker.formatDate("D, d M yy", date, inst.settings);
+								}
+							});
+						});
+					</script>
+				
+				</td>
+			</tr>
+			<tr>
+				<td><label>duration: </label></td>
+				<td><input type="text" id="duration"></td>
+			</tr>
+			<tr>
+				<td><label>description: </label></td>
+				<td><input type="text" id="description"></td>
+			</tr>
+			<tr>
+				<td><label>project: </label></td>
+				<td>
+					<select id="projectDrop"></select>
+				</td>
+			</tr>
+			<tr>
+				<td><label>is extra</label>
+				<td><input id="isExtra" type="checkbox"></td>
+			</tr>
+		</table>
+		
+		<button id="saveActivity" onclick="saveActivity()">Save activity</button>
+	</div>
 </body>
 </html>
