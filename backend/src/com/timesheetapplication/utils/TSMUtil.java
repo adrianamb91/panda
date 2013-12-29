@@ -2,6 +2,7 @@ package com.timesheetapplication.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class TSMUtil {
@@ -23,6 +24,15 @@ public class TSMUtil {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static Date truncateDateToMonthsFirst(Date as) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(as);
+		c.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMinimum(Calendar.DAY_OF_MONTH));
+		
+		Date d = c.getTime();
+		return c.getTime();
 	}
 
 }

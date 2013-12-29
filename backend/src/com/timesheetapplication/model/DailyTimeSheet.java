@@ -10,11 +10,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "daily_timesheet")
 public class DailyTimeSheet extends AbstractEntity {
-
+	@Temporal(TemporalType.DATE)
 	@Column(name = "date")
 	private Date date;
 
@@ -25,6 +27,10 @@ public class DailyTimeSheet extends AbstractEntity {
 	@OneToMany (mappedBy = "timesheet")
 	private List<Activity> activities = new ArrayList<Activity>();
 
+	@ManyToOne
+	@JoinColumn(name = "month_timesheet_id")
+	private MonthlyTimesheet mTimesheet;
+	
 	public Date getDate() {
 		return date;
 	}
@@ -47,6 +53,14 @@ public class DailyTimeSheet extends AbstractEntity {
 
 	public void setActivities(List<Activity> activities) {
 		this.activities = activities;
+	}
+
+	public MonthlyTimesheet getmTimesheet() {
+		return mTimesheet;
+	}
+
+	public void setmTimesheet(MonthlyTimesheet mTimesheet) {
+		this.mTimesheet = mTimesheet;
 	}
 	
 }

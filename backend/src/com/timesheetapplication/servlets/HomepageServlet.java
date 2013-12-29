@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,13 +19,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.crypto.provider.DESCipher;
 import com.timesheetapplication.enums.Job;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Employee;
+import com.timesheetapplication.model.MonthlyTimesheet;
 import com.timesheetapplication.model.Project;
 import com.timesheetapplication.service.ActivityService;
 import com.timesheetapplication.service.DailyTimesheetService;
+import com.timesheetapplication.service.MonthlyTimeSheetService;
 import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
 
@@ -39,6 +43,8 @@ public class HomepageServlet extends HttpServlet {
 	private ActivityService activityService = new ActivityService();
 
 	private DailyTimesheetService dtimesheetService = new DailyTimesheetService();
+	
+	private MonthlyTimeSheetService mtimesheetService = new MonthlyTimeSheetService();
 	
 	public HomepageServlet() {
 		super();
@@ -108,19 +114,94 @@ public class HomepageServlet extends HttpServlet {
 			case "loadAllJobs" : 
 				processLoadAllJobs(responseMessage, response);
 				break;
+			case "loadTodaysTimesheet":
+				processLoadTodaysTimesheet(request, response, responseMessage);
+				break;
 			case "done":
 				session.invalidate();
+				break;
+			case "loadAllMTimesheets":
+				processLoadAllMonthlyTimesheets(request, response, responseMessage);
 				break;
 			case "changepassword":
 				break;
 			case "saveActivity" :
-				processSaveActivity(request);
+				processSaveActivity(request, response, responseMessage);
 				break;
 			default:
 				break;
 		}
 	}
 	
+	private void processLoadAllMonthlyTimesheets(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+		Employee e = (Employee) session.getAttribute("loggedInUser");
+		
+		ArrayList<String> nameList = new ArrayList<String>();
+		ArrayList<String> statusList = new ArrayList<String>();
+		Calendar c = Calendar.getInstance();
+		for (MonthlyTimesheet m : e.getmTimesheets()) {
+			c.setTime(m.getDate());
+			
+			
+			// to be continued!
+		}
+		
+		
+		
+	}
+
+	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+		Employee e = (Employee) session.getAttribute("loggedInUser");
+		Date as = new Date();
+		DailyTimeSheet ts = dtimesheetService.findDTSbyDateAndUser(as, e);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		
+		if (ts == null || ts.getActivities().size() == 0) {
+			ts = new DailyTimeSheet();
+			ts.setOwner((Employee) session.getAttribute("loggedInUser"));
+			ts.setDate(new Date());
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		} else {
+			try {
+				Integer i = 0;
+				ArrayList<String> durationArray = new ArrayList<String>();
+				ArrayList<String> descriptionArray = new ArrayList<String>();
+				ArrayList<String> projectArray = new ArrayList<String>();
+				JSONArray array_du, array_de, array_p;
+				for (Activity a : ts.getActivities()) {
+					durationArray.add(a.getDuration().toString());
+					descriptionArray.add(a.getDescription());
+					projectArray.add(a.getProject().getName());
+				}
+
+				array_du = new JSONArray(durationArray);
+				array_de = new JSONArray(descriptionArray);
+				array_p = new JSONArray(projectArray);
+				
+				responseMessage.put("date", sdf.format(new Date()));
+				responseMessage.put("size", "" + ts.getActivities().size());
+				responseMessage.put("description", array_de);
+				responseMessage.put("duration", array_du);
+				responseMessage.put("project", array_p);
+				responseMessage.put("ok", true);
+				
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		}
+		dtimesheetService.saveOrUpdateEvent(ts);
+		try {
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 	private void processLoadAllJobs(JSONObject responseMessage,
 			HttpServletResponse response) {
 		ArrayList<String> jobNames = new ArrayList<String>();
@@ -165,7 +246,7 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	private void processSaveActivity(HttpServletRequest request) {
+	private void processSaveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 
 		String duration = request.getParameter("duration");
 		String description = request.getParameter("description");
@@ -173,8 +254,7 @@ public class HomepageServlet extends HttpServlet {
 		String isExtra = request.getParameter("isExtra");
 		String selectedProject = request.getParameter("project");
 
-		System.out.println(duration + " " + description + " " + date + " "
-				+ isExtra + " " + selectedProject);
+		System.out.println(duration + " " + description + " " + date + " " + isExtra + " " + selectedProject);
 
 		Activity a = new Activity();
 		a.setDescription(description);
@@ -184,26 +264,53 @@ public class HomepageServlet extends HttpServlet {
 
 		activityService.saveOrUpdate(a);
 
-		Employee e = (Employee) session.getAttribute("loggedInUser");
-		Date as = TSMUtil.convertStringToDate(date);
+		Employee currentUser = (Employee) session.getAttribute("loggedInUser");
+		Date currentDate = TSMUtil.convertStringToDate(date);
 
-		DailyTimeSheet ts = dtimesheetService.findDTSbyDateAndUser(as, e);
+		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(currentDate, currentUser);
 
-		// if there is no dts for that particular date and employee create a new
-		// one.
-		if (ts == null) {
-			ts = new DailyTimeSheet();
-			ts.getActivities().add(a);
-			ts.setOwner((Employee) session.getAttribute("loggedInUser"));
-			ts.setDate(TSMUtil.convertStringToDate(date));
+		// if there is no dts for that particular date and employee create a
+		// new one.
+		if (dts == null) {
+			dts = new DailyTimeSheet();
+			dts.getActivities().add(a);
+			dts.setOwner(currentUser);
+			dts.setDate(currentDate);
 		} else {
-			ts.getActivities().add(a);
+			dts.getActivities().add(a);
 		}
-		dtimesheetService.saveOrUpdateEvent(ts);
+		dtimesheetService.saveOrUpdateEvent(dts);
+
+		Date dtrunc = TSMUtil.truncateDateToMonthsFirst(currentDate);
+		MonthlyTimesheet mts = mtimesheetService.findMTSByDateAndUser(dtrunc, currentUser);
+
+		if (mts == null) {
+			mts = new MonthlyTimesheet();
+			mts.setDate(dtrunc);
+			mts.setOwner(currentUser);
+			mts.getTimesheets().add(dts);
+		}
+		else {
+			mts.getTimesheets().add(dts);
+		}
+		
+		mtimesheetService.saveOrUpdate(mts);
+		
+		
+		dts.setmTimesheet(mts);
+		dtimesheetService.saveOrUpdateEvent(dts);
 		
 		// set the ts for this activity
-		a.setTimesheet(ts);
+		a.setTimesheet(dts);
 		activityService.saveOrUpdate(a);
+		
+		try {
+			responseMessage.put("ok", true);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	protected void doPost(HttpServletRequest request,

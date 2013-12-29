@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.timesheetapplication.enums.Job;
@@ -48,6 +49,9 @@ public class Employee extends AbstractEntity {
 	@ManyToMany(cascade = {CascadeType.ALL})
 	@JoinTable(name = "employee_project_map", joinColumns = @JoinColumn(name = "proj_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
 	private List<Project> projects = new ArrayList<Project>();
+	
+	@OneToMany (mappedBy = "owner")
+	private List<MonthlyTimesheet> mTimesheets = new ArrayList<MonthlyTimesheet>();
 
 	public List<Project> getProjects() {
 		return projects;
@@ -111,6 +115,14 @@ public class Employee extends AbstractEntity {
 
 	public void setJob(Job job) {
 		this.job = job;
+	}
+
+	public List<MonthlyTimesheet> getmTimesheets() {
+		return mTimesheets;
+	}
+
+	public void setmTimesheets(List<MonthlyTimesheet> mTimesheets) {
+		this.mTimesheets = mTimesheets;
 	}
 
 }
