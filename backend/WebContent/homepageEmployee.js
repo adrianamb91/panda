@@ -95,12 +95,7 @@ $(document).ready(function() {
 	getLoginDataFromServer();
 	loadProjectsForUser();
 	loadTodaysTimesheetForUser();
-	//loadAllMTimesheetsForUser();
-
-	$('.editable').editable('http://www.example.com/save.php', {
-        indicator : 'Saving...',
-        tooltip   : 'Click to edit...'
-    });
+	loadAllMTimesheetsForUser();
 	
 	$('#settingsBtn').click(function() {
 		// $('#view_page').load("settings.html #view_settings");
@@ -122,13 +117,12 @@ function loadAllMTimesheetsForUser() {
 	// delete all rows from the table
 	// don't worry, they'll be brought back from the server
 	$("#monthly-entries > tbody").empty();
-	
-	
 	$.ajax({
 		type: "GET",
 		url: "HomepageServlet",
 		data: {phase : "loadAllMTimesheets"},
 		success: function (data, textStatus, jqXHR) {
+			console.log("monthly");
 			console.log(data);
 			var tsTable = $('#monthly-entries');
 
@@ -150,24 +144,35 @@ function loadTodaysTimesheetForUser() {
 	// don't worry, they'll be brought back from the server
 	$("#entries > tbody").empty();
 	
-	
 	$.ajax({
 		type: "GET",
 		url: "HomepageServlet",
 		data: {phase : "loadTodaysTimesheet"},
 		success: function (data, textStatus, jqXHR) {
 			console.log(data);
-			var tsTable = $('#entries');
-
-			for (var i = 0; i < data.size; i ++) {
-				tsTable.append(
-						"<tr>" +
-						'<td class="edit">' + data.date + "</td>" +
-						"<td>" + data.duration[i]+ "</td>" +
-						"<td>" + data.description[i] + "</td>" +
-						"<td>" + data.project[i] + "</td>" +
-						"</tr>"
-				);
+			var tsTable = $('#entries-table');
+			var noEntries = $('#no-entries');
+			var existingEntries = $('#exist-entries');
+			
+			if (data.ok == true) {
+				tsTable.show();
+				noEntries.hide();
+				existingEntries.show();
+				for (var i = 0; i < data.size; i ++) {
+					tsTable.append(
+							"<tr>" +
+							'<td class="edit">' + data.date + "</td>" +
+							"<td>" + data.duration[i]+ "</td>" +
+							"<td>" + data.description[i] + "</td>" +
+							"<td>" + data.project[i] + "</td>" +
+							"</tr>"
+					);
+				}
+			}
+			else {
+				noEntries.show();
+				tsTable.hide();
+				existingEntries.hide();
 			}
 		}
 	});

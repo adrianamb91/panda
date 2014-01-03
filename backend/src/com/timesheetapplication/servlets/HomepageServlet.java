@@ -43,22 +43,20 @@ public class HomepageServlet extends HttpServlet {
 	private ActivityService activityService = new ActivityService();
 
 	private DailyTimesheetService dtimesheetService = new DailyTimesheetService();
-	
+
 	private MonthlyTimeSheetService mtimesheetService = new MonthlyTimeSheetService();
-	
+
 	public HomepageServlet() {
 		super();
 	}
 
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		session = request.getSession();
 
 		JSONObject responseMessage = new JSONObject();
-		
-		System.out.println("homepage servlet knows about user = "
-				+ session.getAttribute("loggedInUser"));
+
+		System.out.println("homepage servlet knows about user = " + session.getAttribute("loggedInUser"));
 		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			System.out.println("you should login");
@@ -72,128 +70,127 @@ public class HomepageServlet extends HttpServlet {
 			}
 			return;
 		}
-		
+
 		String phase = new String(request.getParameter("phase").toString());
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = new Date();
 		switch (phase) {
-			case "init":
-				try {
-					responseMessage.put("ok", true);
-					responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
-					responseMessage.put("job", loggedInUser.getJob());
-					responseMessage.put("date", dateFormat.format(date));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				response.setContentType("application/json; charset=UTF-8");
-				response.getWriter().write(responseMessage.toString());
-				break;
-			case "loadProjectsForCurrentUser":
-				List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
-				
-				ArrayList<String> projectNames = new ArrayList<String>();
-				for (Project p : projects) {
-					projectNames.add(p.getName());
-				}
-				try {
-					responseMessage.put("ok", true);
-					JSONArray array = new JSONArray(projectNames);
-					responseMessage.put ("projects", array);
-					System.out.println("sent back:" + array.toString());
-				} 
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-				response.setContentType("application/json; charset=UTF-8");
-				response.getWriter().write(responseMessage.toString());
-				break;
-			case "loadAllProjects":
-				processLoadAllProjects(responseMessage, response);
-				break;
-			case "loadAllJobs" : 
-				processLoadAllJobs(responseMessage, response);
-				break;
-			case "loadTodaysTimesheet":
-				processLoadTodaysTimesheet(request, response, responseMessage);
-				break;
-			case "done":
-				session.invalidate();
-				break;
-			case "loadAllMTimesheets":
-				processLoadAllMonthlyTimesheets(request, response, responseMessage);
-				break;
-			case "changepassword":
-				break;
-			case "saveActivity" :
-				processSaveActivity(request, response, responseMessage);
-				break;
-			default:
-				break;
+		case "init":
+			try {
+				responseMessage.put("ok", true);
+				responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
+				responseMessage.put("job", loggedInUser.getJob());
+				responseMessage.put("date", dateFormat.format(date));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+			break;
+		case "loadProjectsForCurrentUser":
+			List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
+
+			ArrayList<String> projectNames = new ArrayList<String>();
+			for (Project p : projects) {
+				projectNames.add(p.getName());
+			}
+			try {
+				responseMessage.put("ok", true);
+				JSONArray array = new JSONArray(projectNames);
+				responseMessage.put("projects", array);
+				System.out.println("sent back:" + array.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+			break;
+		case "loadAllProjects":
+			processLoadAllProjects(responseMessage, response);
+			break;
+		case "loadAllJobs":
+			processLoadAllJobs(responseMessage, response);
+			break;
+		case "loadTodaysTimesheet":
+			processLoadTodaysTimesheet(request, response, responseMessage);
+			break;
+		case "done":
+			session.invalidate();
+			break;
+		case "loadAllMTimesheets":
+			processLoadAllMonthlyTimesheets(request, response, responseMessage);
+			break;
+		case "changepassword":
+			break;
+		case "saveActivity":
+			processSaveActivity(request, response, responseMessage);
+			break;
+		default:
+			break;
 		}
 	}
-	
+
 	private void processLoadAllMonthlyTimesheets(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
-		
+
 		ArrayList<String> nameList = new ArrayList<String>();
 		ArrayList<String> statusList = new ArrayList<String>();
-		Calendar c = Calendar.getInstance();
+		JSONArray nameArray;
+		JSONArray statusArray;
 		for (MonthlyTimesheet m : e.getmTimesheets()) {
-			c.setTime(m.getDate());
-			
-			
-			// to be continued!
+			nameList.add(TSMUtil.formatDate(m.getDate()));
+			statusList.add(m.getStatus().name());
 		}
-		
-		
-		
+		nameArray = new JSONArray(nameList);
+		statusArray = new JSONArray(statusList);
+
+		try {
+			responseMessage.put("date", nameArray);
+			responseMessage.put("status", statusArray);
+			responseMessage.put("size", nameList.size());
+			responseMessage.put("ok", true);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
 	}
 
 	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
 		Date as = new Date();
-		DailyTimeSheet ts = dtimesheetService.findDTSbyDateAndUser(as, e);
+		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(as, e);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		
-		if (ts == null || ts.getActivities().size() == 0) {
-			ts = new DailyTimeSheet();
-			ts.setOwner((Employee) session.getAttribute("loggedInUser"));
-			ts.setDate(new Date());
-			try {
-				responseMessage.put("ok", false);
-			} catch (JSONException e1) {
-				e1.printStackTrace();
-			}
-		} else {
-			try {
-				Integer i = 0;
-				ArrayList<String> durationArray = new ArrayList<String>();
-				ArrayList<String> descriptionArray = new ArrayList<String>();
-				ArrayList<String> projectArray = new ArrayList<String>();
-				JSONArray array_du, array_de, array_p;
-				for (Activity a : ts.getActivities()) {
-					durationArray.add(a.getDuration().toString());
-					descriptionArray.add(a.getDescription());
-					projectArray.add(a.getProject().getName());
-				}
 
-				array_du = new JSONArray(durationArray);
-				array_de = new JSONArray(descriptionArray);
-				array_p = new JSONArray(projectArray);
-				
-				responseMessage.put("date", sdf.format(new Date()));
-				responseMessage.put("size", "" + ts.getActivities().size());
-				responseMessage.put("description", array_de);
-				responseMessage.put("duration", array_du);
-				responseMessage.put("project", array_p);
-				responseMessage.put("ok", true);
-				
-			} catch (JSONException e1) {
-				e1.printStackTrace();
+		try {
+			ArrayList<String> durationArray = new ArrayList<String>();
+			ArrayList<String> descriptionArray = new ArrayList<String>();
+			ArrayList<String> projectArray = new ArrayList<String>();
+			JSONArray array_du, array_de, array_p;
+			for (Activity a : dts.getActivities()) {
+				durationArray.add(a.getDuration().toString());
+				descriptionArray.add(a.getDescription());
+				projectArray.add(a.getProject().getName());
 			}
+
+			array_du = new JSONArray(durationArray);
+			array_de = new JSONArray(descriptionArray);
+			array_p = new JSONArray(projectArray);
+
+			responseMessage.put("date", sdf.format(new Date()));
+			responseMessage.put("size", "" + dts.getActivities().size());
+			responseMessage.put("description", array_de);
+			responseMessage.put("duration", array_du);
+			responseMessage.put("project", array_p);
+			responseMessage.put("ok", true);
+
+		} catch (JSONException e1) {
+			e1.printStackTrace();
 		}
-		dtimesheetService.saveOrUpdateEvent(ts);
+
 		try {
 			response.setContentType("application/json; charset=UTF-8");
 			response.getWriter().write(responseMessage.toString());
@@ -202,32 +199,30 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	private void processLoadAllJobs(JSONObject responseMessage,
-			HttpServletResponse response) {
+	private void processLoadAllJobs(JSONObject responseMessage, HttpServletResponse response) {
 		ArrayList<String> jobNames = new ArrayList<String>();
-		
+
 		for (Job j : Job.values()) {
 			jobNames.add(j.name());
 		}
-		
+
 		try {
 			responseMessage.put("ok", true);
 			JSONArray array = new JSONArray(jobNames);
-			responseMessage.put ("elements", array);
+			responseMessage.put("elements", array);
 			System.out.println("sent back:" + array.toString());
-			
+
 			response.setContentType("application/json; charset=UTF-8");
 			response.getWriter().write(responseMessage.toString());
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void processLoadAllProjects(JSONObject responseMessage, HttpServletResponse response) {
 		List<Project> projects = projectService.loadAllProjects();
-		
+
 		ArrayList<String> projectNames = new ArrayList<String>();
 		for (Project p : projects) {
 			projectNames.add(p.getName());
@@ -235,13 +230,12 @@ public class HomepageServlet extends HttpServlet {
 		try {
 			responseMessage.put("ok", true);
 			JSONArray array = new JSONArray(projectNames);
-			responseMessage.put ("elements", array);
+			responseMessage.put("elements", array);
 			System.out.println("sent back:" + array.toString());
-			
+
 			response.setContentType("application/json; charset=UTF-8");
 			response.getWriter().write(responseMessage.toString());
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -289,21 +283,19 @@ public class HomepageServlet extends HttpServlet {
 			mts.setDate(dtrunc);
 			mts.setOwner(currentUser);
 			mts.getTimesheets().add(dts);
-		}
-		else {
+		} else {
 			mts.getTimesheets().add(dts);
 		}
-		
+
 		mtimesheetService.saveOrUpdate(mts);
-		
-		
+
 		dts.setmTimesheet(mts);
 		dtimesheetService.saveOrUpdateEvent(dts);
-		
+
 		// set the ts for this activity
 		a.setTimesheet(dts);
 		activityService.saveOrUpdate(a);
-		
+
 		try {
 			responseMessage.put("ok", true);
 			response.setContentType("application/json; charset=UTF-8");
@@ -313,8 +305,7 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	}
 
 }
