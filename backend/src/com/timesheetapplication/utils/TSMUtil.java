@@ -12,12 +12,12 @@ public class TSMUtil {
 			return null;
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		return sdf.format(d);
 	}
 	
 	public static Date convertStringToDate(String d) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			return formatter.parse(d);
 		} catch (ParseException e) {
@@ -35,4 +35,18 @@ public class TSMUtil {
 		return c.getTime();
 	}
 
+	public static Boolean isValidString(String str) {
+		if (str != null && str.length() > 0 && !str.equals(" ") && !str.equalsIgnoreCase("undefined")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static Boolean isNotEmptyOrNull(String str) {
+		if (str != null && !str.equals("")) {
+			return true;
+		}
+		return false;
+	}
+	
 }

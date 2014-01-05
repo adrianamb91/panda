@@ -49,4 +49,19 @@ $(document).ready(function() {
 		console.log ("" + username + " " + password);
 		sendLoginInfoToServer(username, password);
 	});
+	
+	setFocusesForElement('username', 'username');
+	setFocusesForElement('password', 'password');
+
 });
+
+function setFocusesForElement(element, elementPHolder) {
+	$("#" + element).focusin(function() {
+		$(this).attr("placeholder", '');
+	});
+
+	$("#" + element).focusout(function() {
+		$(this).attr("placeholder", '' + elementPHolder);
+	});
+}
+

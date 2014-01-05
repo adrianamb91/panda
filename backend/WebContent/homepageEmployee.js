@@ -88,15 +88,15 @@ function populateProjectDropdown(data) {
 }
 
 $(document).ready(function() {
-	
-	console.log ("document ready");
+
+	console.log("document ready");
 	mainContent = document.getElementById('view_page').innerHTML;
 
 	getLoginDataFromServer();
 	loadProjectsForUser();
 	loadTodaysTimesheetForUser();
 	loadAllMTimesheetsForUser();
-	
+
 	$('#settingsBtn').click(function() {
 		// $('#view_page').load("settings.html #view_settings");
 		$('#view_page').hide();
@@ -113,63 +113,141 @@ $(document).ready(function() {
 });
 
 function loadAllMTimesheetsForUser() {
-	
+
 	// delete all rows from the table
 	// don't worry, they'll be brought back from the server
 	$("#monthly-entries > tbody").empty();
 	$.ajax({
-		type: "GET",
-		url: "HomepageServlet",
-		data: {phase : "loadAllMTimesheets"},
-		success: function (data, textStatus, jqXHR) {
+		type : "GET",
+		url : "HomepageServlet",
+		data : {
+			phase : "loadAllMTimesheets"
+		},
+		success : function(data, textStatus, jqXHR) {
 			console.log("monthly");
 			console.log(data);
 			var tsTable = $('#monthly-entries');
 
-			for (var i = 0; i < data.size; i ++) {
-				tsTable.append(
-						"<tr>" +
-						"<td>" + data.date[i] + "</td>" +
-						"<td>" + data.status[i] + "</td>" +
-						"</tr>"
-				);
+			for (var i = 0; i < data.size; i++) {
+				tsTable.append("<tr>" + "<td>" + data.date[i] + "</td>"
+						+ "<td>" + data.status[i] + "</td>" + "</tr>");
 			}
 		}
 	});
 }
 
-function loadTodaysTimesheetForUser() {
+function removeActivity(i) {
+	var table = $('#entries-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	$.ajax({
+		type: "GET", 
+		url : "HomepageServlet",
+		data : {phase : "removeActivity",
+			date : (row[0].cells[0]).innerHTML,
+			duration : (row[0].cells[1]).innerHTML,
+			description : (row[0].cells[2]).innerHTML,
+			project : (row[0].cells[3]).innerHTML
+		},
+		success : function(data, textStatus, jqXHR) {
+			alert('s-a dus!');
+			loadTodaysTimesheetForUser();
+		},
+		error : function() {
+			alert("failure");
+			console.log('There is an error');
+		}
+	});
 	
+	return false;
+}
+
+
+// for the moment this doesn't really work
+function editActivity(i) {
+
+	var table = $('#entries-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+
+	var dialogBox = $("#dialog-form"); 
+	dialogBox.dialog("open");
+	
+	// to be continued upon Adri's (the boss) request
+	$('#selection_date').attr('value', '' + row[0].cells[0].innerHTML);
+	$('#duration').attr('value', '' + row[0].cells[1].innerHTML); 
+	$('#description').attr('value', '' + row[0].cells[2].innerHTML); 
+	
+	var form = $('#new_entry'), allFields = $(':text', form);
+	$("#dialog-form").dialog({
+		autoOpen : false,
+		height : 510,
+		width : 350,
+		modal : true,
+		draggable : false,
+		resizable : false,
+		buttons : {
+			"Save_2" : function() {
+				console.log("save_1 clicked!");
+				allFields.removeClass("ui-state-error");
+				// console.log(validateFields(form));
+					// addToUsers(form);
+					console.log("save_2 called!!");
+					saveActivity(row[0].cells[0].innerHTML, row[0].cells[1].innerHTML, row[0].cells[2].innerHTML, row[0].cells[3].innerHTML);
+				$(this).dialog("close");
+			},
+			Cancel : function() {
+				$(this).dialog("close");
+				loadTodaysTimesheetForUser();
+			}
+		},
+		close : function() {
+			allFields.val("").removeClass("ui-state-error");
+			loadTodaysTimesheetForUser();
+		}
+	});
+
+	return false;
+}
+
+function loadTodaysTimesheetForUser() {
+
 	// delete all rows from the table
 	// don't worry, they'll be brought back from the server
-	$("#entries > tbody").empty();
-	
+	$('#entries-table > tbody').empty();
+
+	console.log('s-a facut un clean!');
+
 	$.ajax({
-		type: "GET",
-		url: "HomepageServlet",
-		data: {phase : "loadTodaysTimesheet"},
-		success: function (data, textStatus, jqXHR) {
+		type : "GET",
+		url : "HomepageServlet",
+		data : {
+			phase : "loadTodaysTimesheet"
+		},
+		success : function(data, textStatus, jqXHR) {
 			console.log(data);
 			var tsTable = $('#entries-table');
 			var noEntries = $('#no-entries');
 			var existingEntries = $('#exist-entries');
-			
+
 			if (data.ok == true) {
 				tsTable.show();
 				noEntries.hide();
 				existingEntries.show();
-				for (var i = 0; i < data.size; i ++) {
-					tsTable.append(
-							"<tr>" +
-							'<td class="edit">' + data.date + "</td>" +
-							"<td>" + data.duration[i]+ "</td>" +
-							"<td>" + data.description[i] + "</td>" +
-							"<td>" + data.project[i] + "</td>" +
-							"</tr>"
-					);
+				for (var i = 0; i < data.size; i++) {
+					// index = 0 -> selects table head so this row should be
+					// skipped
+					var rowIndex = i + 1;
+					tsTable.append("<tr>" + '<td class="edit">' + data.date
+							+ "</td>" + "<td>" + data.duration[i] + "</td>"
+							+ "<td>" + data.description[i] + "</td>" + "<td>"
+							+ data.project[i] + "</td>" + "<td>"
+							+ '<a href="#" onClick="editActivity(' + rowIndex
+							+ ')">edit</a>' + "<td>"
+							+ '<a href="#" onClick="removeActivity(' + rowIndex
+							+ ')">remove</a>' + "</tr>");
 				}
-			}
-			else {
+			} else {
 				noEntries.show();
 				tsTable.hide();
 				existingEntries.hide();
@@ -189,17 +267,20 @@ $(function() {
 		draggable : false,
 		resizable : false,
 		buttons : {
-			"Create new entry" : function() {
+			"Save_1" : function() {
+				console.log("save_1 clicked!");
 				allFields.removeClass("ui-state-error");
 				// console.log(validateFields(form));
-				 if (validateFields(form)) {
+				if (validateFields(form)) {
 					// addToUsers(form);
 					console.log("did it!");
 					saveActivity();
 				}
+				$(this).dialog("close");
 			},
 			Cancel : function() {
 				$(this).dialog("close");
+				loadTodaysTimesheetForUser();
 			}
 		},
 		close : function() {
@@ -288,7 +369,10 @@ $(function() {
 			});
 });
 
-function saveActivity() {
+function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
+	
+	console.log("entered save");
+	
 	var duration = document.getElementById('duration').value;
 	var description = document.getElementById('description').value;
 	var isExtra = document.getElementById('isExtra').checked;
@@ -304,11 +388,17 @@ function saveActivity() {
 			description : "" + description,
 			isExtra : "" + isExtra,
 			date : "" + globalDate,
-			project : "" + projectName
-		},
+			project : "" + projectName,
+			old_date : "" + olddate,
+			old_duration: "" + oldduration,
+			old_description: "" + olddescription,
+			old_projectName: "" + oldProjectName
+ 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
 			if (data.ok == true) {
+				
+				// replace with simple ok modal.
 				alert("saved!");
 			}
 		},

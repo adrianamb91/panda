@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,7 +31,7 @@ public class MonthlyTimesheet extends AbstractEntity {
 	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
-	@OneToMany(mappedBy = "mTimesheet")
+	@OneToMany(mappedBy = "mTimesheet", cascade = CascadeType.ALL)
 	private List<DailyTimeSheet> timesheets = new ArrayList<DailyTimeSheet>();
 
 	@Enumerated(EnumType.STRING)

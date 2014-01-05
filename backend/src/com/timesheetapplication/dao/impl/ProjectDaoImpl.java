@@ -48,7 +48,11 @@ public class ProjectDaoImpl extends GenericDaoImpl<Project> implements
 				.createQuery("Select p from Project p where p.name = :name");
 		q.setParameter("name", name);
 		List<Project> resultList = (List<Project>) q.getResultList();
-		return resultList != null && resultList.size() > 0 ? (Project) resultList.get(0) : null;
+
+		if (resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
 	}
 
 }

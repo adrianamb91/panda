@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.ant.FindLeaksTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sun.crypto.provider.DESCipher;
+import com.sun.corba.se.impl.ior.OldPOAObjectKeyTemplate;
 import com.timesheetapplication.enums.Job;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
@@ -72,7 +72,6 @@ public class HomepageServlet extends HttpServlet {
 		}
 
 		String phase = new String(request.getParameter("phase").toString());
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = new Date();
 		switch (phase) {
 		case "init":
@@ -80,7 +79,7 @@ public class HomepageServlet extends HttpServlet {
 				responseMessage.put("ok", true);
 				responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
 				responseMessage.put("job", loggedInUser.getJob());
-				responseMessage.put("date", dateFormat.format(date));
+				responseMessage.put("date", TSMUtil.formatDate(date));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -122,12 +121,34 @@ public class HomepageServlet extends HttpServlet {
 			break;
 		case "changepassword":
 			break;
+		case "removeActivity":
+			processRemoveActivity(request, response, responseMessage);
+			break;
 		case "saveActivity":
 			processSaveActivity(request, response, responseMessage);
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void processRemoveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+
+		Float duration = Float.parseFloat(request.getParameter("duration"));
+		String description = request.getParameter("description");
+		String date = request.getParameter("date");
+		String selectedProject = request.getParameter("project");
+
+		Project p = projectService.findProjectByName(selectedProject);
+		Date d = TSMUtil.convertStringToDate(date);
+
+		Activity a = activityService.findActivityByDateDurationDescAndProject(d, duration, description, p);
+
+		System.out.println(a.getId());
+		System.out.println(a.getDescription());
+		System.out.println(a.getDuration());
+
+		activityService.deleteActivityByDateDurationDescAndProject(d, duration, description, p);
 	}
 
 	private void processLoadAllMonthlyTimesheets(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
@@ -156,20 +177,32 @@ public class HomepageServlet extends HttpServlet {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
 	}
 
 	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
 		Date as = new Date();
 		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(as, e);
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+		if (dts == null || dts.getActivities().size() == 0) {
+			try {
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+				return;
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 
 		try {
 			ArrayList<String> durationArray = new ArrayList<String>();
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			ArrayList<String> projectArray = new ArrayList<String>();
 			JSONArray array_du, array_de, array_p;
+
 			for (Activity a : dts.getActivities()) {
 				durationArray.add(a.getDuration().toString());
 				descriptionArray.add(a.getDescription());
@@ -180,7 +213,7 @@ public class HomepageServlet extends HttpServlet {
 			array_de = new JSONArray(descriptionArray);
 			array_p = new JSONArray(projectArray);
 
-			responseMessage.put("date", sdf.format(new Date()));
+			responseMessage.put("date", TSMUtil.formatDate(as));
 			responseMessage.put("size", "" + dts.getActivities().size());
 			responseMessage.put("description", array_de);
 			responseMessage.put("duration", array_du);
@@ -205,7 +238,6 @@ public class HomepageServlet extends HttpServlet {
 		for (Job j : Job.values()) {
 			jobNames.add(j.name());
 		}
-
 		try {
 			responseMessage.put("ok", true);
 			JSONArray array = new JSONArray(jobNames);
@@ -240,17 +272,39 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
+	/*
+	 * Saves an activity to the database. It can be used in 2 situations : 1.
+	 * save a new activity 2. update an existing activity (that is why there are
+	 * used old info to find the existing one and update it.)
+	 */
 	private void processSaveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
-
 		String duration = request.getParameter("duration");
 		String description = request.getParameter("description");
 		String date = request.getParameter("date");
 		String isExtra = request.getParameter("isExtra");
 		String selectedProject = request.getParameter("project");
 
-		System.out.println(duration + " " + description + " " + date + " " + isExtra + " " + selectedProject);
+		Float oldDuration = null;
+		Activity a = null;
+		if (TSMUtil.isValidString(request.getParameter("old_duration")) && TSMUtil.isValidString(request.getParameter("old_description"))
+				&& TSMUtil.isValidString(request.getParameter("old_projectName")) && TSMUtil.isValidString(request.getParameter("old_date"))) {
 
-		Activity a = new Activity();
+			oldDuration = Float.parseFloat(request.getParameter("old_duration"));
+			String oldDescription = request.getParameter("old_description");
+			Project oldProject = projectService.findProjectByName(request.getParameter("old_projectName"));
+			Date oldDate = TSMUtil.convertStringToDate(request.getParameter("old_date"));
+			System.out.println("old: " + oldDuration + " " + oldDescription + " " + oldDate.getTime() + " " + oldProject.getName());
+			a = activityService.findActivityByDateDurationDescAndProject(oldDate, oldDuration, oldDescription, oldProject);
+		}
+
+		System.out.println("new: " + duration + " " + description + " " + date + " " + isExtra + " " + selectedProject);
+	
+		Boolean update = true;
+		if (a == null) {
+			a = new Activity();
+			update = false;
+		}
+
 		a.setDescription(description);
 		a.setDuration(Float.parseFloat(duration));
 		a.setIsExtra(Boolean.parseBoolean(isExtra));
@@ -271,7 +325,9 @@ public class HomepageServlet extends HttpServlet {
 			dts.setOwner(currentUser);
 			dts.setDate(currentDate);
 		} else {
-			dts.getActivities().add(a);
+			if (!update) {
+				dts.getActivities().add(a);
+			}
 		}
 		dtimesheetService.saveOrUpdateEvent(dts);
 

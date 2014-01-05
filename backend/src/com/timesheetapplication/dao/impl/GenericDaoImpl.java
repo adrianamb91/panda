@@ -29,6 +29,7 @@ public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
 			em.merge(e);
 		}
 		em.getTransaction().commit();
+		
 	}
 
 	@Override

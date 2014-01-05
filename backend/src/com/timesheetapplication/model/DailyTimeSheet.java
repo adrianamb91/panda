@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,6 +18,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "daily_timesheet")
 public class DailyTimeSheet extends AbstractEntity {
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "date")
 	private Date date;
@@ -47,6 +50,7 @@ public class DailyTimeSheet extends AbstractEntity {
 		this.owner = owner;
 	}
 
+	
 	public List<Activity> getActivities() {
 		return activities;
 	}
