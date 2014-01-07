@@ -41,7 +41,13 @@ function sendLoginInfoToServer(un, pswd) {
 }
 
 $(document).ready(function() {
-	console.log("ready");
+    console.log("ready");
+
+    $("#password").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#sign-in-button").click();
+        }
+    });
 	$('#sign-in-button').click(function() {
 		var username = document.getElementById('username').value;
 		var password = document.getElementById('password').value;

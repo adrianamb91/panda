@@ -22,20 +22,22 @@ public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
 		if (e == null) {
 			throw new NullPointerException("Trying to persist a null object");
 		}
-		em.getTransaction().begin();
+		if (!em.getTransaction().isActive()) {
+			em.getTransaction().begin();
+		}
 		if (e.getId() == null) {
 			em.persist(e);
 		} else {
 			em.merge(e);
 		}
 		em.getTransaction().commit();
-		
+
 	}
 
 	@Override
 	public List<E> loadAll() {
 		System.err
-				.println("GenericDaoImp.loadAll() shouldn't have been called!!!");
+		.println("GenericDaoImp.loadAll() shouldn't have been called!!!");
 		return null;
 	}
 

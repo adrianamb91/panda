@@ -2,6 +2,7 @@ package com.timesheetapplication.servlets;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,7 +182,22 @@ public class HomepageServlet extends HttpServlet {
 
 	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
-		Date as = new Date();
+		
+		String dateString = request.getParameter("date");
+		Date as;
+		if (dateString != null) {
+			SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yy");
+			try {
+				as = dt.parse(dateString);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				as = new Date();
+			} 
+		}
+		else {
+			as = new Date();
+		}
 		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(as, e);
 
 		if (dts == null || dts.getActivities().size() == 0) {

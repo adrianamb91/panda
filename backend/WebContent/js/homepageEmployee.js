@@ -110,9 +110,15 @@ $(document).ready(function() {
 	$('#logoutBtn').click(function() {
 		endSession();
 	});
-	
-	$( "#selection_date" ).datepicker( "option", "dateFormat", "dd/mm/yy");
 
+    $("#main_datepicker").datepicker(
+        {
+            dateFormat : "dd/mm/yy",
+            onSelect : function(selected, event) {
+                console.log("I'm here");
+                loadTodaysTimesheetForUser(selected);
+            }
+        });
 });
 
 function loadAllMTimesheetsForUser() {
@@ -213,7 +219,7 @@ function editActivity(i) {
 	return false;
 }
 
-function loadTodaysTimesheetForUser() {
+function loadTodaysTimesheetForUser(dateWanted) {
 
 	// delete all rows from the table
 	// don't worry, they'll be brought back from the server
@@ -225,7 +231,8 @@ function loadTodaysTimesheetForUser() {
 		type : "GET",
 		url : "HomepageServlet",
 		data : {
-			phase : "loadTodaysTimesheet"
+			phase : "loadTodaysTimesheet",
+            date: dateWanted
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -283,12 +290,12 @@ $(function() {
 			},
 			Cancel : function() {
 				$(this).dialog("close");
-				loadTodaysTimesheetForUser();
+				loadTodaysTimesheetForUser(globalDate);
 			}
 		},
 		close : function() {
 			allFields.val("").removeClass("ui-state-error");
-			loadTodaysTimesheetForUser();
+			loadTodaysTimesheetForUser(globalDate);
 		}
 	});
 
@@ -362,6 +369,7 @@ $(function() {
 	$(".datepicker").datepicker(
 			{
 				dateFormat : "dd/mm/yy",
+                //maxDate: "+1d",
 				onSelect : function(dateText, inst) {
 					var date = $.datepicker.parseDate(inst.settings.dateFormat
 							|| $.datepicker._defaults.dateFormat, dateText,
@@ -407,7 +415,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 				
 				// replace with simple ok modal.
 				alert("saved!");
-				loadTodaysTimesheetForUser();
+				loadTodaysTimesheetForUser(globalDate);
 			}
 		},
 		error : function() {
