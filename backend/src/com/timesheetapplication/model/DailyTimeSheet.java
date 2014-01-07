@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,14 +22,14 @@ public class DailyTimeSheet extends AbstractEntity {
 	@Column(name = "date")
 	private Date date;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
-	@OneToMany (mappedBy = "timesheet")
+	@OneToMany (fetch = FetchType.LAZY, mappedBy = "timesheet")
 	private List<Activity> activities = new ArrayList<Activity>();
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "month_timesheet_id")
 	private MonthlyTimesheet mTimesheet;
 	

@@ -110,6 +110,9 @@ $(document).ready(function() {
 	$('#logoutBtn').click(function() {
 		endSession();
 	});
+	
+	$( "#selection_date" ).datepicker( "option", "dateFormat", "dd/mm/yy");
+
 });
 
 function loadAllMTimesheetsForUser() {
@@ -379,6 +382,10 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 	var projectDropdown = document.getElementById('projectDrop');
 	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
 
+	$( "#selection_date" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+	var date = $( "#selection_date" ).datepicker().val();
+	console.log(date);
+	
 	$.ajax({
 		type : "GET",
 		url : "HomepageServlet",
@@ -387,7 +394,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 			duration : "" + duration,
 			description : "" + description,
 			isExtra : "" + isExtra,
-			date : "" + globalDate,
+			date : "" + date,
 			project : "" + projectName,
 			old_date : "" + olddate,
 			old_duration: "" + oldduration,
@@ -400,6 +407,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 				
 				// replace with simple ok modal.
 				alert("saved!");
+				loadTodaysTimesheetForUser();
 			}
 		},
 		error : function() {

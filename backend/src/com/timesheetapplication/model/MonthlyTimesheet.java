@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.timesheetapplication.enums.Job;
 import com.timesheetapplication.enums.MonthlyTimesheetStatus;
 
 @Entity
@@ -27,11 +27,11 @@ public class MonthlyTimesheet extends AbstractEntity {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
-	@OneToMany(mappedBy = "mTimesheet", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mTimesheet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<DailyTimeSheet> timesheets = new ArrayList<DailyTimeSheet>();
 
 	@Enumerated(EnumType.STRING)

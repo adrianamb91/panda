@@ -2,6 +2,7 @@ package com.timesheetapplication.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,14 +19,14 @@ public class Activity extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "dtimesheet_id")
 	private DailyTimeSheet timesheet;
 
 	@Column(name = "is_extra")
 	private Boolean isExtra;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "project_id")
 	private Project project;
 
