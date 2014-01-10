@@ -285,8 +285,9 @@ $(function() {
 					// addToUsers(form);
 					console.log("did it!");
 					saveActivity();
+                    $(this).dialog("close");
 				}
-				$(this).dialog("close");
+
 			},
 			Cancel : function() {
 				$(this).dialog("close");
@@ -415,7 +416,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 				
 				// replace with simple ok modal.
 				alert("saved!");
-				loadTodaysTimesheetForUser(globalDate);
+				loadTodaysTimesheetForUser(date);
 			}
 		},
 		error : function() {
