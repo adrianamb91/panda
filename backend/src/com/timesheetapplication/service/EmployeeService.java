@@ -45,5 +45,11 @@ public class EmployeeService {
 	public Employee findEmployeeByFirstAndLastName(String name) {
 		return employeeDao.findEmployeeByFirstAndLastName(name);
 	}
-
+	
+	public void removeEmployeeByUsername(String username) {
+		Employee e = findEmployeeByUsername(username);
+		if (e != null) {
+			employeeDao.remove(e);
+		}
+	}
 }

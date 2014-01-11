@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.timesheetapplication.dao.DivisionDao;
+import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.Division;
 
 public class DivisionDaoImpl extends GenericDaoImpl<Division> implements
@@ -17,7 +18,7 @@ public class DivisionDaoImpl extends GenericDaoImpl<Division> implements
 	}
 	
 	public List<Division> loadAll() {
-		return this.em.createQuery("Select d from Division d").getResultList();
+		return this.em.createQuery("Select d from Division d order by d.name").getResultList();
 	}
 
 	public Division findByName(String name) {
@@ -31,4 +32,5 @@ public class DivisionDaoImpl extends GenericDaoImpl<Division> implements
 		}
 		return null;
 	}
+
 }

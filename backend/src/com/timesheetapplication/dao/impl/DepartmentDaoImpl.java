@@ -17,7 +17,7 @@ public class DepartmentDaoImpl extends GenericDaoImpl<Department> implements
 	}
 
 	public List<Department> loadAll() {
-		Query q = em.createQuery("Select d from Department d");
+		Query q = em.createQuery("Select d from Department d order by d.name");
 		return q.getResultList();
 	}
 

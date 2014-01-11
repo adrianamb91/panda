@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import com.timesheetapplication.dao.GenericDao;
 import com.timesheetapplication.model.AbstractEntity;
+import com.timesheetapplication.model.Activity;
 
 @Transactional
 public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
@@ -36,9 +37,14 @@ public class GenericDaoImpl<E extends AbstractEntity> implements GenericDao<E> {
 
 	@Override
 	public List<E> loadAll() {
-		System.err
-		.println("GenericDaoImp.loadAll() shouldn't have been called!!!");
+		System.err.println("GenericDaoImp.loadAll() shouldn't have been called!!!");
 		return null;
+	}
+
+	public void remove(AbstractEntity e) {
+		em.getTransaction().begin();
+		em.remove(e);
+		em.getTransaction().commit();
 	}
 
 }

@@ -1,9 +1,15 @@
 package com.timesheetapplication.utils;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TSMUtil {
 
@@ -47,6 +53,18 @@ public class TSMUtil {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void sendFalseInPage(JSONObject responseMessage, HttpServletResponse response) {
+		try {
+			responseMessage.put("ok", false);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

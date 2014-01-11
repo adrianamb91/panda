@@ -67,15 +67,156 @@ public class ManagementServlet extends HttpServlet {
 		case "saveDivision":
 			processSaveDivision(request, responseMessage, response);
 			break;
+		case "removeDivision":
+			processRemoveDivision(request, responseMessage, response);
+			break;
+		case "removeDepartment":
+			processRemoveDepartment(request, responseMessage, response);
+			break;
+		case "removeEmployee":
+			processRemoveEmployee(request, responseMessage, response);
+			break;
+		case "editDivision":
+			processEditDivision(request, responseMessage, response);
+			break;
+		case "editDepartment":
+			processEditDepartment(request, responseMessage, response);
 		default:
 			break;
+		}
+	}
+
+	private void processEditDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+		String oldname = request.getParameter("oldname");
+		String newName = request.getParameter("newname");
+
+		if (!TSMUtil.isNotEmptyOrNull(oldname)) {
+			TSMUtil.sendFalseInPage(responseMessage, response);
+			return;
+		}
+
+		Department d = departmentService.findDepartmentByName(oldname);
+		if (d == null) {
+			TSMUtil.sendFalseInPage(responseMessage, response);
+			return;
+		}
+
+		d.setName(newName);
+		departmentService.saveOrUpdate(d);
+		
+		try {
+			responseMessage.put("ok", true);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processEditDivision(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+		
+		String oldName = request.getParameter("oldname");
+		String newName = request.getParameter("newname");
+		
+		if (TSMUtil.isNotEmptyOrNull(oldName) && TSMUtil.isNotEmptyOrNull(newName)) {
+			try {
+				if (divisionService.replaceDivisionName(oldName, newName)) {
+					responseMessage.put("ok", true);
+				} else {
+					responseMessage.put("ok", false);
+				}
+
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void processRemoveEmployee(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		String username = request.getParameter("name");
+
+		if (TSMUtil.isNotEmptyOrNull(username)) {
+			employeeService.removeEmployeeByUsername(username);
+			try {
+				responseMessage.put("ok", true);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processRemoveDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+		String departmentName = request.getParameter("name");
+		if (TSMUtil.isNotEmptyOrNull(departmentName)) {
+			departmentService.remove(departmentName);
+			try {
+				responseMessage.put("ok", true);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processRemoveDivision(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		String divisionName = request.getParameter("name");
+		if (TSMUtil.isNotEmptyOrNull(divisionName)) {
+			divisionService.remove(divisionName);
+			try {
+				responseMessage.put("ok", true);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
 
 	private void processLoadAllEmployees(JSONObject responseMessage, HttpServletResponse response) {
 		List<Employee> employees = employeeService.loadAllEmployees();
-		
+
 		if (employees.size() == 0) {
 			try {
 				responseMessage.put("ok", false);
@@ -88,7 +229,7 @@ public class ManagementServlet extends HttpServlet {
 			}
 			return;
 		}
-		
+
 		List<String> usernames = new ArrayList<String>();
 		List<String> firstNames = new ArrayList<String>();
 		List<String> lastNames = new ArrayList<String>();
@@ -133,10 +274,10 @@ public class ManagementServlet extends HttpServlet {
 		}
 
 	}
-	
+
 	private void processLoadAllPossibleManagers(JSONObject responseMessage, HttpServletResponse response) {
 		List<Employee> employees = employeeService.loadAllEmployees();
-		
+
 		if (employees.size() == 0) {
 			try {
 				responseMessage.put("ok", false);
@@ -149,7 +290,7 @@ public class ManagementServlet extends HttpServlet {
 			}
 			return;
 		}
-		
+
 		List<String> names = new ArrayList<String>();
 
 		for (Employee e : employees) {
@@ -206,13 +347,13 @@ public class ManagementServlet extends HttpServlet {
 		ArrayList<String> managerNames = new ArrayList<String>();
 		for (Department d : departments) {
 			departmentNames.add(d.getName());
-			
+
 			if (d.getDivision() != null) {
 				divisionNames.add(d.getDivision().getName());
 			} else {
 				divisionNames.add("-");
 			}
-			
+
 			if (d.getManager() != null) {
 				managerNames.add(d.getManager().getFirstName() + " " + d.getManager().getLastName());
 			} else {

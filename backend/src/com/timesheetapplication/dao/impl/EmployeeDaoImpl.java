@@ -34,7 +34,7 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements
 	
 	@Override
 	public List<Employee> loadAll() {
-		return this.em.createQuery("Select e from Employee e").getResultList();
+		return this.em.createQuery("Select e from Employee e order by e.username").getResultList();
 	}
 
 	public Employee findEmployeeByFirstAndLastName(String name) {

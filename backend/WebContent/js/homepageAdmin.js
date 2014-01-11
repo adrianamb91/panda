@@ -1,7 +1,6 @@
 /**
  * Created by Adri on 1/10/14.
  */
-
 var serverIp = "localhost:8080";
 
 $(document).ready(function() {
@@ -172,12 +171,11 @@ function populateDivisionsTable(data) {
 			// skipped
 			var rowIndex = i + 1;
 			tsTable.append("<tr>" + 
-					'<td class="edit">' + data.elements[i] + "</td>" + 
-					"<td>" + data.managers[i] + "</td>"
-					+ "<td>" + '<a href="#" onClick="editActivity(' + rowIndex
-					+ ')">edit</a>' + "<td>"
-					+ '<a href="#" onClick="removeActivity(' + rowIndex
-					+ ')">remove</a>' + "</tr>");
+								'<td>' + data.elements[i] + "</td>" +
+								"<td>" + data.managers[i] + "</td>" + 
+								"<td>" + '<a href="#" onClick="editDivision(' + rowIndex + ')">edit</a>' +
+								"<td>" + '<a href="#" onClick="removeDivision(' + rowIndex + ')">remove</a>' + 
+							"</tr>");
 		} 
 	} else {
 		noEntries.show();
@@ -185,6 +183,205 @@ function populateDivisionsTable(data) {
 		existingEntries.hide();
 	}
 }
+
+
+// indexul din tabel pe care vreau sa'l sterg
+function removeDivision(i) {
+	
+	var table = $('#divisions-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	
+	$.ajax({
+		type : "GET", 
+		url : "ManagementServlet", 
+		data : {phase : "removeDivision",
+			 	name : row[0].cells[0].innerHTML
+		},
+		success : function (data, textStatus, jqXHR) {
+			if (data.ok == true) {
+				alert("am sters division!");
+				loadDivisions();
+			}
+			else {
+				alert("stergerea nu s-a realizat cu success :( ");
+			}
+		},
+		error : function () {
+			alert("failed miserably");
+		}		
+	});
+}
+
+function removeDepartment (i) {
+	var table = $('#departments-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	$.ajax({
+		type : "GET", 
+		url : "ManagementServlet", 
+		data : {phase : "removeDepartment",
+			 	name : row[0].cells[0].innerHTML
+		},
+		success : function (data, textStatus, jqXHR) {
+			if (data.ok == true) {
+				alert("am sters departamentul!");
+				loadDepartments();
+			}
+			else {
+				alert("stergerea nu s-a realizat cu success :( ");
+			}
+		},
+		error : function () {
+			alert("failed miserably");
+		}		
+	});
+} 
+
+function removeEmployee(i) {
+	var table = $('#employees-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	$.ajax({
+		type : "GET", 
+		url : "ManagementServlet", 
+		data : {phase : "removeEmployee",
+			 	name : row[0].cells[0].innerHTML,
+		},
+		success : function (data, textStatus, jqXHR) {
+			if (data.ok == true) {
+				alert("am sters employee-ul!");
+				loadEmployees();
+			}
+			else {
+				alert("stergerea nu s-a realizat cu success :( ");
+			}
+		},
+		error : function () {
+			alert("failed miserably");
+		}		
+	});
+}
+
+function editDivision(i) {
+	var table = $('#divisions-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	var dialogBox = $("#add-division-dialog"); 
+	dialogBox.dialog("open");
+	managerName = divManagerName.options[divManagerName.selectedIndex].text;
+
+	$('#nameDiv').attr('value', "" + row[0].cells[0].innerHTML);
+	$("#add-division-dialog").dialog({
+		autoOpen : false,
+		height : 510,
+		width : 350,
+		modal : true,
+		draggable : true,
+		resizable : true,
+		buttons : {
+			"Save_3" : function() {
+				console.log("save_1 clicked!");
+
+				var newName = $('#nameDiv').val();
+
+				$.ajax({
+					type : "GET", 
+					url : "ManagementServlet", 
+					data : {phase : "editDivision",
+						 	oldname : "" + row[0].cells[0].innerHTML,
+						 	newname : "" +  newName,
+						 	managerName : divManagerName.options[divManagerName.selectedIndex].text
+					},
+					success : function (data, textStatus, jqXHR) {
+						if (data.ok == true) {
+							alert("am modificat division!");
+							loadDivisions();
+						}
+						else {
+							alert("modificarea nu s-a realizat cu success :( ");
+						}
+					},
+					error : function () {
+						alert("failed miserably");
+					}		
+				});
+				
+				$(this).dialog("close");
+			},
+			Cancel : function() {
+				$(this).dialog("close");
+			}
+		},
+		close : function() {
+			$(this).dialog("close");
+			loadDivisions();
+		}
+	});
+	
+	return false;
+}
+
+
+function editDepartment(i) {
+	var table = $('#departments-table');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	var dialogBox = $("#add-department-dialog"); 
+	dialogBox.dialog("open");
+
+	$('#nameDept').attr('value', "" + row[0].cells[0].innerHTML);
+	
+	dialogBox.dialog({
+		autoOpen : false,
+		height : 510,
+		width : 350,
+		modal : true,
+		draggable : true,
+		resizable : true,
+		buttons : {
+			"Save_3" : function() {
+				console.log("save_1 clicked!");
+				var newName = $('#nameDept').val();
+
+				$.ajax({
+					type : "GET", 
+					url : "ManagementServlet", 
+					data : {phase : "editDepartment",
+						 	oldname : "" + row[0].cells[0].innerHTML,
+						 	newname : "" +  newName
+					},
+					success : function (data, textStatus, jqXHR) {
+						if (data.ok == true) {
+							alert("am modificat department!");
+							loadDepartments();
+						}
+						else {
+							alert("modificarea nu s-a realizat cu success :( ");
+							loadDepartments();
+						}
+					},
+					error : function () {
+						alert("failed miserably");
+					}		
+				});
+				
+				$(this).dialog("close");
+			},
+			Cancel : function() {
+				$(this).dialog("close");
+				loadDepartments();
+			}
+		},
+		close : function() {
+			$(this).dialog("close");
+			loadDepartments();
+		}
+	});
+	
+	return false;
+}
+
 
 function loadManagers() {
 
@@ -203,8 +400,6 @@ function loadManagers() {
 			console.log('There is an error');
 		}
 	});
-
-
 }
 
 //form function
@@ -332,6 +527,7 @@ function saveDepartment() {
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
+			loadDepartments();
 		},
 		error : function() {
 			alert("failure");
@@ -357,13 +553,12 @@ function populateDepartmentsTable(data) {
 			// skipped
 			var rowIndex = i + 1;
 			tsTable.append("<tr>" + 
-					'<td class="edit">' + data.elements[i] + "</td>" + 
-					"<td>" + data.managers[i] + "</td>" + 
-					"<td>" + data.divisions[i] + "</td>"
-					+ "<td>" + '<a href="#" onClick="editActivity(' + rowIndex
-					+ ')">edit</a>' + "<td>"
-					+ '<a href="#" onClick="removeActivity(' + rowIndex
-					+ ')">remove</a>' + "</tr>");
+								'<td class="edit">' + data.elements[i] + "</td>" + 
+								"<td>" + data.managers[i] + "</td>" + 
+								"<td>" + data.divisions[i] + "</td>" + 
+								"<td>" + '<a href="#" onClick="editDepartment(' + rowIndex + ')">edit</a>' + 
+								"<td>" + '<a href="#" onClick="removeDepartment(' + rowIndex + ')">remove</a>' + 
+							"</tr>");
 		} 
 	} else {
 		noEntries.show();
@@ -600,30 +795,23 @@ function saveEmployee(){
 	var email = document.getElementById('email').value;
 
 	var jobDrop = document.getElementById('jobDrop');
-	var job = null;
-
-	if (jobDrop.selectedIndex != 0) {
-		job = jobDrop.options[jobDrop.selectedIndex].text;
-	} else {
-		console.log("N-ai selectat job");
-		job="";
-	}
+	var job = jobDrop.options[jobDrop.selectedIndex].text;
+	
+//	if (jobDrop.selectedIndex != 0) {
+//		job = jobDrop.options[jobDrop.selectedIndex].text;
+//	} else {
+//		alert("N-ai selectat job");
+//	}
 
 	var deptDrop = document.getElementById('empDeptDrop');
-	var deptName = null;
-
-	if (deptDrop.selectedIndex != 0) {
-		deptName = deptDrop.options[deptDrop.selectedIndex].text;
-	} else {
-		console.log("N-ai selectat departament");
-		deptName="";
-	}
+	var deptName = deptDrop.options[deptDrop.selectedIndex].text;
+	
 	$.ajax({
 		type : "GET",
 		url : "ManagementServlet",
 		data : {
 			phase : "saveNewEmployee",
-			name : "" + name,
+			name : "" + username,
 			pass : "" + pass,
 			firstName : "" + firstName,
 			lastName : "" + lastName,
@@ -633,6 +821,7 @@ function saveEmployee(){
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
+			loadEmployees();
 		},
 		error : function() {
 			alert("failure");
@@ -652,39 +841,7 @@ function loadEmployees(){
 			phase : "loadAllEmployees"
 		},
 		success : function(data, textSataus, jqXHR) {
-			var tsTable = $('#employees-table');
-			var noEntries = $('#no-employees');
-			var existingEntries = $('#exist-employees');
-
-			$('#employees-table > tbody').empty();
-			
-			if (data.ok == true) {
-				tsTable.show();
-				noEntries.hide();
-				existingEntries.show();
-
-				for (var i = 0; i < data.size; i++) {
-					// index = 0 -> selects table head so this row should be
-					// skipped
-					var rowIndex = i + 1;
-					tsTable.append("<tr>" + 
-							'<td class="edit">' + data.usernames[i] + "</td>" + 
-							"<td>" + data.firstnames[i] + "</td>" + 
-							"<td>" + data.lastnames[i] + "</td>" + 
-							"<td>" + data.emails[i] + "</td>" + 
-							"<td>" + data.jobs[i] + "</td>" + 
-							"<td>" + data.departments[i] + "</td>" + 
-							"<td>" + '<a href="#" onClick="editActivity(' + rowIndex
-							+ ')">edit</a>' + "<td>"
-							+ '<a href="#" onClick="removeActivity(' + rowIndex
-							+ ')">remove</a>' + "</tr>");
-				} 
-			} else {
-				noEntries.show();
-				tsTable.hide();
-				existingEntries.hide();
-			}
-
+			populateEmployeesTable(data);
 		},
 		error : function() {
 			alert("failure");
@@ -693,6 +850,42 @@ function loadEmployees(){
 	});
 
 }
+
+function populateEmployeesTable(data) {
+	var tsTable = $('#employees-table');
+	var noEntries = $('#no-employees');
+	var existingEntries = $('#exist-employees');
+
+	$('#employees-table > tbody').empty();
+	
+	if (data.ok == true) {
+		tsTable.show();
+		noEntries.hide();
+		existingEntries.show();
+
+		for (var i = 0; i < data.size; i++) {
+			// index = 0 -> selects table head so this row should be
+			// skipped
+			var rowIndex = i + 1;
+			tsTable.append("<tr>" + 
+								'<td class="edit">' + data.usernames[i] + "</td>" + 
+								"<td>" + data.firstnames[i] + "</td>" + 
+								"<td>" + data.lastnames[i] + "</td>" + 
+								"<td>" + data.emails[i] + "</td>" + 
+								"<td>" + data.jobs[i] + "</td>" + 
+								"<td>" + data.departments[i] + "</td>" + 
+								"<td>" + '<a href="#" onClick="editActivity(' + rowIndex + ')">edit</a>' + 
+								"<td>" + '<a href="#" onClick="removeEmployee(' + rowIndex + ')">remove</a>' + 
+							"</tr>");
+		} 
+	} else {
+		noEntries.show();
+		tsTable.hide();
+		existingEntries.hide();
+	}
+}
+
+
 
 function loadJobs() {
 	$.ajax({
