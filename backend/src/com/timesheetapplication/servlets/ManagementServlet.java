@@ -40,7 +40,8 @@ public class ManagementServlet extends HttpServlet {
 		super();
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
 		String phase = new String(request.getParameter("phase").toString());
 		JSONObject responseMessage = new JSONObject();
@@ -86,26 +87,38 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processEditDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+	private void processEditDepartment(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
 		String oldname = request.getParameter("oldname");
 		String newName = request.getParameter("newname");
+		String managerName = request.getParameter("manager");
+		System.out.println("Manager name:" + managerName);
+		String divisionName = request.getParameter("division");
 
-		if (!TSMUtil.isNotEmptyOrNull(oldname)) {
-			TSMUtil.sendFalseInPage(responseMessage, response);
-			return;
-		}
-
-		Department d = departmentService.findDepartmentByName(oldname);
-		if (d == null) {
-			TSMUtil.sendFalseInPage(responseMessage, response);
-			return;
-		}
-
-		d.setName(newName);
-		departmentService.saveOrUpdate(d);
+		Employee manager = employeeService
+				.findEmployeeByFirstAndLastName(managerName);
+		
+		Division div = divisionService.findDivisionByName(divisionName);
 		
 		try {
-			responseMessage.put("ok", true);
+			if (TSMUtil.isNotEmptyOrNull(oldname)) {
+				Department d = departmentService.findDepartmentByName(oldname);
+				if (d != null) {
+					d.setName(newName);
+					if (manager != null) {
+						d.setManager(manager);
+					} else {
+						System.out.println("n-avem manager");
+					}
+					if (div != null) {
+						d.setDivision(div);
+					}
+					departmentService.saveOrUpdate(d);
+					responseMessage.put("ok", true);
+				}
+			} else {
+				responseMessage.put("ok", false);
+			}
 			response.setContentType("application/json; charset=UTF-8");
 			response.getWriter().write(responseMessage.toString());
 		} catch (JSONException e) {
@@ -115,19 +128,32 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processEditDivision(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
-		
+	private void processEditDivision(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
+
 		String oldName = request.getParameter("oldname");
 		String newName = request.getParameter("newname");
-		
-		if (TSMUtil.isNotEmptyOrNull(oldName) && TSMUtil.isNotEmptyOrNull(newName)) {
-			try {
-				if (divisionService.replaceDivisionName(oldName, newName)) {
-					responseMessage.put("ok", true);
-				} else {
-					responseMessage.put("ok", false);
-				}
 
+		String managerName = request.getParameter("managerName");
+
+		Employee manager = employeeService
+				.findEmployeeByFirstAndLastName(managerName);
+
+		if (TSMUtil.isNotEmptyOrNull(oldName)
+				&& TSMUtil.isNotEmptyOrNull(newName)) {
+			try {
+
+				Division d = divisionService.findDivisionByName(oldName);
+				if (d == null) {
+					responseMessage.put("ok", false);
+				} else {
+					d.setName(newName);
+					if (manager != null) {
+						d.setManager(manager);
+					}
+					divisionService.saveOrUpdate(d);
+					responseMessage.put("ok", true);
+				}
 				response.setContentType("application/json; charset=UTF-8");
 				response.getWriter().write(responseMessage.toString());
 			} catch (JSONException e) {
@@ -138,7 +164,8 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processRemoveEmployee(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+	private void processRemoveEmployee(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
 
 		String username = request.getParameter("name");
 
@@ -164,9 +191,17 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processRemoveDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+	private void processRemoveDepartment(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
 		String departmentName = request.getParameter("name");
 		if (TSMUtil.isNotEmptyOrNull(departmentName)) {
+			
+			Department d = departmentService.findDepartmentByName(departmentName);
+			
+			if (d != null) {
+				employeeService.removeEmployeesFromDepartment(d);
+			}
+			
 			departmentService.remove(departmentName);
 			try {
 				responseMessage.put("ok", true);
@@ -188,7 +223,8 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processRemoveDivision(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+	private void processRemoveDivision(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
 
 		String divisionName = request.getParameter("name");
 		if (TSMUtil.isNotEmptyOrNull(divisionName)) {
@@ -214,7 +250,8 @@ public class ManagementServlet extends HttpServlet {
 
 	}
 
-	private void processLoadAllEmployees(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllEmployees(JSONObject responseMessage,
+			HttpServletResponse response) {
 		List<Employee> employees = employeeService.loadAllEmployees();
 
 		if (employees.size() == 0) {
@@ -275,7 +312,8 @@ public class ManagementServlet extends HttpServlet {
 
 	}
 
-	private void processLoadAllPossibleManagers(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllPossibleManagers(JSONObject responseMessage,
+			HttpServletResponse response) {
 		List<Employee> employees = employeeService.loadAllEmployees();
 
 		if (employees.size() == 0) {
@@ -323,7 +361,9 @@ public class ManagementServlet extends HttpServlet {
 		String job = request.getParameter("job");
 		String depart = request.getParameter("depart");
 
-		System.out.println(username + " " + pass + " " + firstName + " " + lastName + " " + email + " " + project + " " + job + " " + depart);
+		System.out.println(username + " " + pass + " " + firstName + " "
+				+ lastName + " " + email + " " + project + " " + job + " "
+				+ depart);
 
 		Employee e = new Employee();
 		e.setUsername(username);
@@ -338,7 +378,8 @@ public class ManagementServlet extends HttpServlet {
 		employeeService.saveOrUpdate(e);
 	}
 
-	private void processLoadAllDepartments(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllDepartments(JSONObject responseMessage,
+			HttpServletResponse response) {
 
 		List<Department> departments = departmentService.loadAll();
 
@@ -355,7 +396,8 @@ public class ManagementServlet extends HttpServlet {
 			}
 
 			if (d.getManager() != null) {
-				managerNames.add(d.getManager().getFirstName() + " " + d.getManager().getLastName());
+				managerNames.add(d.getManager().getFirstName() + " "
+						+ d.getManager().getLastName());
 			} else {
 				managerNames.add("-");
 			}
@@ -385,13 +427,14 @@ public class ManagementServlet extends HttpServlet {
 		String divisionName = request.getParameter("division");
 
 		System.out.println("--+++--" + managerName);
-		
+
 		Department d = new Department();
 
 		Division div = divisionService.findDivisionByName(divisionName);
 		Employee manager = null;
 		if (TSMUtil.isNotEmptyOrNull(managerName)) {
-			manager = employeeService.findEmployeeByFirstAndLastName(managerName);
+			manager = employeeService
+					.findEmployeeByFirstAndLastName(managerName);
 		}
 
 		d.setName(name);
@@ -401,14 +444,17 @@ public class ManagementServlet extends HttpServlet {
 		}
 
 		departmentService.saveOrUpdate(d);
+
 		
 		if (manager != null) {
 			manager.setDepartment(d);
 			employeeService.saveOrUpdate(manager);
 		}
+		
 	}
 
-	private void processLoadAllDivisions(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllDivisions(JSONObject responseMessage,
+			HttpServletResponse response) {
 		List<Division> divisions = divisionService.loadAll();
 
 		ArrayList<String> divisionNames = new ArrayList<String>();
@@ -418,7 +464,8 @@ public class ManagementServlet extends HttpServlet {
 			divisionNames.add(d.getName());
 
 			if (d.getManager() != null) {
-				managersNames.add(d.getManager().getFirstName() + " " + d.getManager().getLastName());
+				managersNames.add(d.getManager().getFirstName() + " "
+						+ d.getManager().getLastName());
 			} else {
 				managersNames.add("-");
 			}
@@ -442,7 +489,8 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	private void processSaveDivision(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+	private void processSaveDivision(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
 
 		String divName = request.getParameter("name");
 		String manName = request.getParameter("manager");
@@ -471,7 +519,8 @@ public class ManagementServlet extends HttpServlet {
 		}
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
 	}
 

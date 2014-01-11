@@ -51,13 +51,15 @@ public class HomepageServlet extends HttpServlet {
 		super();
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
 		session = request.getSession();
 
 		JSONObject responseMessage = new JSONObject();
 
-		System.out.println("homepage servlet knows about user = " + session.getAttribute("loggedInUser"));
+		System.out.println("homepage servlet knows about user = "
+				+ session.getAttribute("loggedInUser"));
 		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
 			System.out.println("you should login");
@@ -78,7 +80,8 @@ public class HomepageServlet extends HttpServlet {
 		case "init":
 			try {
 				responseMessage.put("ok", true);
-				responseMessage.put("name", loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
+				responseMessage.put("name", loggedInUser.getFirstName() + " "
+						+ loggedInUser.getLastName());
 				responseMessage.put("job", loggedInUser.getJob());
 				responseMessage.put("date", TSMUtil.formatDate(date));
 			} catch (JSONException e) {
@@ -118,19 +121,31 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	private void processLoadProjectsForCurrentUser(JSONObject responseMessage, HttpServletResponse response) throws IOException {
+	private void processLoadProjectsForCurrentUser(JSONObject responseMessage,
+			HttpServletResponse response) throws IOException {
 		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
-		List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
-
-		ArrayList<String> projectNames = new ArrayList<String>();
-		for (Project p : projects) {
-			projectNames.add(p.getName());
+		List<Project> projects = null;
+		if (loggedInUser.getDepartment() != null) {
+			projects = projectService.getProjectsForDepartment(loggedInUser
+					.getDepartment());
 		}
+
+		System.out.println("Sunt si eu pe aici");
+		
 		try {
-			responseMessage.put("ok", true);
-			JSONArray array = new JSONArray(projectNames);
-			responseMessage.put("projects", array);
-			System.out.println("sent back:" + array.toString());
+			if (projects == null) {
+				responseMessage.put("ok", false);
+			} else {
+				responseMessage.put("ok", true);
+
+				ArrayList<String> projectNames = new ArrayList<String>();
+				for (Project p : projects) {
+					projectNames.add(p.getName());
+				}
+				JSONArray array = new JSONArray(projectNames);
+				responseMessage.put("projects", array);
+				System.out.println("sent back:" + array.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -138,7 +153,8 @@ public class HomepageServlet extends HttpServlet {
 		response.getWriter().write(responseMessage.toString());
 	}
 
-	private void processRemoveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+	private void processRemoveActivity(HttpServletRequest request,
+			HttpServletResponse response, JSONObject responseMessage) {
 
 		Float duration = Float.parseFloat(request.getParameter("duration"));
 		String description = request.getParameter("description");
@@ -148,16 +164,19 @@ public class HomepageServlet extends HttpServlet {
 		Project p = projectService.findProjectByName(selectedProject);
 		Date d = TSMUtil.convertStringToDate(date);
 
-		Activity a = activityService.findActivityByDateDurationDescAndProject(d, duration, description, p);
+		Activity a = activityService.findActivityByDateDurationDescAndProject(
+				d, duration, description, p);
 
 		System.out.println(a.getId());
 		System.out.println(a.getDescription());
 		System.out.println(a.getDuration());
 
-		activityService.deleteActivityByDateDurationDescAndProject(d, duration, description, p);
+		activityService.deleteActivityByDateDurationDescAndProject(d, duration,
+				description, p);
 	}
 
-	private void processLoadAllMonthlyTimesheets(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+	private void processLoadAllMonthlyTimesheets(HttpServletRequest request,
+			HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
 
 		ArrayList<String> nameList = new ArrayList<String>();
@@ -185,7 +204,8 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+	private void processLoadTodaysTimesheet(HttpServletRequest request,
+			HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
 
 		String dateString = request.getParameter("date");
@@ -252,7 +272,8 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	private void processLoadAllJobs(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllJobs(JSONObject responseMessage,
+			HttpServletResponse response) {
 		ArrayList<String> jobNames = new ArrayList<String>();
 
 		for (Job j : Job.values()) {
@@ -272,7 +293,8 @@ public class HomepageServlet extends HttpServlet {
 
 	}
 
-	private void processLoadAllProjects(JSONObject responseMessage, HttpServletResponse response) {
+	private void processLoadAllProjects(JSONObject responseMessage,
+			HttpServletResponse response) {
 		List<Project> projects = projectService.loadAllProjects();
 
 		ArrayList<String> projectNames = new ArrayList<String>();
@@ -297,7 +319,8 @@ public class HomepageServlet extends HttpServlet {
 	 * save a new activity 2. update an existing activity (that is why there are
 	 * used old info to find the existing one and update it.)
 	 */
-	private void processSaveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+	private void processSaveActivity(HttpServletRequest request,
+			HttpServletResponse response, JSONObject responseMessage) {
 		String duration = request.getParameter("duration");
 		String description = request.getParameter("description");
 		String date = request.getParameter("date");
@@ -306,18 +329,28 @@ public class HomepageServlet extends HttpServlet {
 
 		Float oldDuration = null;
 		Activity a = null;
-		if (TSMUtil.isValidString(request.getParameter("old_duration")) && TSMUtil.isValidString(request.getParameter("old_description"))
-				&& TSMUtil.isValidString(request.getParameter("old_projectName")) && TSMUtil.isValidString(request.getParameter("old_date"))) {
+		if (TSMUtil.isValidString(request.getParameter("old_duration"))
+				&& TSMUtil.isValidString(request
+						.getParameter("old_description"))
+				&& TSMUtil.isValidString(request
+						.getParameter("old_projectName"))
+				&& TSMUtil.isValidString(request.getParameter("old_date"))) {
 
-			oldDuration = Float.parseFloat(request.getParameter("old_duration"));
+			oldDuration = Float
+					.parseFloat(request.getParameter("old_duration"));
 			String oldDescription = request.getParameter("old_description");
-			Project oldProject = projectService.findProjectByName(request.getParameter("old_projectName"));
-			Date oldDate = TSMUtil.convertStringToDate(request.getParameter("old_date"));
-			System.out.println("old: " + oldDuration + " " + oldDescription + " " + oldDate.getTime() + " " + oldProject.getName());
-			a = activityService.findActivityByDateDurationDescAndProject(oldDate, oldDuration, oldDescription, oldProject);
+			Project oldProject = projectService.findProjectByName(request
+					.getParameter("old_projectName"));
+			Date oldDate = TSMUtil.convertStringToDate(request
+					.getParameter("old_date"));
+			System.out.println("old: " + oldDuration + " " + oldDescription
+					+ " " + oldDate.getTime() + " " + oldProject.getName());
+			a = activityService.findActivityByDateDurationDescAndProject(
+					oldDate, oldDuration, oldDescription, oldProject);
 		}
 
-		System.out.println("new: " + duration + " " + description + " " + date + " " + isExtra + " " + selectedProject);
+		System.out.println("new: " + duration + " " + description + " " + date
+				+ " " + isExtra + " " + selectedProject);
 
 		Boolean update = true;
 		if (a == null) {
@@ -335,7 +368,8 @@ public class HomepageServlet extends HttpServlet {
 		Employee currentUser = (Employee) session.getAttribute("loggedInUser");
 		Date currentDate = TSMUtil.convertStringToDate(date);
 
-		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(currentDate, currentUser);
+		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(
+				currentDate, currentUser);
 
 		// if there is no dts for that particular date and employee create a
 		// new one.
@@ -352,7 +386,8 @@ public class HomepageServlet extends HttpServlet {
 		dtimesheetService.saveOrUpdateEvent(dts);
 
 		Date dtrunc = TSMUtil.truncateDateToMonthsFirst(currentDate);
-		MonthlyTimesheet mts = mtimesheetService.findMTSByDateAndUser(dtrunc, currentUser);
+		MonthlyTimesheet mts = mtimesheetService.findMTSByDateAndUser(dtrunc,
+				currentUser);
 
 		if (mts == null) {
 			mts = new MonthlyTimesheet();
@@ -381,7 +416,8 @@ public class HomepageServlet extends HttpServlet {
 		}
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 	}
 
 }

@@ -3,6 +3,7 @@ package com.timesheetapplication.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -23,7 +24,7 @@ public class Department extends AbstractEntity {
 	@Column(name = "abbreviation")
 	private String abbv;
 	
-	@OneToOne
+	@OneToOne//(cascade = CascadeType.ALL)
 	@JoinColumn(name = "manager_id")
 	private Employee manager;
 
@@ -35,7 +36,6 @@ public class Department extends AbstractEntity {
 	private List<Employee> employees = new ArrayList<Employee>();
 
 	@OneToMany
-	@JoinColumn(name = "department_id")
 	private List<Project> projects = new ArrayList<Project>();
 
 	public String getName() {

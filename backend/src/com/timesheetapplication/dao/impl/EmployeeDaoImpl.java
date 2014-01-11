@@ -49,4 +49,12 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements
 		return null;
 	}
 
+	public void removeEmpFromDepartment(Long id) {
+		em.getTransaction().begin();
+		Query q = em.createQuery("Delete from Employee e where e.department.id = :id");
+		q.setParameter("id", id);
+		q.executeUpdate();
+		em.getTransaction().commit();
+	}
+
 }

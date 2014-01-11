@@ -7,6 +7,7 @@ import javax.persistence.Query;
 
 import com.timesheetapplication.dao.DepartmentDao;
 import com.timesheetapplication.model.Department;
+import com.timesheetapplication.model.Division;
 
 public class DepartmentDaoImpl extends GenericDaoImpl<Department> implements
 		DepartmentDao {
@@ -34,10 +35,8 @@ public class DepartmentDaoImpl extends GenericDaoImpl<Department> implements
 	}
 
 	public Department findByManager(Long id) {
-		// TODO Auto-generated method stub
 		Query q = em.createQuery("Select d from Department d where d.manager.id = :id");
 		q.setParameter("id", id);
-		
 		List<Department> results = q.getResultList();
 		if (results != null && results.size() > 0) {
 			return results.get(0);

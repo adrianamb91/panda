@@ -10,6 +10,8 @@ import com.timesheetapplication.utils.TSMUtil;
 public class DivisionService {
 
 	private DivisionDaoImpl divisionDao = new DivisionDaoImpl(EntityManagerHolder.getInstance().getEntityManager());
+	
+	private DepartmentService departmentService = new DepartmentService();
 
 	public void saveOrUpdate(Division d) {
 		divisionDao.saveOrUpdate(d);
@@ -26,6 +28,10 @@ public class DivisionService {
 	public void remove(String name) {
 		Division d = findDivisionByName(name);
 		if (d != null) {
+			
+			
+			//departmentService.removeDepartmentsFromDivision(d);
+			// TODO : DELETE ALL DEPARTMENTS AND EMPLOYEES FROM DIVISION D
 			divisionDao.remove(d);
 		}
 	}

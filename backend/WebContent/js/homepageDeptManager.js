@@ -13,7 +13,7 @@ $(document).ready(function() {
     mainContent = document.getElementById('view_page').innerHTML;
 
     getLoginDataFromServer();
-    //loadProjectsForUser();
+    loadProjectsForUser();
     loadTodaysTimesheetForUser();
     loadAllMTimesheetsForUser();
 
@@ -134,7 +134,14 @@ function loadProjectsForUser() {
         },
         success : function(data, textStatus, jqXHR) {
             console.log(data);
-            populateProjectDropdown(data);
+            if (data.ok == true) {
+                populateProjectDropdown(data);
+                $('#add-entry').removeAttr('disabled');
+            } else {
+                alert("No projects!");
+                $('#add-entry').attr('disabled', 'disabled');
+            }
+
         },
         error : function() {
             alert("failure: load projects for user");
@@ -440,6 +447,7 @@ function saveProject() {
         success : function(data, textStatus, jqXHR) {
             console.log(data);
             loadProjects();
+            loadProjectsForUser();
         },
         error : function() {
             alert("failure");
@@ -577,9 +585,9 @@ $(function() {
         var bValid = true;
         var name = $('[name="clientName"]', form);
 
-       bValid = bValid && checkLength(name, "name", 1, 200);
+        bValid = bValid && checkLength(name, "name", 1, 200);
 
-       return bValid;
+        return bValid;
     }
 });
 

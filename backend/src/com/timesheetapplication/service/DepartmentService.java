@@ -5,6 +5,7 @@ import java.util.List;
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.DepartmentDaoImpl;
 import com.timesheetapplication.model.Department;
+import com.timesheetapplication.model.Division;
 import com.timesheetapplication.model.Employee;
 
 public class DepartmentService {
@@ -34,4 +35,5 @@ public class DepartmentService {
 	public Department findDepartmentByManager(Employee e) {
 		return departmentDao.findByManager(e.getId());
 	}
+
 }

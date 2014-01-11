@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.timesheetapplication.dao.ProjectDao;
+import com.timesheetapplication.model.Department;
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.model.Project;
 
@@ -27,11 +28,13 @@ public class ProjectDaoImpl extends GenericDaoImpl<Project> implements
 
 	@Override
 	public List<Project> findProjectsForEmployee(Employee e) {
-		if (e == null || e.getId() == null || e.getDepartment() == null || e.getDepartment().getId() == null) {
+		if (e == null || e.getId() == null || e.getDepartment() == null
+				|| e.getDepartment().getId() == null) {
 			return null;
 		}
-		
-		String query = "Select p from Project p where p.department.id = " + e.getDepartment().getId();
+
+		String query = "Select p from Project p where p.department.id = "
+				+ e.getDepartment().getId();
 		return em.createQuery(query).getResultList();
 	}
 
@@ -50,6 +53,15 @@ public class ProjectDaoImpl extends GenericDaoImpl<Project> implements
 			return resultList.get(0);
 		}
 		return null;
+	}
+
+	public List<Project> findProjectsForDepartment(Department department) {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery(
+				"Select p from Project p where p.department.id = :id")
+				.setParameter("id", department.getId());
+		List<Project> results = (List<Project>) q.getResultList();
+		return results;
 	}
 
 }

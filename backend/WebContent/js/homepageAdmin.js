@@ -101,15 +101,13 @@ function saveDivision() {
 	var divManagerName = document.getElementById('bossDivDrop');
 	var managerName = null;
 
-    /*
+
 	if (divManagerName.selectedIndex != 0) {
 		managerName = divManagerName.options[divManagerName.selectedIndex].text;
 	} else {
 		console.log("N-ai selectat manager!");
 		managerName="";
 	}
-    */
-    managerName = divManagerName.options[divManagerName.selectedIndex].text;
 
 	$.ajax({
 		type : "GET",
@@ -230,6 +228,7 @@ function removeDepartment (i) {
 			if (data.ok == true) {
 				alert("am sters departamentul!");
 				loadDepartments();
+				loadEmployees();
 			}
 			else {
 				alert("stergerea nu s-a realizat cu success :( ");
@@ -272,7 +271,9 @@ function editDivision(i) {
 	var row = $(selectorValue, table);
 	var dialogBox = $("#add-division-dialog"); 
 	dialogBox.dialog("open");
-	managerName = divManagerName.options[divManagerName.selectedIndex].text;
+
+    var divManagerName = document.getElementById('bossDivDrop');
+    managerName = divManagerName.options[divManagerName.selectedIndex].text;
 
 	$('#nameDiv').attr('value', "" + row[0].cells[0].innerHTML);
 	$("#add-division-dialog").dialog({
@@ -330,6 +331,29 @@ function editDepartment(i) {
 	var table = $('#departments-table');
 	var selectorValue = 'tr:eq(' + i + ')';
 	var row = $(selectorValue, table);
+
+    var deptManagerName = document.getElementById('bossDeptDrop');
+    var managerName = null;
+
+    if (deptManagerName.selectedIndex != 0) {
+        managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
+    } else {
+        console.log("N-ai selectat manager!");
+        managerName="";
+    }
+
+    console.log("manager name: |" + managerName + "|");
+
+    var deptDivisionName = document.getElementById('divDeptDrop');
+    var divisionName = null;
+
+    if (deptDivisionName.selectedIndex != 0) {
+        divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
+    } else {
+        console.log("N-ai selectat manager!");
+        divisionName="";
+    }
+
 	var dialogBox = $("#add-department-dialog"); 
 	dialogBox.dialog("open");
 
@@ -347,12 +371,35 @@ function editDepartment(i) {
 				console.log("save_1 clicked!");
 				var newName = $('#nameDept').val();
 
+                var deptManagerName = document.getElementById('bossDeptDrop');
+                var managerName = null;
+
+                if (deptManagerName.selectedIndex != 0) {
+                    managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
+                } else {
+                    console.log("N-ai selectat manager!");
+                    managerName="";
+                }
+
+                var deptDivisionName = document.getElementById('divDeptDrop');
+                var divisionName = null;
+
+                if (deptDivisionName.selectedIndex != 0) {
+                    divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
+                } else {
+                    console.log("N-ai selectat manager!");
+                    divisionName="";
+                }
+
+
 				$.ajax({
 					type : "GET", 
 					url : "ManagementServlet", 
 					data : {phase : "editDepartment",
 						 	oldname : "" + row[0].cells[0].innerHTML,
-						 	newname : "" +  newName
+						 	newname : "" +  newName,
+                            manager : "" + managerName,
+                            division : "" + divisionName
 					},
 					success : function (data, textStatus, jqXHR) {
 						if (data.ok == true) {
@@ -487,6 +534,8 @@ $(function() {
 		var bValid = true;
 		var divisionName = $('[name="nameDiv"]', form);
 
+        var manager = document.getElementById('bossDivDrop')
+
 		//bValid = bValid && checkLength(divisionName, "divisionName", 1, 200);
 
 		//var manager = document.getElementById('bossDivDrop');
@@ -503,14 +552,24 @@ function saveDepartment() {
 	var deptManagerName = document.getElementById('bossDeptDrop');
 	var managerName = null;
 
-    managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
+    if (deptManagerName.selectedIndex != 0) {
+        managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
+    } else {
+        console.log("N-ai selectat manager!");
+        managerName="";
+    }
 
     console.log("manager name: |" + managerName + "|");
 
 	var deptDivisionName = document.getElementById('divDeptDrop');
 	var divisionName = null;
 
-    divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
+    if (deptDivisionName.selectedIndex != 0) {
+        divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
+    } else {
+        console.log("N-ai selectat manager!");
+        divisionName="";
+    }
 
 	$.ajax({
 		type: "GET",
@@ -908,6 +967,9 @@ function populateDropdown(data, elementId) {
 	var projDrop = document.getElementById(elementId);
 	console.log(data.elements.length);
 
+    var elemTest = document.createElement("option");
+    elemTest.textContent = "Select:";
+    projDrop.appendChild(elemTest);
 	for (var i = 0; i < data.elements.length; i++) {
 		var elem = document.createElement("option");
 		elem.textContent = data.elements[i];

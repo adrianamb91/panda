@@ -5,6 +5,7 @@ import java.util.List;
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.EmployeeDaoImpl;
 import com.timesheetapplication.enums.Job;
+import com.timesheetapplication.model.Department;
 import com.timesheetapplication.model.Employee;
 
 public class EmployeeService {
@@ -51,5 +52,11 @@ public class EmployeeService {
 		if (e != null) {
 			employeeDao.remove(e);
 		}
+	}
+
+	public void removeEmployeesFromDepartment(Department d) {
+
+		employeeDao.removeEmpFromDepartment(d.getId());
+		
 	}
 }

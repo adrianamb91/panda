@@ -5,6 +5,7 @@ import java.util.List;
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.EmployeeDaoImpl;
 import com.timesheetapplication.dao.impl.ProjectDaoImpl;
+import com.timesheetapplication.model.Department;
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.model.Project;
 
@@ -30,6 +31,11 @@ public class ProjectService {
 	
 	public List<Project> loadAllProjects() {
 		return projectDao.loadAll();
+	}
+
+	public List<Project> getProjectsForDepartment(Department department) {
+		// TODO Auto-generated method stub
+		return projectDao.findProjectsForDepartment(department);
 	}
 
 }

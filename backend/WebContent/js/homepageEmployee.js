@@ -58,22 +58,27 @@ function changePassword() {
 }
 
 function loadProjectsForUser() {
-	console.log("loadProjectsForUser");
-	$.ajax({
-		type : "GET",
-		url : "HomepageServlet",
-		data : {
-			phase : "loadProjectsForCurrentUser"
-		},
-		success : function(data, textStatus, jqXHR) {
-			console.log(data);
-			populateProjectDropdown(data);
-		},
-		error : function() {
-			alert("failure: load projects for user");
-			console.log('There is an error');
-		}
-	});
+    console.log("loadProjectsForUser");
+    $.ajax({
+        type : "GET",
+        url : "HomepageServlet",
+        data : {
+            phase : "loadProjectsForCurrentUser"
+        },
+        success : function(data, textStatus, jqXHR) {
+            console.log(data);
+            if (data.ok == true) {
+                populateProjectDropdown(data);
+            } else {
+                alert("No projects!");
+            }
+
+        },
+        error : function() {
+            alert("failure: load projects for user");
+            console.log('There is an error');
+        }
+    });
 }
 
 function populateProjectDropdown(data) {
