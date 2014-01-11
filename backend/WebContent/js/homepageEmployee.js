@@ -29,8 +29,8 @@ function getLoginDataFromServer() {
 			}
 		},
 		error : function() {
-			alert("failure");
-			console.log('There is an error');
+			alert("failure: get login data from server");
+			console.log('There is an error in getting login data from server');
 		}
 	});
 }
@@ -47,7 +47,7 @@ function endSession() {
 					+ '/TimesheetManagement/login.html', '_self', false);
 		},
 		error : function() {
-			alert("failure");
+			alert("failure: end session");
 			console.log('There is an error');
 		}
 	})
@@ -70,7 +70,7 @@ function loadProjectsForUser() {
 			populateProjectDropdown(data);
 		},
 		error : function() {
-			alert("failure");
+			alert("failure: load projects for user");
 			console.log('There is an error');
 		}
 	});

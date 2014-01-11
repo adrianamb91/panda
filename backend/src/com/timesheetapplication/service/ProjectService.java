@@ -31,4 +31,5 @@ public class ProjectService {
 	public List<Project> loadAllProjects() {
 		return projectDao.loadAll();
 	}
+
 }

@@ -31,6 +31,17 @@ public class DepartmentDaoImpl extends GenericDaoImpl<Department> implements
 			return results.get(0);
 		}
 		return null;
+	}
 
+	public Department findByManager(Long id) {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("Select d from Department d where d.manager.id = :id");
+		q.setParameter("id", id);
+		
+		List<Department> results = q.getResultList();
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
 	}
 }

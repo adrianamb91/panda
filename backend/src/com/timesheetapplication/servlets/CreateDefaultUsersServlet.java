@@ -82,12 +82,12 @@ public class CreateDefaultUsersServlet extends HttpServlet {
 
 		if (employeeService.findEmployeeByUsername("dmoraru") == null) {
 			e = new Employee();
-			e.setUsername("man");
+			e.setUsername("dmoraru");
 			e.setPassword("manager");
-			e.setFirstName("c");
-			e.setLastName("d");
+			e.setFirstName("Dragos");
+			e.setLastName("Moraru");
 			e.setJob(Job.DEPT_MANAGER);
-			e.setEmail("cd@isi.com");
+			e.setEmail("dmoraru@isi.com");
 
 			employeeService.saveOrUpdate(e);
 		}
