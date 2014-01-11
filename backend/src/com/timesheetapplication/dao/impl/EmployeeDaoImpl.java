@@ -37,4 +37,16 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements
 		return this.em.createQuery("Select e from Employee e").getResultList();
 	}
 
+	public Employee findEmployeeByFirstAndLastName(String name) {
+		// TODO Auto-generated method stub
+		Query query = em.createQuery("select e from Employee e where e.firstName||' '||e.lastName = :name");
+		query.setParameter("name", name);
+		
+		List<Employee> results = query.getResultList();
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
+	}
+
 }

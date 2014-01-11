@@ -385,7 +385,7 @@ function loadDepartments() {
 			if (data.ok == true) {
 				populateDropdown(data, "empDeptDrop");
 				populateDepartmentsTable(data);
-				alert("whooopie");
+				//alert("whooopie");
 			}
 		},
 		error : function() {

@@ -41,5 +41,9 @@ public class EmployeeService {
 	public List<Employee> loadAllEmployees() {
 		return employeeDao.loadAll();
 	}
+	
+	public Employee findEmployeeByFirstAndLastName(String name) {
+		return employeeDao.findEmployeeByFirstAndLastName(name);
+	}
 
 }

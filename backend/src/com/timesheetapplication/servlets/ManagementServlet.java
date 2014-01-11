@@ -301,7 +301,7 @@ public class ManagementServlet extends HttpServlet {
 
 		Employee manager = null;
 		if (TSMUtil.isNotEmptyOrNull(manName)) {
-			manager = employeeService.findEmployeeByUsername(manName);
+			manager = employeeService.findEmployeeByFirstAndLastName(manName);
 			d.setManager(manager);
 		}
 
