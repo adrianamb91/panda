@@ -1,5 +1,7 @@
 package com.timesheetapplication.service;
 
+import java.util.List;
+
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.ClientDaoImpl;
 import com.timesheetapplication.model.Client;
@@ -16,4 +18,7 @@ public class ClientService {
 		clientDao.saveOrUpdate(c);
 	}
 	
+	public List<Client> loadAll() {
+		return clientDao.loadAll();
+	}
 }

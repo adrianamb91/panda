@@ -26,19 +26,26 @@
       <file leaf-file-name="homepageAdmin.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageAdmin.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="131" column="14" selection-start="3687" selection-end="3687" vertical-scroll-proportion="-6.1923075" vertical-offset="2066" max-vertical-offset="5185">
-              <folding>
-                <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#tr#1;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#2;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#6;n#fieldset#0;n#form#0;n#div#4;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#table#0;n#div#5;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
+            <state line="194" column="33" selection-start="6172" selection-end="6354" vertical-scroll-proportion="-19.5" vertical-offset="2791" max-vertical-offset="5185">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="homepageEmployee.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageEmployee.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="166" column="28" selection-start="5657" selection-end="5675" vertical-scroll-proportion="25.807692" vertical-offset="3493" max-vertical-offset="4199">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="homepageDeptManager.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageDeptManager.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="452" column="4" selection-start="13348" selection-end="13348" vertical-scroll-proportion="-7.917333" vertical-offset="10653" max-vertical-offset="13464">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -46,27 +53,8 @@
       <file leaf-file-name="homepageAdmin.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="697" column="12" selection-start="16572" selection-end="16572" vertical-scroll-proportion="0.0" vertical-offset="10561" max-vertical-offset="14076">
-              <folding>
-                <marker date="1389400057634" expanded="true" signature="3070:3587" placeholder="{...}" />
-                <marker date="1389400057634" expanded="true" signature="4826:4860" placeholder="{...}" />
-                <marker date="1389400057634" expanded="true" signature="6542:6626" placeholder="{...}" />
-                <marker date="1389400057634" expanded="true" signature="8851:9264" placeholder="{...}" />
-                <marker date="1389400057634" expanded="true" signature="11068:11149" placeholder="{...}" />
-                <marker date="1389400057634" expanded="true" signature="13370:13451" placeholder="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="homepageEmployee.html" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageEmployee.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="174" column="48" selection-start="6156" selection-end="6156" vertical-scroll-proportion="0.73110723" vertical-offset="2542" max-vertical-offset="4182">
-              <folding>
-                <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
+            <state line="330" column="28" selection-start="7872" selection-end="7872" vertical-scroll-proportion="0.0" vertical-offset="5290" max-vertical-offset="14059">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -74,13 +62,31 @@
       <file leaf-file-name="homepageEmployee.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="389" column="56" selection-start="9780" selection-end="9780" vertical-scroll-proportion="0.0" vertical-offset="2422" max-vertical-offset="3570">
+            <state line="366" column="3" selection-start="6770" selection-end="9187" vertical-scroll-proportion="0.0" vertical-offset="5881" max-vertical-offset="7361">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="homepageDeptManager.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageDeptManager.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="268" column="39" selection-start="10221" selection-end="10221" vertical-scroll-proportion="-12.769231" vertical-offset="3884" max-vertical-offset="5049">
               <folding>
-                <element signature="n#!!block;n#removeActivity#0" expanded="false" />
-                <element signature="n#!!block;n#editActivity#0" expanded="false" />
-                <element signature="n#!!block;n#loadTodaysTimesheetForUser#0" expanded="false" />
-                <element signature="e#6701#9086#0" expanded="false" />
-                <element signature="e#9103#9487#0" expanded="false" />
+                <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#0;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#1;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#2;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#4;n#fieldset#0;n#form#0;n#div#0;n#td#2;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="tag#div#1;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="tag#div#2;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#0;n#div#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#2;n#fieldset#0;n#form#0;n#div#2;n#div#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -111,11 +117,14 @@
         <option value="$PROJECT_DIR$/backend/WebContent/css/homepage-style.css" />
         <option value="$PROJECT_DIR$/backend/WebContent/css/overlay.css" />
         <option value="$PROJECT_DIR$/backend/WebContent/login.html" />
-        <option value="$PROJECT_DIR$/backend/WebContent/js/login.js" />
-        <option value="$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js" />
-        <option value="$PROJECT_DIR$/backend/WebContent/homepageEmployee.html" />
-        <option value="$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js" />
         <option value="$PROJECT_DIR$/backend/WebContent/homepageAdmin.html" />
+        <option value="$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js" />
+        <option value="$PROJECT_DIR$/backend/WebContent/js/login.js" />
+        <option value="$PROJECT_DIR$/backend/WebContent/homepageEmployee.html" />
+        <option value="$PROJECT_DIR$/backend/WebContent/WEB-INF/homepageDeptManager.html" />
+        <option value="$PROJECT_DIR$/backend/WebContent/homepageDeptManager.html" />
+        <option value="$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js" />
+        <option value="$PROJECT_DIR$/backend/WebContent/js/homepageDeptManager.js" />
       </list>
     </option>
   </component>
@@ -278,6 +287,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="panda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="panda" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="backend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WebContent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="js" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -314,10 +345,23 @@
     <property name="options.lastSelected" value="appearance" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Adri\Documents\GitHub\panda\backend\WebContent" />
+    </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
+      <option name="VMOptions" />
+      <option name="arguments" />
+      <option name="filePath" />
+      <option name="scope" value="ALL" />
+      <option name="testName" />
+      <method />
+    </configuration>
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <option name="VMOptions" />
       <option name="arguments" />
@@ -328,23 +372,15 @@
       <option name="showConsoleOnStdOut" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
-      <option name="VMOptions" />
-      <option name="arguments" />
-      <option name="filePath" />
-      <option name="scope" value="ALL" />
-      <option name="testName" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" singleton="true" config-file="">
-      <envs />
-      <method />
-    </configuration>
     <configuration default="true" type="JSTestDriver:ConfigurationType" factoryName="JsTestDriver">
       <setting name="configLocationType" value="CONFIG_FILE" />
       <setting name="settingsFile" value="" />
       <setting name="serverType" value="INTERNAL" />
       <setting name="preferredDebugBrowser" value="CHROME" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" singleton="true" config-file="">
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
@@ -382,15 +418,35 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView" selected-index="2">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="1" width="1302" height="766" extended-state="0" />
+    <frame x="1" y="1" width="1302" height="766" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25816485" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23343849" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496112" sideWeight="0.7665615" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25816485" sideWeight="0.670347" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -399,7 +455,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329653" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -417,9 +473,18 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/backend/WebContent/login.html">
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="63" selection-start="203" selection-end="203" vertical-scroll-proportion="0.17" vertical-offset="0" max-vertical-offset="629" />
+        <state line="398" column="0" selection-start="9350" selection-end="11650" vertical-scroll-proportion="0.0" vertical-offset="6579" max-vertical-offset="14076">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="50" selection-start="0" selection-end="10863" vertical-scroll-proportion="0.0" vertical-offset="1224" max-vertical-offset="7361">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/backend/WebContent/others/__login.html">
@@ -430,13 +495,6 @@
     <entry file="file://$PROJECT_DIR$/backend/WebContent/css/style-buttons.css">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="22" selection-start="725" selection-end="731" vertical-scroll-proportion="-1.0840336" vertical-offset="832" max-vertical-offset="1598">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/login.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="29" selection-start="1372" selection-end="1372" vertical-scroll-proportion="0.6430921" vertical-offset="408" max-vertical-offset="1343">
           <folding />
         </state>
       </provider>
@@ -455,58 +513,86 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js">
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/login.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="389" column="56" selection-start="9780" selection-end="9780" vertical-scroll-proportion="0.0" vertical-offset="2422" max-vertical-offset="3570">
-          <folding>
-            <element signature="n#!!block;n#removeActivity#0" expanded="false" />
-            <element signature="n#!!block;n#editActivity#0" expanded="false" />
-            <element signature="n#!!block;n#loadTodaysTimesheetForUser#0" expanded="false" />
-            <element signature="e#6701#9086#0" expanded="false" />
-            <element signature="e#9103#9487#0" expanded="false" />
-          </folding>
+        <state line="6" column="63" selection-start="203" selection-end="203" vertical-scroll-proportion="-3.9230769" vertical-offset="0" max-vertical-offset="646" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/login.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="52" selection-start="704" selection-end="704" vertical-scroll-proportion="0.0" vertical-offset="42" max-vertical-offset="1394">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js">
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/__homepageDeptManager.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="697" column="12" selection-start="16572" selection-end="16572" vertical-scroll-proportion="0.0" vertical-offset="10561" max-vertical-offset="14076">
-          <folding>
-            <marker date="1389400057634" expanded="true" signature="3070:3587" placeholder="{...}" />
-            <marker date="1389400057634" expanded="true" signature="4826:4860" placeholder="{...}" />
-            <marker date="1389400057634" expanded="true" signature="6542:6626" placeholder="{...}" />
-            <marker date="1389400057634" expanded="true" signature="8851:9264" placeholder="{...}" />
-            <marker date="1389400057634" expanded="true" signature="11068:11149" placeholder="{...}" />
-            <marker date="1389400057634" expanded="true" signature="13370:13451" placeholder="{...}" />
-          </folding>
+        <state line="63" column="57" selection-start="1428" selection-end="1428" vertical-scroll-proportion="0.030303031" vertical-offset="1054" max-vertical-offset="5270">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageAdmin.html">
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/others/addEmployee.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="14" selection-start="3687" selection-end="3687" vertical-scroll-proportion="-6.1923075" vertical-offset="2066" max-vertical-offset="5185">
-          <folding>
-            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#tr#1;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#2;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#6;n#fieldset#0;n#form#0;n#div#4;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#div#5;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
+        <state line="16" column="11" selection-start="523" selection-end="523" vertical-scroll-proportion="0.3535109" vertical-offset="126" max-vertical-offset="3111">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageEmployee.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="174" column="48" selection-start="6156" selection-end="6156" vertical-scroll-proportion="0.73110723" vertical-offset="2542" max-vertical-offset="4182">
+        <state line="166" column="28" selection-start="5657" selection-end="5675" vertical-scroll-proportion="25.807692" vertical-offset="3493" max-vertical-offset="4199">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageEmployee.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="366" column="3" selection-start="6770" selection-end="9187" vertical-scroll-proportion="0.0" vertical-offset="5881" max-vertical-offset="7361">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageAdmin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="33" selection-start="6172" selection-end="6354" vertical-scroll-proportion="-19.5" vertical-offset="2791" max-vertical-offset="5185">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageAdmin.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="330" column="28" selection-start="7872" selection-end="7872" vertical-scroll-proportion="0.0" vertical-offset="5290" max-vertical-offset="14059">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/homepageDeptManager.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="268" column="39" selection-start="10221" selection-end="10221" vertical-scroll-proportion="-12.769231" vertical-offset="3884" max-vertical-offset="5049">
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#1;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#2;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#4;n#fieldset#0;n#form#0;n#div#0;n#td#2;n#table#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="tag#div#1;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="tag#div#2;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="n#style#0;n#input#1;n#fieldset#0;n#form#0;n#div#0;n#div#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#2;n#fieldset#0;n#form#0;n#div#2;n#div#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/WebContent/js/homepageDeptManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="452" column="4" selection-start="13348" selection-end="13348" vertical-scroll-proportion="-7.917333" vertical-offset="10653" max-vertical-offset="13464">
+          <folding />
         </state>
       </provider>
     </entry>

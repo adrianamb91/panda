@@ -381,19 +381,31 @@ public class ManagementServlet extends HttpServlet {
 	private void processSaveDepartment(HttpServletRequest request) {
 
 		String name = request.getParameter("name");
-		String manangerName = request.getParameter("mananger");
+		String managerName = request.getParameter("manager");
 		String divisionName = request.getParameter("division");
 
+		System.out.println("--+++--" + managerName);
+		
 		Department d = new Department();
 
 		Division div = divisionService.findDivisionByName(divisionName);
-		Employee manager = employeeService.findEmployeeByUsername(manangerName);
+		Employee manager = null;
+		if (TSMUtil.isNotEmptyOrNull(managerName)) {
+			manager = employeeService.findEmployeeByFirstAndLastName(managerName);
+		}
 
 		d.setName(name);
 		d.setDivision(div);
-		d.setManager(manager);
+		if (manager != null) {
+			d.setManager(manager);
+		}
 
 		departmentService.saveOrUpdate(d);
+		
+		if (manager != null) {
+			manager.setDepartment(d);
+			employeeService.saveOrUpdate(manager);
+		}
 	}
 
 	private void processLoadAllDivisions(JSONObject responseMessage, HttpServletResponse response) {
@@ -444,6 +456,8 @@ public class ManagementServlet extends HttpServlet {
 		if (TSMUtil.isNotEmptyOrNull(manName)) {
 			manager = employeeService.findEmployeeByFirstAndLastName(manName);
 			d.setManager(manager);
+		} else {
+			System.out.println("-----manager null");
 		}
 
 		divisionService.saveOrUpdate(d);

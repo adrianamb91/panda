@@ -101,12 +101,15 @@ function saveDivision() {
 	var divManagerName = document.getElementById('bossDivDrop');
 	var managerName = null;
 
+    /*
 	if (divManagerName.selectedIndex != 0) {
 		managerName = divManagerName.options[divManagerName.selectedIndex].text;
 	} else {
 		console.log("N-ai selectat manager!");
 		managerName="";
 	}
+    */
+    managerName = divManagerName.options[divManagerName.selectedIndex].text;
 
 	$.ajax({
 		type : "GET",
@@ -500,22 +503,14 @@ function saveDepartment() {
 	var deptManagerName = document.getElementById('bossDeptDrop');
 	var managerName = null;
 
-	if (deptManagerName.selectedIndex != 0) {
-		managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
-	} else {
-		console.log("N-ai selectat manager");
-		managerName="";
-	}
+    managerName = deptManagerName.options[deptManagerName.selectedIndex].text;
+
+    console.log("manager name: |" + managerName + "|");
 
 	var deptDivisionName = document.getElementById('divDeptDrop');
 	var divisionName = null;
 
-	if (deptDivisionName.selectedIndex != 0) {
-		divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
-	} else {
-		console.log("N-ai selectat divizie");
-		divisionName="";
-	}
+    divisionName = deptDivisionName.options[deptDivisionName.selectedIndex].text;
 
 	$.ajax({
 		type: "GET",
@@ -568,7 +563,6 @@ function populateDepartmentsTable(data) {
 }
 
 function loadDepartments() {
-//	TODO:
 	$.ajax({
 		type : "GET",
 		url : "ManagementServlet",
@@ -797,15 +791,20 @@ function saveEmployee(){
 	var jobDrop = document.getElementById('jobDrop');
 	var job = jobDrop.options[jobDrop.selectedIndex].text;
 	
-//	if (jobDrop.selectedIndex != 0) {
-//		job = jobDrop.options[jobDrop.selectedIndex].text;
-//	} else {
-//		alert("N-ai selectat job");
-//	}
-
 	var deptDrop = document.getElementById('empDeptDrop');
 	var deptName = deptDrop.options[deptDrop.selectedIndex].text;
 	
+	var deptName = null;
+    deptName = deptDrop.options[deptDrop.selectedIndex].text;
+    /*
+	if (deptDrop.selectedIndex != 0) {
+		deptName = deptDrop.options[deptDrop.selectedIndex].text;
+	} else {
+		console.log("N-ai selectat departament");
+		deptName="";
+	}
+	*/
+
 	$.ajax({
 		type : "GET",
 		url : "ManagementServlet",
