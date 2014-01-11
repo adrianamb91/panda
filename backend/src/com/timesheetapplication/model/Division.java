@@ -10,22 +10,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "division")
-public class Division extends AbstractEntity{
+public class Division extends AbstractEntity {
 
-	private static final long serialVersionUID = 1L;
-	
 	@Column(name = "name")
 	private String name;
 
 	@OneToOne
 	@JoinColumn(name = "manager_id")
 	private Employee manager;
-	
-	
-	@OneToMany (mappedBy = "division")
+
+	@OneToMany(mappedBy = "division")
 	private List<Department> departments = new ArrayList<Department>();
 
 	public String getName() {
@@ -43,5 +40,8 @@ public class Division extends AbstractEntity{
 	public void setManager(Employee manager) {
 		this.manager = manager;
 	}
-}
 
+	public List<Department> getDepartments() {
+		return departments;
+	}
+}

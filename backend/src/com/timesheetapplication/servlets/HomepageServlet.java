@@ -88,22 +88,7 @@ public class HomepageServlet extends HttpServlet {
 			response.getWriter().write(responseMessage.toString());
 			break;
 		case "loadProjectsForCurrentUser":
-			List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
-
-			ArrayList<String> projectNames = new ArrayList<String>();
-			for (Project p : projects) {
-				projectNames.add(p.getName());
-			}
-			try {
-				responseMessage.put("ok", true);
-				JSONArray array = new JSONArray(projectNames);
-				responseMessage.put("projects", array);
-				System.out.println("sent back:" + array.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			response.setContentType("application/json; charset=UTF-8");
-			response.getWriter().write(responseMessage.toString());
+			processLoadProjectsForCurrentUser(responseMessage, response);
 			break;
 		case "loadAllProjects":
 			processLoadAllProjects(responseMessage, response);
@@ -131,6 +116,26 @@ public class HomepageServlet extends HttpServlet {
 		default:
 			break;
 		}
+	}
+
+	private void processLoadProjectsForCurrentUser(JSONObject responseMessage, HttpServletResponse response) throws IOException {
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+		List<Project> projects = projectService.getProjectsForEmployee(loggedInUser);
+
+		ArrayList<String> projectNames = new ArrayList<String>();
+		for (Project p : projects) {
+			projectNames.add(p.getName());
+		}
+		try {
+			responseMessage.put("ok", true);
+			JSONArray array = new JSONArray(projectNames);
+			responseMessage.put("projects", array);
+			System.out.println("sent back:" + array.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		response.setContentType("application/json; charset=UTF-8");
+		response.getWriter().write(responseMessage.toString());
 	}
 
 	private void processRemoveActivity(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
@@ -182,7 +187,7 @@ public class HomepageServlet extends HttpServlet {
 
 	private void processLoadTodaysTimesheet(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
 		Employee e = (Employee) session.getAttribute("loggedInUser");
-		
+
 		String dateString = request.getParameter("date");
 		Date as;
 		if (dateString != null) {
@@ -193,9 +198,8 @@ public class HomepageServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				as = new Date();
-			} 
-		}
-		else {
+			}
+		} else {
 			as = new Date();
 		}
 		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(as, e);
@@ -314,7 +318,7 @@ public class HomepageServlet extends HttpServlet {
 		}
 
 		System.out.println("new: " + duration + " " + description + " " + date + " " + isExtra + " " + selectedProject);
-	
+
 		Boolean update = true;
 		if (a == null) {
 			a = new Activity();

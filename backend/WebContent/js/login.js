@@ -9,8 +9,7 @@ function sendLoginInfoToServer(un, pswd) {
 			password : "" + pswd
 		},
 		success : function(data, textStatus, jqXHR) {
-			console.log("LOGIN : request submitted successfully");
-			console.log("LOGIN : Response: " + data);
+			console.log(data);
 			if (data.access === 'granted') {
 				if (data.job == 'CLERK') {
 					window.open('http://' + serverIp
@@ -25,12 +24,16 @@ function sendLoginInfoToServer(un, pswd) {
 							+ '/TimesheetManagement/homepageDeptManager.html',
 							'_self', false);
 				}
-			} else {
-				console.log("LOGIN : We should print error message");
-				var errorMsg = document.getElementById('error_message');
-				errorMsg.style.color = 'Red';
-				errorMsg.style.fontSize = "large";
-				errorMsg.innerText = "Username/password are no good!";
+			} 
+			else if (data.access === 'wrong_password'){
+				$('#errorMessage').text("Invalid password");
+				$('#errorMessage').show();
+				$('#password').text('');
+			}
+			else if (data.access === 'wrong_user') {
+				$('#errorMessage').text("Invalid username");
+				$('#errorMessage').show();
+				$('#username').text('');
 			}
 		},
 		error : function() {

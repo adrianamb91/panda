@@ -42,11 +42,8 @@ public class Login extends HttpServlet {
 
 		Integer accessGranted = employeeService.checkUsernameForAccess(
 				username, password);
-
 		System.out.println("access= " + accessGranted);
-		if (accessGranted == -1) {
-			return;
-		}
+
 		Boolean isAdmin = (accessGranted == 2);
 
 		Employee loggedInUser = employeeService
@@ -55,6 +52,11 @@ public class Login extends HttpServlet {
 		if (loggedInUser != null) {
 			HttpSession session = request.getSession();
 			session.setAttribute("loggedInUser", loggedInUser);
+			try {
+				responseMessage.put("job", loggedInUser.getJob());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		try {
 			switch (accessGranted) {
@@ -62,14 +64,13 @@ public class Login extends HttpServlet {
 				responseMessage.put("access", "wrong_user");
 				break;
 			case -2:
-				responseMessage.put("access", "wrong_passwor");
+				responseMessage.put("access", "wrong_password");
 				break;
 			default:
 				responseMessage.put("access", "granted");
 				break;
 			}
 			responseMessage.put("isAdmin", isAdmin);
-			responseMessage.put("job", loggedInUser.getJob());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

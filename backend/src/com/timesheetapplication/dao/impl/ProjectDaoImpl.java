@@ -25,16 +25,13 @@ public class ProjectDaoImpl extends GenericDaoImpl<Project> implements
 		return this.em.createQuery("Select p from Project p").getResultList();
 	}
 
-	/*
-	 * returns all the projects an Employee is working on.
-	 */
 	@Override
 	public List<Project> findProjectsForEmployee(Employee e) {
-		if (e == null || e.getId() == null) {
+		if (e == null || e.getId() == null || e.getDepartment() == null || e.getDepartment().getId() == null) {
 			return null;
 		}
-		String query = "Select p from Project p join p.employees e where e.id = "
-				+ e.getId();
+		
+		String query = "Select p from Project p where p.department.id = " + e.getDepartment().getId();
 		return em.createQuery(query).getResultList();
 	}
 

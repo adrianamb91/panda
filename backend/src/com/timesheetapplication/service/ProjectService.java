@@ -13,6 +13,9 @@ public class ProjectService {
 	private ProjectDaoImpl projectDao = new ProjectDaoImpl(EntityManagerHolder
 			.getInstance().getEntityManager());
 
+	/*
+	 * returns all the projects that e's department is working on
+	 */
 	public List<Project> getProjectsForEmployee(Employee e) {
 		return projectDao.findProjectsForEmployee(e);
 	}

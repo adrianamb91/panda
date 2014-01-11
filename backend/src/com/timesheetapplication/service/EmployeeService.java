@@ -1,5 +1,7 @@
 package com.timesheetapplication.service;
 
+import java.util.List;
+
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.EmployeeDaoImpl;
 import com.timesheetapplication.enums.Job;
@@ -34,6 +36,10 @@ public class EmployeeService {
 
 	public void saveOrUpdate(Employee e) {
 		employeeDao.saveOrUpdate(e);
+	}
+
+	public List<Employee> loadAllEmployees() {
+		return employeeDao.loadAll();
 	}
 
 }

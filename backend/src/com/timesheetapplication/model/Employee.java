@@ -42,15 +42,19 @@ public class Employee extends AbstractEntity {
 	@JoinColumn(name = "deptno")
 	private Department department;
 
+	@ManyToOne
+	@JoinColumn(name = "manager_id")
+	private Employee manager;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "job")
 	private Job job;
 
-	@ManyToMany(cascade = {CascadeType.ALL})
+	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "employee_project_map", joinColumns = @JoinColumn(name = "proj_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
 	private List<Project> projects = new ArrayList<Project>();
-	
-	@OneToMany (mappedBy = "owner")
+
+	@OneToMany(mappedBy = "owner")
 	private List<MonthlyTimesheet> mTimesheets = new ArrayList<MonthlyTimesheet>();
 
 	public List<Project> getProjects() {
@@ -123,6 +127,14 @@ public class Employee extends AbstractEntity {
 
 	public void setmTimesheets(List<MonthlyTimesheet> mTimesheets) {
 		this.mTimesheets = mTimesheets;
+	}
+
+	public Employee getManager() {
+		return manager;
+	}
+
+	public void setManager(Employee manager) {
+		this.manager = manager;
 	}
 
 }

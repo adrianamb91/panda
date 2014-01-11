@@ -3,10 +3,11 @@ package com.timesheetapplication.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -18,8 +19,13 @@ public class Project extends AbstractEntity {
 	@Column(name = "name")
 	private String name;
 
-	@ManyToMany(mappedBy = "projects")
-	private List<Employee> employees = new ArrayList<Employee>();
+	@ManyToOne
+	@JoinColumn(name = "department_id")
+	private Department department;
+
+	@ManyToOne
+	@JoinColumn(name = "client_id")
+	private Client client;
 
 	public String getName() {
 		return name;
@@ -29,12 +35,20 @@ public class Project extends AbstractEntity {
 		this.name = name;
 	}
 
-	public List<Employee> getEmployees() {
-		return employees;
+	public Department getDepartment() {
+		return department;
 	}
 
-	public void setEmployees(List<Employee> employees) {
-		this.employees = employees;
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 }
