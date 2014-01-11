@@ -92,6 +92,32 @@ function populateProjectDropdown(data) {
 	}
 }
 
+function submitMTS(i) {
+	console.log("submit mts");
+	var table = $('#monthly-entries');
+	var selectorValue = 'tr:eq(' + i + ')';
+	var row = $(selectorValue, table);
+	
+	$.ajax({
+		type: "GET",
+		url : "HomepageServlet",
+		data : {phase : "submitMTSByClerk",
+			date : "" + row[0].cells[0].innerHTML,
+		},
+		success : function(data, textStatus, jqXHR) {
+			alert('s-a dus!');
+			if (data.ok == true) {
+				loadAllMTimesheetsForUser();
+			}
+		},
+		error : function() {
+			alert("failure");
+			console.log('There is an error');
+		}
+	});
+
+}
+
 $(document).ready(function() {
 
 	console.log("document ready");
@@ -143,8 +169,17 @@ function loadAllMTimesheetsForUser() {
 			var tsTable = $('#monthly-entries');
 
 			for (var i = 0; i < data.size; i++) {
-				tsTable.append("<tr>" + "<td>" + data.date[i] + "</td>"
-						+ "<td>" + data.status[i] + "</td>" + "</tr>");
+				if (data.status[i] == 'OPEN' ) {
+					tsTable.append("<tr>" + 
+							"<td>" + data.date[i] + "</td>" +
+							"<td>" + data.status[i] 
+							+ '<button id="submitMTS" style="float: right" onclick="submitMTS(' + i + 1 + ')">Submit</button>' 
+							+ "</td>" + 
+					"</tr>");
+				} else {
+					tsTable.append("<tr>" + "<td>" + data.date[i] + "</td>"
+							+ "<td>" + data.status[i] + "</td>" + "</tr>");
+				}
 			}
 		}
 	});

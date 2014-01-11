@@ -32,4 +32,9 @@ public class MonthlyTimeSheetDaoImpl extends GenericDaoImpl<MonthlyTimesheet> im
 		return null;
 	}
 
+	public List<MonthlyTimesheet> findByUser(Employee e) {
+		Query q = em.createQuery("Select m from MonthlyTimesheet m where m.owner.id = :id").setParameter("id", e.getId());
+		return q.getResultList();
+	}
+
 }

@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import com.sun.corba.se.impl.ior.OldPOAObjectKeyTemplate;
 import com.timesheetapplication.enums.Job;
+import com.timesheetapplication.enums.MonthlyTimesheetStatus;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Employee;
@@ -116,9 +117,54 @@ public class HomepageServlet extends HttpServlet {
 		case "saveActivity":
 			processSaveActivity(request, response, responseMessage);
 			break;
+		case "submitMTSByDeptM":
+			processSubmitMTSbyDeptM(request, response, responseMessage);
+			break;
+		case "submitMTSByClerk":
+			processSubmitMTSbyClerk(request, response, responseMessage);
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void processSubmitMTSbyClerk(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+		// TODO Auto-generated method stub
+		System.out.println("Sunt si eu pe aici");
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+		String dateWanted = request.getParameter("date");
+		
+		MonthlyTimesheet m = mtimesheetService.findMTSByDateAndUser(TSMUtil.convertStringToDate(dateWanted), loggedInUser);
+		m.setStatus(MonthlyTimesheetStatus.SUBMITTED);
+		mtimesheetService.saveOrUpdate(m);
+		
+		try {
+			responseMessage.put("ok", true);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void processSubmitMTSbyDeptM(HttpServletRequest request, HttpServletResponse response, JSONObject responseMessage) {
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+		String dateWanted = request.getParameter("date");
+		
+		MonthlyTimesheet m = mtimesheetService.findMTSByDateAndUser(TSMUtil.convertStringToDate(dateWanted), loggedInUser);
+		m.setStatus(MonthlyTimesheetStatus.APPROVED);
+		mtimesheetService.saveOrUpdate(m);
+		
+		try {
+			responseMessage.put("ok", true);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void processLoadProjectsForCurrentUser(JSONObject responseMessage,
@@ -183,10 +229,13 @@ public class HomepageServlet extends HttpServlet {
 		ArrayList<String> statusList = new ArrayList<String>();
 		JSONArray nameArray;
 		JSONArray statusArray;
-		for (MonthlyTimesheet m : e.getmTimesheets()) {
+		
+		List<MonthlyTimesheet> mts = mtimesheetService.findAllMTSforUser(e);
+		for (MonthlyTimesheet m : mts) {
 			nameList.add(TSMUtil.formatDate(m.getDate()));
 			statusList.add(m.getStatus().name());
 		}
+		
 		nameArray = new JSONArray(nameList);
 		statusArray = new JSONArray(statusList);
 
