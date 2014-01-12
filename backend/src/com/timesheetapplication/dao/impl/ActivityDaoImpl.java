@@ -45,4 +45,13 @@ public class ActivityDaoImpl extends GenericDaoImpl<Activity> implements Activit
 		return q.getResultList();
 	}
 
+	public List<Activity> findWorkPutIntoProject(Project p, Date from, Date to) {
+		Query q = em.createQuery("Select m from Activity m where m.timesheet.date > :from and m.timesheet.date < :to and m.project.id = :pid");
+		q.setParameter("from", from);
+		q.setParameter("to", to);
+		q.setParameter("pid", p.getId());
+		
+		return q.getResultList();
+	}
+
 }

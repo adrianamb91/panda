@@ -40,7 +40,6 @@ $(document).ready(function() {
 	$("#main_datepicker").datepicker({
 		dateFormat : "dd/mm/yy",
 		onSelect : function(selected, event) {
-			console.log("I'm here");
 			loadTodaysTimesheetForUser(selected);
 		}
 	});
@@ -129,6 +128,8 @@ function loadEmployees() {
 			phase : "loadEmployees"
 		},
 		success : function(data, textStatus, jqXHR) {
+			
+			console.log("ALL CLERKS: ");
 			console.log(data);
 			if (data.ok == true) {
 				populateDropdown(data, "clerkDrop");
@@ -184,6 +185,7 @@ function loadProjectsForUser() {
 			phase : "loadProjectsForCurrentUser"
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("PROJECTS FOR USER: ");
 			console.log(data);
 			if (data.ok == true) {
 				populateProjectDropdown(data);
@@ -440,6 +442,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 			old_projectName : "" + oldProjectName
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("SAVE ACTIVITY:");
 			console.log(data);
 			if (data.ok == true) {
 
@@ -468,6 +471,7 @@ function saveClient() {
 			name : "" + name,
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("CLIENT SAVE RESP: ");
 			console.log(data);
 			if (data.ok == true) {
 				alert("saved");
@@ -513,6 +517,7 @@ function loadClients() {
 			phase : "loadAllClients"
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("LOAD ALL CLIENTS: ");
 			console.log(data);
 			if (data.ok == true) {
 				populateClientsTable(data);
@@ -547,6 +552,7 @@ function saveProject() {
 			department : "" + departmentName
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("PROJECT SAVE: ");
 			console.log(data);
 			loadProjects();
 			loadProjectsForUser();
@@ -567,9 +573,12 @@ function loadProjects() {
 			phase : "loadAllProjects"
 		},
 		success : function(data, textStatus, jqXHR) {
+			console.log("LOAD ALL PROJECTS RESP:");
 			console.log(data);
 			if (data.ok == true) {
 				populateProjectsTable(data);
+				populateDropdown(data, 'projectDrop');
+				populateDropdown(data, 'project_drop_report');
 			}
 		},
 		error : function() {
@@ -883,9 +892,9 @@ $(function() {
 				&& checkRegexp(duration, /^([0-9.])+$/i,
 						"Duration should be expressed in number of hours");
 
-		var project = document.getElementById('projectDrop');
-		bValid = bValid
-				&& validateSelectedProject(project, "You must select a project");
+		//var project = document.getElementById('projectDrop');
+		//bValid = bValid
+		//		&& validateSelectedProject(project, "You must select a project");
 
 		return bValid;
 	}
@@ -898,6 +907,7 @@ function populateAllActivitiesTable(data) {
 	
 	var table = $('#all-entries-table');
 	$('#all-entries-table > tbody').empty();
+	console.log("ALL ACTIVITIES: ");
 	console.log(data);
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
@@ -919,8 +929,8 @@ function reviewWorkFromEmployeeInInterval() {
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
 	
-	from = "06/01/2014";
-	to = "20/01/2014";
+	//from = "06/01/2014";
+	//to = "20/01/2014";
 	
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
@@ -956,6 +966,7 @@ function populateIntervalActivitiesTable(data) {
 	
 	var table = $('#interval-entries-table');
 	$('#interval-entries-table > tbody').empty();
+	console.log("DETAILED MTS: ");
 	console.log(data);
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
@@ -994,4 +1005,101 @@ function generatePieChart(entries) {
 		});
 }
 
-reviewSummaryWorkFromEmployeeInInterval
+function reviewSummaryWorkFromEmployeeInInterval() {
+	
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var enameDrop = document.getElementById('clerkDrop_report');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewSummaryWorkFromEmployeeInInterval",
+				name: "" + empname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("SUMMARY WORK: ");
+			console.log(data);
+			if (data.ok == true) {
+				populateSummaryWorkTable(data);
+			}
+		
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function populateSummaryWorkTable(data) {
+	//summary_interval-entries-table
+	
+	var table = $('#summary_interval-entries-table');
+	$('#summary_interval-entries-table > tbody').empty();
+	
+	console.log("SUMMARY DATA:");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							"<td>" + data.project[i] + "</td>" + 
+							"<td>" + data.duration[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}
+
+
+
+function reviewWorkForProjectInInterval() {
+	
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var projDrop = document.getElementById('project_drop_report');
+	var projname = projDrop.options[projDrop.selectedIndex].text;
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewSummaryWorkForProjectInInterval",
+				name: "" + projname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("PROJECT SUMMARY WORK: ");
+			console.log(data);
+			populateProjectSummaryWorkTable(data);
+			
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+	
+}
+
+function populateProjectSummaryWorkTable(data) {
+	//summary_interval-entries-table
+	
+	var table = $('#summary_interval-project-table');
+	$('#summary_interval-project-table > tbody').empty();
+	
+	console.log("PROJECT SUMMARY DATA:");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							"<td>" + data.owners[i] + "</td>" + 
+							"<td>" + data.durations[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}
