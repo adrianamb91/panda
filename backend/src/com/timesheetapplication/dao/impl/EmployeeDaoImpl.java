@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.timesheetapplication.dao.EmployeeDao;
+import com.timesheetapplication.model.Department;
 import com.timesheetapplication.model.Employee;
 
 /**
@@ -55,6 +56,12 @@ public class EmployeeDaoImpl extends GenericDaoImpl<Employee> implements
 		q.setParameter("id", id);
 		q.executeUpdate();
 		em.getTransaction().commit();
+	}
+
+	public List<Employee> findAllEmployeesFromDepartment(Department d) {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("Select e from Employee e where e.department.id = :deptno").setParameter("deptno", d.getId());
+		return q.getResultList();
 	}
 
 }

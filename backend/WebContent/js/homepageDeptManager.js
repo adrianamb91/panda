@@ -16,6 +16,8 @@ $(document).ready(function() {
 	loadProjectsForUser();
 	loadTodaysTimesheetForUser();
 	loadAllMTimesheetsForUser();
+	
+	loadEmployees();
 
 	getDepartment();
 	loadClients();
@@ -117,7 +119,29 @@ function endSession() {
 			alert("failure: end session");
 			console.log('There is an error');
 		}
-	})
+	});
+}
+
+function loadEmployees() {
+	$.ajax({
+		type : "GET",
+		url : "DepartmentManagerServlet",
+		data : {
+			phase : "loadEmployees"
+		},
+		success : function(data, textStatus, jqXHR) {
+			console.log(data);
+			if (data.ok == true) {
+				populateDropdown(data, "clerkDrop");
+			} else {
+				alert("No employees");
+			}
+		},
+		error : function() {
+			alert("failure");
+			console.log('There is an error');
+		}
+	});
 }
 
 function changePassword() {

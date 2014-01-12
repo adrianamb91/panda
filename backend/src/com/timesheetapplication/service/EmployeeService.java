@@ -59,4 +59,8 @@ public class EmployeeService {
 		employeeDao.removeEmpFromDepartment(d.getId());
 		
 	}
+
+	public List<Employee> findAllEmployeesByDepartment(Department d) {
+		return employeeDao.findAllEmployeesFromDepartment(d);
+	}
 }
