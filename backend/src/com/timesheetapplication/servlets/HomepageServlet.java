@@ -273,7 +273,7 @@ public class HomepageServlet extends HttpServlet {
 		}
 		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(as, e);
 
-		if (dts == null || dts.getActivities().size() == 0) {
+		if (dts == null) {
 			try {
 				responseMessage.put("ok", false);
 				response.setContentType("application/json; charset=UTF-8");
@@ -285,6 +285,21 @@ public class HomepageServlet extends HttpServlet {
 				e1.printStackTrace();
 			}
 		}
+		
+		List<Activity> acts = activityService.findActivitiesByDTS(dts);
+		if (acts == null || acts.size() == 0) {
+			try {
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+				return;
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 
 		try {
 			ArrayList<String> durationArray = new ArrayList<String>();
@@ -292,7 +307,7 @@ public class HomepageServlet extends HttpServlet {
 			ArrayList<String> projectArray = new ArrayList<String>();
 			JSONArray array_du, array_de, array_p;
 
-			for (Activity a : dts.getActivities()) {
+			for (Activity a : acts) {
 				durationArray.add(a.getDuration().toString());
 				descriptionArray.add(a.getDescription());
 				projectArray.add(a.getProject().getName());
@@ -303,7 +318,7 @@ public class HomepageServlet extends HttpServlet {
 			array_p = new JSONArray(projectArray);
 
 			responseMessage.put("date", TSMUtil.formatDate(as));
-			responseMessage.put("size", "" + dts.getActivities().size());
+			responseMessage.put("size", "" + acts.size());
 			responseMessage.put("description", array_de);
 			responseMessage.put("duration", array_du);
 			responseMessage.put("project", array_p);
@@ -401,6 +416,42 @@ public class HomepageServlet extends HttpServlet {
 		System.out.println("new: " + duration + " " + description + " " + date
 				+ " " + isExtra + " " + selectedProject);
 
+		Employee currentUser = (Employee) session.getAttribute("loggedInUser");
+		Date currentDate = TSMUtil.convertStringToDate(date);
+		Date dtrunc = TSMUtil.truncateDateToMonthsFirst(currentDate);		
+		MonthlyTimesheet mts = mtimesheetService.findMTSByDateAndUser(dtrunc,
+				currentUser);
+
+		if (mts == null) {
+			mts = new MonthlyTimesheet();
+			mts.setDate(dtrunc);
+			mts.setOwner(currentUser);
+		} 
+		mtimesheetService.saveOrUpdate(mts);
+		
+		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(
+				currentDate, currentUser);
+
+		// if there is no dts for that particular date and employee create a
+		// new one.
+		if (dts == null) {
+			dts = new DailyTimeSheet();
+			dts.setOwner(currentUser);
+			dts.setDate(currentDate);
+			dts.setmTimesheet(mts);
+		}
+		dtimesheetService.saveOrUpdateEvent(dts);
+		
+		a = new Activity();
+		a.setDescription(description);
+		a.setDuration(Float.parseFloat(duration));
+		a.setIsExtra(Boolean.parseBoolean(isExtra));
+		a.setProject(projectService.findProjectByName(selectedProject));
+		a.setTimesheet(dts);
+		
+		activityService.saveOrUpdate(a);
+		
+		/*
 		Boolean update = true;
 		if (a == null) {
 			a = new Activity();
@@ -455,6 +506,7 @@ public class HomepageServlet extends HttpServlet {
 		// set the ts for this activity
 		a.setTimesheet(dts);
 		activityService.saveOrUpdate(a);
+		*/
 
 		try {
 			responseMessage.put("ok", true);

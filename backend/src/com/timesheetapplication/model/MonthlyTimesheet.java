@@ -31,8 +31,8 @@ public class MonthlyTimesheet extends AbstractEntity {
 	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
-	@OneToMany(mappedBy = "mTimesheet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<DailyTimeSheet> timesheets = new ArrayList<DailyTimeSheet>();
+//	@OneToMany(mappedBy = "mTimesheet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<DailyTimeSheet> timesheets = new ArrayList<DailyTimeSheet>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
@@ -54,13 +54,13 @@ public class MonthlyTimesheet extends AbstractEntity {
 		this.owner = owner;
 	}
 
-	public List<DailyTimeSheet> getTimesheets() {
-		return timesheets;
-	}
-
-	public void setTimesheets(List<DailyTimeSheet> timesheets) {
-		this.timesheets = timesheets;
-	}
+//	public List<DailyTimeSheet> getTimesheets() {
+//		return timesheets;
+//	}
+//
+//	public void setTimesheets(List<DailyTimeSheet> timesheets) {
+//		this.timesheets = timesheets;
+//	}
 
 	public MonthlyTimesheetStatus getStatus() {
 		return status;

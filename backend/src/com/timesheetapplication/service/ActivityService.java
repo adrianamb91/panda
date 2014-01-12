@@ -34,9 +34,9 @@ public class ActivityService {
 	 */
 	public void deleteActivityByDateDurationDescAndProject(Date d, Float duration, String description, Project p) {
 		Activity a = activityDao.findByDateDurationDescAndProject(d, duration, description, p);
-		DailyTimeSheet dts = a.getTimesheet();
-		dts.getActivities().remove(a);
-		dailyDao.saveOrUpdate(dts);
+//		DailyTimeSheet dts = a.getTimesheet();
+//		dts.getActivities().remove(a);
+//		dailyDao.saveOrUpdate(dts);
 
 		activityDao.removeByDateDurationDescAndProject(a);
 	}

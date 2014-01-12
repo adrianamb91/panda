@@ -50,20 +50,20 @@ public class Employee extends AbstractEntity {
 	@Column(name = "job")
 	private Job job;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "employee_project_map", joinColumns = @JoinColumn(name = "proj_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
-	private List<Project> projects = new ArrayList<Project>();
+//	@ManyToMany(cascade = { CascadeType.ALL })
+//	@JoinTable(name = "employee_project_map", joinColumns = @JoinColumn(name = "proj_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
+//	private List<Project> projects = new ArrayList<Project>();
+//
+//	@OneToMany(mappedBy = "owner")
+//	private List<MonthlyTimesheet> mTimesheets = new ArrayList<MonthlyTimesheet>();
 
-	@OneToMany(mappedBy = "owner")
-	private List<MonthlyTimesheet> mTimesheets = new ArrayList<MonthlyTimesheet>();
-
-	public List<Project> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
-	}
+//	public List<Project> getProjects() {
+//		return projects;
+//	}
+//
+//	public void setProjects(List<Project> projects) {
+//		this.projects = projects;
+//	}
 
 	public String getEmail() {
 		return email;
@@ -121,13 +121,13 @@ public class Employee extends AbstractEntity {
 		this.job = job;
 	}
 
-	public List<MonthlyTimesheet> getmTimesheets() {
-		return mTimesheets;
-	}
-
-	public void setmTimesheets(List<MonthlyTimesheet> mTimesheets) {
-		this.mTimesheets = mTimesheets;
-	}
+//	public List<MonthlyTimesheet> getmTimesheets() {
+//		return mTimesheets;
+//	}
+//
+//	public void setmTimesheets(List<MonthlyTimesheet> mTimesheets) {
+//		this.mTimesheets = mTimesheets;
+//	}
 
 	public Employee getManager() {
 		return manager;

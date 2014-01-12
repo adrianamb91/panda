@@ -26,8 +26,8 @@ public class DailyTimeSheet extends AbstractEntity {
 	@JoinColumn(name = "owner_id")
 	private Employee owner;
 
-	@OneToMany (fetch = FetchType.LAZY, mappedBy = "timesheet")
-	private List<Activity> activities = new ArrayList<Activity>();
+//	@OneToMany (fetch = FetchType.LAZY, mappedBy = "timesheet")
+//	private List<Activity> activities = new ArrayList<Activity>();
 
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "month_timesheet_id")
@@ -50,13 +50,13 @@ public class DailyTimeSheet extends AbstractEntity {
 	}
 
 	
-	public List<Activity> getActivities() {
-		return activities;
-	}
-
-	public void setActivities(List<Activity> activities) {
-		this.activities = activities;
-	}
+//	public List<Activity> getActivities() {
+//		return activities;
+//	}
+//
+//	public void setActivities(List<Activity> activities) {
+//		this.activities = activities;
+//	}
 
 	public MonthlyTimesheet getmTimesheet() {
 		return mTimesheet;

@@ -153,7 +153,6 @@
         <li><a href="#view3">Employees Timesheet</a></li>
         <li><a href="#view4">Report 1</a></li>
         <li><a href="#view5">Manage Employees</a></li>
-        <li><a href="#view6">Manage clients and projects</a></li>
     </ul>
     <div class="tabcontents">
         <div id="view1">
@@ -230,6 +229,7 @@
                 <h1 id="no-monthlyts" class="edit">No monthly timesheet yet</h1>
             </div>
         </div>
+
         <div id="view3">
 			Select employee:
 			<select id="clerkDrop" class="text ui-widget-content ui-corner-all">
@@ -257,141 +257,9 @@
 		
 		<!--         report -->
         <div id="view4">
-        	
-        	<label>Select employee: </label>
-			<select id="clerkDrop_report" class="text ui-widget-content ui-corner-all">
-            	<option>Select an employee</option>
-            </select>
-            
-            <label>Select PROJECT: </label>
-			<select id="project_drop_report" class="text ui-widget-content ui-corner-all">
-            	<option>Select a project</option>
-            </select>
-            
-            <label>from: </label>
-            <input class="datepicker" id="selection_date_from" type="text">
-            
-            <label>to: </label>
-            <input class="datepicker" id="selection_date_to" type="text">
-            
-            <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">review summary</button>
-            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
-            <button id="reviewWordButton" onclick="reviewWorkForProjectInInterval()">review work at project</button>
-            
-            <label>Sumar:</label>
-            <div id="summary-interval-entries-contain" class="ui-widget">
-					<table id="summary_interval-entries-table" style="float: left" class="ui-widget ui-widget-content">
-						<thead>
-							<tr class="ui-widget-header ">
-								<th>Project</th>
-								<th>Duration</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-			</div>
-            <br>
-            <label>Detalii:</label>
-            <div id="interval-entries-contain" class="ui-widget">
-					<table id="interval-entries-table" style="float: left" class="ui-widget ui-widget-content">
-						<thead>
-							<tr class="ui-widget-header ">
-								<th>Date</th>
-								<th>Duration</th>
-								<th>Description</th>
-								<th>Project</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-			</div>
-			<br>
-			
-			<label>Sumar proiect:</label>
-            <div id="summary-interval-project-contain" class="ui-widget">
-					<table id="summary_interval-project-table" style="float: left" class="ui-widget ui-widget-content">
-						<thead>
-							<tr class="ui-widget-header ">
-								<th>Owner</th>
-								<th>Duration</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-			</div>
-			
-			<div id="chart1" style="float: right; margin-top:20px; margin-left:20px; width:800px; height:800px;"></div>
-            
         </div>
-        
 
         <div id="view5">
-        </div>
-        <div id="view6">
-            <div id="add-client-dialog" class="dialog-form" title="Add new client">
-                <p class="validateTips">All form fields are required.</p>
-
-                <form id="new_client">
-                    <fieldset>
-                        <input placeholder="Client name" type="text" name="clientName" id="clientName" value ="" class="text ui-widget-content ui-corner-all">
-                        <input type="submit" style="display: none" />
-                    </fieldset>
-                </form>
-            </div>
-
-            <div id="clients-contain" class="entries-contain" class="ui-widget">
-                <h1 id="exist-clients" class="edit">Existing Clients:</h1>
-                <table id="clients-table" class="ui-widget ui-widget-content">
-                    <thead>
-                    <tr class="ui-widget-header ">
-                        <th>Name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <h1 id="no-clients" class="edit">No clients yet</h1>
-            </div>
-
-            <button id="add-client">Add client</button>
-            <br>
-            <!---- Aici incepe treaba cu proiectele --->
-            <div id="add-project-dialog" class="dialog-form" title="Add new client">
-                <p class="validateTips">All form fields are required.</p>
-
-                <form id="new_project">
-                    <fieldset>
-                        <input placeholder="Department name" type="text" name="departmentName" id="departmentName"
-                               value="" readonly class="text ui-widget-content ui-corner-all">
-                        <input placeholder="Project name" type="text" name="projectName" id="projectName"
-                               value ="" class="text ui-widget-content ui-corner-all">
-                        <select id="clientDrop" name="Client" class="text ui-widget-content ui-corner-all">
-                            <option>Select a client</option>
-                        </select>
-                        <input type="submit" style="display: none" />
-                    </fieldset>
-                </form>
-            </div>
-
-            <div id="projects-contain" class="entries-contain" class="ui-widget">
-                <h1 id="exist-projects" class="edit">Existing Clients:</h1>
-                <table id="projects-table" class="ui-widget ui-widget-content">
-                    <thead>
-                    <tr class="ui-widget-header ">
-                        <th>Name</th>
-                        <th>Client</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <h1 id="no-projects" class="edit">No projects yet</h1>
-            </div>
-
-            <button id="add-project">Add project</button>
         </div>
     </div>
 </div>

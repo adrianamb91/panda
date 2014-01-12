@@ -22,8 +22,8 @@ public class Division extends AbstractEntity {
 	@JoinColumn(name = "manager_id")
 	private Employee manager;
 
-	@OneToMany(mappedBy = "division")
-	private List<Department> departments = new ArrayList<Department>();
+//	@OneToMany(mappedBy = "division")
+//	private List<Department> departments = new ArrayList<Department>();
 
 	public String getName() {
 		return name;
@@ -41,7 +41,7 @@ public class Division extends AbstractEntity {
 		this.manager = manager;
 	}
 
-	public List<Department> getDepartments() {
-		return departments;
-	}
+//	public List<Department> getDepartments() {
+//		return departments;
+//	}
 }

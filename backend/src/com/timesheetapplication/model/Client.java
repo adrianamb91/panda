@@ -16,8 +16,8 @@ public class Client extends AbstractEntity {
 	@Column(name = "name")
 	private String name;
 
-	@OneToMany(mappedBy = "client")
-	private List<Project> projects = new ArrayList<Project>();
+//	@OneToMany(mappedBy = "client")
+//	private List<Project> projects = new ArrayList<Project>();
 
 	public String getName() {
 		return name;
@@ -27,12 +27,12 @@ public class Client extends AbstractEntity {
 		this.name = name;
 	}
 
-	public List<Project> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
-	}
+//	public List<Project> getProjects() {
+//		return projects;
+//	}
+//
+//	public void setProjects(List<Project> projects) {
+//		this.projects = projects;
+//	}
 
 }

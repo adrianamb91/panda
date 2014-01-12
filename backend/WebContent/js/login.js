@@ -23,6 +23,10 @@ function sendLoginInfoToServer(un, pswd) {
 					window.open('http://' + serverIp
 							+ '/TimesheetManagement/homepageDeptManager.html',
 							'_self', false);
+				} else if (data.job == 'DIVISION_MANAGER') {
+					window.open('http://' + serverIp
+							+ '/TimesheetManagement/homepageDivManager.html',
+							'_self', false);
 				}
 			} 
 			else if (data.access === 'wrong_password'){

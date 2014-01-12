@@ -32,11 +32,11 @@ public class Department extends AbstractEntity {
 	@JoinColumn(name = "division_id")
 	private Division division;
 
-	@OneToMany(mappedBy = "department")
-	private List<Employee> employees = new ArrayList<Employee>();
-
-	@OneToMany
-	private List<Project> projects = new ArrayList<Project>();
+//	@OneToMany(mappedBy = "department")
+//	private List<Employee> employees = new ArrayList<Employee>();
+//
+//	@OneToMany
+//	private List<Project> projects = new ArrayList<Project>();
 
 	public String getName() {
 		return name;
@@ -62,21 +62,21 @@ public class Department extends AbstractEntity {
 		this.division = division;
 	}
 
-	public List<Employee> getEmployees() {
-		return employees;
-	}
-
-	public void setEmployees(List<Employee> employees) {
-		this.employees = employees;
-	}
-
-	public List<Project> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
-	}
+//	public List<Employee> getEmployees() {
+//		return employees;
+//	}
+//
+//	public void setEmployees(List<Employee> employees) {
+//		this.employees = employees;
+//	}
+//
+//	public List<Project> getProjects() {
+//		return projects;
+//	}
+//
+//	public void setProjects(List<Project> projects) {
+//		this.projects = projects;
+//	}
 
 	public String getAbbv() {
 		return abbv;

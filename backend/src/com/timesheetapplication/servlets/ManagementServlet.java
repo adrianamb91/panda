@@ -372,7 +372,7 @@ public class ManagementServlet extends HttpServlet {
 		e.setLastName(lastName);
 		e.setEmail(email);
 		e.setJob(Job.valueOf(job));
-		e.getProjects().add(projectService.findProjectByName(project));
+		//e.getProjects().add(projectService.findProjectByName(project));
 		e.setDepartment(departmentService.findDepartmentByName(depart));
 
 		employeeService.saveOrUpdate(e);
