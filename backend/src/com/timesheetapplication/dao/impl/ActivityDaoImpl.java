@@ -60,4 +60,19 @@ public class ActivityDaoImpl extends GenericDaoImpl<Activity> implements Activit
 		return q.getResultList();
 	}
 
+	public Activity findByDateDurationDesc(Date date, Float duration,
+			String description) {
+		// TODO Auto-generated method stub
+		Query q = em
+				.createQuery("Select a from Activity a where a.timesheet.date = :date and a.duration = :duration and a.description = :description");
+		q.setParameter("date", date).setParameter("duration", duration).setParameter("description", description);
+
+		ArrayList<Activity> results = (ArrayList<Activity>) q.getResultList();
+
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
+	}
+
 }

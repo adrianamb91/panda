@@ -450,63 +450,6 @@ public class HomepageServlet extends HttpServlet {
 		a.setTimesheet(dts);
 		
 		activityService.saveOrUpdate(a);
-		
-		/*
-		Boolean update = true;
-		if (a == null) {
-			a = new Activity();
-			update = false;
-		}
-
-		a.setDescription(description);
-		a.setDuration(Float.parseFloat(duration));
-		a.setIsExtra(Boolean.parseBoolean(isExtra));
-		a.setProject(projectService.findProjectByName(selectedProject));
-
-		activityService.saveOrUpdate(a);
-
-		Employee currentUser = (Employee) session.getAttribute("loggedInUser");
-		Date currentDate = TSMUtil.convertStringToDate(date);
-
-		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(
-				currentDate, currentUser);
-
-		// if there is no dts for that particular date and employee create a
-		// new one.
-		if (dts == null) {
-			dts = new DailyTimeSheet();
-			dts.getActivities().add(a);
-			dts.setOwner(currentUser);
-			dts.setDate(currentDate);
-		} else {
-			if (!update) {
-				dts.getActivities().add(a);
-			}
-		}
-		dtimesheetService.saveOrUpdateEvent(dts);
-
-		Date dtrunc = TSMUtil.truncateDateToMonthsFirst(currentDate);
-		MonthlyTimesheet mts = mtimesheetService.findMTSByDateAndUser(dtrunc,
-				currentUser);
-
-		if (mts == null) {
-			mts = new MonthlyTimesheet();
-			mts.setDate(dtrunc);
-			mts.setOwner(currentUser);
-			mts.getTimesheets().add(dts);
-		} else {
-			mts.getTimesheets().add(dts);
-		}
-
-		mtimesheetService.saveOrUpdate(mts);
-
-		dts.setmTimesheet(mts);
-		dtimesheetService.saveOrUpdateEvent(dts);
-
-		// set the ts for this activity
-		a.setTimesheet(dts);
-		activityService.saveOrUpdate(a);
-		*/
 
 		try {
 			responseMessage.put("ok", true);

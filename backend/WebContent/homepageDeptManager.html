@@ -372,7 +372,72 @@
 					<div id="chart3" style="width:800px; height:500px;display: none"></div>
 				</div>
 			</div>
+
         <div id="view5">
+        </div>
+
+        <div id="view6">
+            <div id="add-client-dialog" class="dialog-form" title="Add new client">
+                <p class="validateTips">All form fields are required.</p>
+
+                <form id="new_client">
+                    <fieldset>
+                        <input placeholder="Client name" type="text" name="clientName" id="clientName" value ="" class="text ui-widget-content ui-corner-all">
+                        <input type="submit" style="display: none" />
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="clients-contain" class="entries-contain" class="ui-widget">
+                <h1 id="exist-clients" class="edit">Existing Clients:</h1>
+                <table id="clients-table" class="ui-widget ui-widget-content">
+                    <thead>
+                    <tr class="ui-widget-header ">
+                        <th>Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <h1 id="no-clients" class="edit">No clients yet</h1>
+            </div>
+
+            <button id="add-client">Add client</button>
+            <br>
+            <!---- Aici incepe treaba cu proiectele --->
+            <div id="add-project-dialog" class="dialog-form" title="Add new client">
+                <p class="validateTips">All form fields are required.</p>
+
+                <form id="new_project">
+                    <fieldset>
+                        <input placeholder="Department name" type="text" name="departmentName" id="departmentName"
+                               value="" readonly class="text ui-widget-content ui-corner-all">
+                        <input placeholder="Project name" type="text" name="projectName" id="projectName"
+                               value ="" class="text ui-widget-content ui-corner-all">
+                        <select id="clientDrop" name="Client" class="text ui-widget-content ui-corner-all">
+                            <option>Select a client</option>
+                        </select>
+                        <input type="submit" style="display: none" />
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="projects-contain" class="entries-contain" class="ui-widget">
+                <h1 id="exist-projects" class="edit">Existing Clients:</h1>
+                <table id="projects-table" class="ui-widget ui-widget-content">
+                    <thead>
+                    <tr class="ui-widget-header ">
+                        <th>Name</th>
+                        <th>Client</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <h1 id="no-projects" class="edit">No projects yet</h1>
+            </div>
+
+            <button id="add-project">Add project</button>
         </div>
     </div>
 </div>
