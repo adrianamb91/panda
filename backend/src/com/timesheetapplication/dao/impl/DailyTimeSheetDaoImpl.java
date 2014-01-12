@@ -1,6 +1,7 @@
 package com.timesheetapplication.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -74,5 +75,10 @@ public class DailyTimeSheetDaoImpl extends GenericDaoImpl<DailyTimeSheet> implem
 			q.setParameter("id", dts.getId());
 
 		q.executeUpdate();
+	}
+
+	public List<DailyTimeSheet> findDTSbyMTS(MonthlyTimesheet mts) {
+		Query q = em.createQuery("Select d from DailyTimeSheet d where d.mTimesheet.id = :id").setParameter("id", mts.getId());
+		return q.getResultList();
 	}
 }

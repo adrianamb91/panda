@@ -16,7 +16,7 @@ $(document).ready(function() {
 	loadProjectsForUser();
 	loadTodaysTimesheetForUser();
 	loadAllMTimesheetsForUser();
-	
+
 	loadEmployees();
 
 	getDepartment();
@@ -37,20 +37,19 @@ $(document).ready(function() {
 		endSession();
 	});
 
-	$("#main_datepicker").datepicker(
-			{
-				dateFormat : "dd/mm/yy",
-				onSelect : function(selected, event) {
-					console.log("I'm here");
-					loadTodaysTimesheetForUser(selected);
-				}
-			});
+	$("#main_datepicker").datepicker({
+		dateFormat : "dd/mm/yy",
+		onSelect : function(selected, event) {
+			console.log("I'm here");
+			loadTodaysTimesheetForUser(selected);
+		}
+	});
 });
 
 function populateHeaderData(name, date, job) {
 	document.getElementById('topBarInfo').innerHTML = date
-	+ "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp You are logged in as:"
-	+ name + "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Job:" + job;
+			+ "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp You are logged in as:"
+			+ name + "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Job:" + job;
 }
 
 function getLoginDataFromServer() {
@@ -148,6 +147,33 @@ function changePassword() {
 
 }
 
+function viewMTS() {
+
+//	var projectDropdown = document.getElementById('projectDrop');
+//	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
+//	var empname = $('#clerkDrop').options[$('#clerkDrop').selectedIndex].text;
+	
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	console.log("requesting MTS for " + empname);
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewLastMTS",
+			name: empname},
+		success: function (data, textStatus, jqXHR) {
+			console.log("REVIEW MTS: ");
+			console.log(data);
+			populateAllActivitiesTable(data);
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
 function loadProjectsForUser() {
 	console.log("loadProjectsForUser");
 	$.ajax({
@@ -190,47 +216,58 @@ function loadAllMTimesheetsForUser() {
 	// delete all rows from the table
 	// don't worry, they'll be brought back from the server
 	$("#monthly-entries > tbody").empty();
-	$.ajax({
-		type : "GET",
-		url : "HomepageServlet",
-		data : {
-			phase : "loadAllMTimesheets"
-		},
-		success : function(data, textStatus, jqXHR) {
-			console.log("monthly");
-			console.log(data);
-			var tsTable = $('#monthly-entries');
+	$
+			.ajax({
+				type : "GET",
+				url : "HomepageServlet",
+				data : {
+					phase : "loadAllMTimesheets"
+				},
+				success : function(data, textStatus, jqXHR) {
+					console.log("monthly");
+					console.log(data);
+					var tsTable = $('#monthly-entries');
 
-			for (var i = 0; i < data.size; i++) {
-				if (data.status[i] == 'OPEN') {
-					console.log("dat2: " + data.date[i]);
-					tsTable.append("<tr>" + 
-							"<td>" + data.date[i] + "</td>" +
-							"<td>" + '<a href="# onclick="editMTSstatus(' + i + 1 + ')>'
-							+ data.status[i] + '</a> <button id="submitMTS" style="float: right" onclick="submitMTS(' + i + 1 + ')">Submit</button>' + "</td>" + 
-					"</tr>");
-				} else {
-					tsTable.append("<tr>" + 
-							"<td>" + data.date[i] + "</td>" +
-							"<td>" + '<a href="# onclick="editMTSstatus(' + i + 1 + ')>'
-							+ data.status[i] + '</a>' + "</td>" + 
-					"</tr>");
+					for (var i = 0; i < data.size; i++) {
+						if (data.status[i] == 'OPEN') {
+							console.log("dat2: " + data.date[i]);
+							tsTable
+									.append("<tr>"
+											+ "<td>"
+											+ data.date[i]
+											+ "</td>"
+											+ "<td>"
+											+ '<a href="# onclick="editMTSstatus('
+											+ i
+											+ 1
+											+ ')>'
+											+ data.status[i]
+											+ '</a> <button id="submitMTS" style="float: right" onclick="submitMTS('
+											+ i + 1 + ')">Submit</button>'
+											+ "</td>" + "</tr>");
+						} else {
+							tsTable.append("<tr>" + "<td>" + data.date[i]
+									+ "</td>" + "<td>"
+									+ '<a href="# onclick="editMTSstatus(' + i
+									+ 1 + ')>' + data.status[i] + '</a>'
+									+ "</td>" + "</tr>");
+						}
+
+					}
 				}
-
-			}
-		}
-	});
+			});
 }
 
 function submitMTS(i) {
 	var table = $('#monthly-entries');
 	var selectorValue = 'tr:eq(' + i + ')';
 	var row = $(selectorValue, table);
-	
+
 	$.ajax({
-		type: "GET",
+		type : "GET",
 		url : "HomepageServlet",
-		data : {phase : "submitMTSByDeptM",
+		data : {
+			phase : "submitMTSByDeptM",
 			date : "" + row[0].cells[0].innerHTML,
 		},
 		success : function(data, textStatus, jqXHR) {
@@ -252,9 +289,10 @@ function removeActivity(i) {
 	var selectorValue = 'tr:eq(' + i + ')';
 	var row = $(selectorValue, table);
 	$.ajax({
-		type: "GET",
+		type : "GET",
 		url : "HomepageServlet",
-		data : {phase : "removeActivity",
+		data : {
+			phase : "removeActivity",
 			date : (row[0].cells[0]).innerHTML,
 			duration : (row[0].cells[1]).innerHTML,
 			description : (row[0].cells[2]).innerHTML,
@@ -273,8 +311,7 @@ function removeActivity(i) {
 	return false;
 }
 
-
-//for the moment this doesn't really work
+// for the moment this doesn't really work
 function editActivity(i) {
 
 	var table = $('#entries-table');
@@ -290,33 +327,37 @@ function editActivity(i) {
 	$('#description').attr('value', '' + row[0].cells[2].innerHTML);
 
 	var form = $('#new_entry'), allFields = $(':text', form);
-	$("#dialog-form").dialog({
-		autoOpen : false,
-		height : 510,
-		width : 350,
-		modal : true,
-		draggable : false,
-		resizable : false,
-		buttons : {
-			"Save_2" : function() {
-				console.log("save_1 clicked!");
-				allFields.removeClass("ui-state-error");
-				// console.log(validateFields(form));
-				// addToUsers(form);
-				console.log("save_2 called!!");
-				saveActivity(row[0].cells[0].innerHTML, row[0].cells[1].innerHTML, row[0].cells[2].innerHTML, row[0].cells[3].innerHTML);
-				$(this).dialog("close");
-			},
-			Cancel : function() {
-				$(this).dialog("close");
-				loadTodaysTimesheetForUser();
-			}
-		},
-		close : function() {
-			allFields.val("").removeClass("ui-state-error");
-			loadTodaysTimesheetForUser();
-		}
-	});
+	$("#dialog-form").dialog(
+			{
+				autoOpen : false,
+				height : 510,
+				width : 350,
+				modal : true,
+				draggable : false,
+				resizable : false,
+				buttons : {
+					"Save_2" : function() {
+						console.log("save_1 clicked!");
+						allFields.removeClass("ui-state-error");
+						// console.log(validateFields(form));
+						// addToUsers(form);
+						console.log("save_2 called!!");
+						saveActivity(row[0].cells[0].innerHTML,
+								row[0].cells[1].innerHTML,
+								row[0].cells[2].innerHTML,
+								row[0].cells[3].innerHTML);
+						$(this).dialog("close");
+					},
+					Cancel : function() {
+						$(this).dialog("close");
+						loadTodaysTimesheetForUser();
+					}
+				},
+				close : function() {
+					allFields.val("").removeClass("ui-state-error");
+					loadTodaysTimesheetForUser();
+				}
+			});
 
 	return false;
 }
@@ -334,7 +375,7 @@ function loadTodaysTimesheetForUser(dateWanted) {
 		url : "HomepageServlet",
 		data : {
 			phase : "loadTodaysTimesheet",
-			date: dateWanted
+			date : dateWanted
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -368,8 +409,6 @@ function loadTodaysTimesheetForUser(dateWanted) {
 	});
 }
 
-
-
 function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 
 	console.log("entered save");
@@ -380,8 +419,8 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 	var projectDropdown = document.getElementById('projectDrop');
 	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
 
-	$( "#selection_date" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
-	var date = $( "#selection_date" ).datepicker().val();
+	$("#selection_date").datepicker("option", "dateFormat", "dd/mm/yy");
+	var date = $("#selection_date").datepicker().val();
 	console.log(date);
 
 	$.ajax({
@@ -395,9 +434,9 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 			date : "" + date,
 			project : "" + projectName,
 			old_date : "" + olddate,
-			old_duration: "" + oldduration,
-			old_description: "" + olddescription,
-			old_projectName: "" + oldProjectName
+			old_duration : "" + oldduration,
+			old_description : "" + olddescription,
+			old_projectName : "" + oldProjectName
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -415,7 +454,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 	});
 }
 
-//De aici incepe managementul clientilor si al proiectelor
+// De aici incepe managementul clientilor si al proiectelor
 
 function saveClient() {
 	var name = document.getElementById('clientName').value;
@@ -455,9 +494,8 @@ function populateClientsTable(data) {
 
 		for (var i = 0; i < data.size; i++) {
 			var rowIndex = i + 1;
-			tsTable.append("<tr>" +
-					'<td class="edit">' + data.elements[i] + "</td>"
-					+ "</tr>");
+			tsTable.append("<tr>" + '<td class="edit">' + data.elements[i]
+					+ "</td>" + "</tr>");
 		}
 	} else {
 		noEntries.show();
@@ -499,12 +537,13 @@ function saveProject() {
 	console.log("manager name: |" + clientName + "|");
 
 	$.ajax({
-		type: "GET",
+		type : "GET",
 		url : "ClientProjectServlet",
-		data : {phase : "saveProject",
+		data : {
+			phase : "saveProject",
 			client : "" + clientName,
 			project : "" + projectName,
-			department: "" + departmentName
+			department : "" + departmentName
 		},
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -545,7 +584,6 @@ function populateProjectsTable(data) {
 	var existingEntries = $('#exist-projects');
 
 	if (data.ok == true) {
-		console.log("Size = " + data.size);
 		$('#projects-table > tbody').empty();
 		tsTable.show();
 		noEntries.hide();
@@ -553,10 +591,8 @@ function populateProjectsTable(data) {
 
 		for (var i = 0; i < data.size; i++) {
 			var rowIndex = i + 1;
-			tsTable.append("<tr>" +
-					'<td class="edit">' + data.elements[i] + "</td>"
-					+ "<td>" + data.clients[i] + "</td>"
-					+ "</tr>");
+			tsTable.append("<tr>" + '<td class="edit">' + data.elements[i]
+					+ "</td>" + "<td>" + data.clients[i] + "</td>" + "</tr>");
 		}
 	} else {
 		noEntries.show();
@@ -653,7 +689,7 @@ $(function() {
 	}
 });
 
-//form for entries in daily timesheet
+// form for entries in daily timesheet
 $(function() {
 	var form = $('#new_project'), allFields = $(':text', form);
 	$("#add-project-dialog").dialog({
@@ -735,7 +771,6 @@ $(function() {
 	function validateFields(form) {
 		var bValid = true;
 
-
 		return bValid;
 	}
 });
@@ -744,7 +779,7 @@ $(function() {
 	$(".datepicker").datepicker(
 			{
 				dateFormat : "dd/mm/yy",
-				//maxDate: "+1d",
+				// maxDate: "+1d",
 				onSelect : function(dateText, inst) {
 					var date = $.datepicker.parseDate(inst.settings.dateFormat
 							|| $.datepicker._defaults.dateFormat, dateText,
@@ -755,7 +790,7 @@ $(function() {
 			});
 });
 
-//form function
+// form function
 $(function() {
 	var form = $('#new_entry'), allFields = $(':text', form);
 	$("#dialog-form").dialog({
@@ -844,13 +879,35 @@ $(function() {
 
 		bValid = bValid && checkLength(description, "description", 1, 250);
 		bValid = bValid
-		&& checkRegexp(duration, /^([0-9.])+$/i,
-		"Duration should be expressed in number of hours");
+				&& checkRegexp(duration, /^([0-9.])+$/i,
+						"Duration should be expressed in number of hours");
 
 		var project = document.getElementById('projectDrop');
 		bValid = bValid
-		&& validateSelectedProject(project, "You must select a project");
+				&& validateSelectedProject(project, "You must select a project");
 
 		return bValid;
 	}
 });
+
+
+function populateAllActivitiesTable(data) {
+	
+	console.log("populateAllActivitiesTable:");
+	
+	var table = $('#all-entries-table');
+	$('#all-entries-table > tbody').empty();
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			console.log("intra aici");
+			table.append("<tr>" + 
+							'<td>' + data.date[i] + "</td>" + 
+							"<td>" + data.duration[i] + "</td>" + 
+							"<td>" + data.description[i] + "</td>" + 
+							"<td>" + data.project[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}

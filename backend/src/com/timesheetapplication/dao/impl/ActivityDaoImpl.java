@@ -2,12 +2,14 @@ package com.timesheetapplication.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.timesheetapplication.dao.ActivityDao;
 import com.timesheetapplication.model.Activity;
+import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Project;
 
 public class ActivityDaoImpl extends GenericDaoImpl<Activity> implements ActivityDao {
@@ -36,6 +38,11 @@ public class ActivityDaoImpl extends GenericDaoImpl<Activity> implements Activit
 		em.getTransaction().begin();
 		em.remove(a);
 		em.getTransaction().commit();
+	}
+
+	public List<Activity> findActivitiesByDTS(DailyTimeSheet crtDTS) {
+		Query q = em.createQuery("Select a from Activity a where a.timesheet.id = :id").setParameter("id", crtDTS.getId());
+		return q.getResultList();
 	}
 
 }
