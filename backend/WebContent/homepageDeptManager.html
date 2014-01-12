@@ -213,9 +213,25 @@
 			<select id="clerkDrop" class="text ui-widget-content ui-corner-all">
             	<option>Select an employee</option>
             </select>
-        </div>
+            
+            <br>
+            <button id="viewMTS" onclick="viewMTS()">Examine timesheet</button>
+				
+			<div id="all-entries-contain" class="ui-widget">
+					<table id="all-entries-table" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Date</th>
+								<th>Duration</th>
+								<th>Description</th>
+								<th>Project</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
         <div id="view4">
-
         </div>
         <div id="view5">
             <div id="add-client-dialog" class="dialog-form" title="Add new client">

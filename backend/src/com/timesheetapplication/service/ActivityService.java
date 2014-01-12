@@ -1,6 +1,7 @@
 package com.timesheetapplication.service;
 
 import java.util.Date;
+import java.util.List;
 
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.ActivityDaoImpl;
@@ -38,6 +39,10 @@ public class ActivityService {
 		dailyDao.saveOrUpdate(dts);
 
 		activityDao.removeByDateDurationDescAndProject(a);
+	}
+
+	public List<Activity> findActivitiesByDTS(DailyTimeSheet crtDTS) {
+		return activityDao.findActivitiesByDTS(crtDTS);
 	}
 
 }
