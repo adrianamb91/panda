@@ -913,15 +913,21 @@ function populateAllActivitiesTable(data) {
 	return false;
 }
 
+
 function reviewWorkFromEmployeeInInterval() {
 	
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
 	
+	from = "06/01/2014";
+	to = "20/01/2014";
+	
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
 	
 	console.log("to: " + to + " from: " + from);
+	
+	//generatePieChart();
 	
 	$.ajax({
 		type: "GET", 
@@ -935,6 +941,8 @@ function reviewWorkFromEmployeeInInterval() {
 			console.log("REVIEW MTS INTERVAL: ");
 			console.log(data);
 			populateIntervalActivitiesTable(data);
+			
+			generatePieChart(data.chartDataJSON);
 		},
 		error: function() {
 			alert("general failure!");
@@ -960,5 +968,30 @@ function populateIntervalActivitiesTable(data) {
 		}
 	}	
 	return false;
-	
 }
+
+function generatePieChart(entries) {
+	
+	console.log("PLOT: ");
+	console.log(entries);
+	
+	plot2 = jQuery.jqplot('chart1', entries,
+		{
+			title : ' ',
+			seriesDefaults : {
+				shadow : false,
+				renderer : jQuery.jqplot.PieRenderer,
+				rendererOptions : {
+					startAngle : 180,
+					sliceMargin : 4,
+					showDataLabels : true
+				}
+			},
+			legend : {
+				show : true,
+				location : 'w'
+			}
+		});
+}
+
+reviewSummaryWorkFromEmployeeInInterval

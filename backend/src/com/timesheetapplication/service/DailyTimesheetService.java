@@ -25,8 +25,8 @@ public class DailyTimesheetService {
 		return dtimesheetDao.findDTSbyMTS(mts);
 	}
 
-	public List<DailyTimeSheet> loadDTSinInterval(Date from, Date to) {
-		return dtimesheetDao.loadFromInterval(from, to);
+	public List<DailyTimeSheet> loadDTSinInterval(Employee e, Date from, Date to) {
+		return dtimesheetDao.loadFromInterval(e, from, to);
 	}
 
 }

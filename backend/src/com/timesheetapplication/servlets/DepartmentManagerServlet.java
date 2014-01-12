@@ -3,7 +3,9 @@ package com.timesheetapplication.servlets;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sun.crypto.provider.DESCipher;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Department;
@@ -92,12 +93,13 @@ public class DepartmentManagerServlet extends HttpServlet {
 		if (TSMUtil.isNotEmptyOrNull(ename)) {
 			Employee e = employeeService.findEmployeeByFirstAndLastName(ename);
 			if (e != null) {
-				List<DailyTimeSheet> dtsheets = dTimesheetService.loadDTSinInterval(TSMUtil.convertStringToDate(from),
+				List<DailyTimeSheet> dtsheets = dTimesheetService.loadDTSinInterval(e, TSMUtil.convertStringToDate(from),
 						TSMUtil.convertStringToDate(to));
 				if (dtsheets != null) {
 
 					List<Activity> crtActivities = new ArrayList<Activity>();
 					List<Activity> allActivities = new ArrayList<Activity>();
+					Map<String, Float> chartData = new HashMap<String, Float>();
 
 					for (DailyTimeSheet dts : dtsheets) {
 						crtActivities = activityService.findActivitiesByDTS(dts);
@@ -118,13 +120,48 @@ public class DepartmentManagerServlet extends HttpServlet {
 						durationArray.add(a.getDuration().toString());
 						descriptionArray.add(a.getDescription());
 						projectArray.add(a.getProject().getName());
-					}
+						
+						if (!chartData.containsKey(a.getProject().getName())) {
+							chartData.put(a.getProject().getName(), a.getDuration());
+						}
+						else {
+							Float oldValue = chartData.get(a.getProject().getName());
+							chartData.put(a.getProject().getName(), oldValue + a.getDuration());
+						}
+					}	
 
 					array_da = new JSONArray(dateArray);
 					array_du = new JSONArray(durationArray);
 					array_de = new JSONArray(descriptionArray);
 					array_p = new JSONArray(projectArray);
-
+					
+					System.out.println(array_da);
+					System.out.println(chartData);
+					
+					JSONObject chartFormat = new JSONObject(chartData);
+					System.out.println(chartFormat.toString());
+					System.out.println(chartFormat);
+					
+					JSONArray chartJSON = null;
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append("[[");
+					
+					int iter = 0;
+					for (String p : chartData.keySet()) {
+						sb.append("['");
+						sb.append(p);
+						sb.append("', ");
+						sb.append(chartData.get(p));
+						sb.append("]");
+						if (iter < chartData.keySet().size() - 1) {
+							sb.append(", ");
+						}
+						iter ++ ;
+					}
+					
+					sb.append("]]");
+					
 					try {
 						responseMessage.put("date", array_da);
 						responseMessage.put("description", array_de);
@@ -132,6 +169,9 @@ public class DepartmentManagerServlet extends HttpServlet {
 						responseMessage.put("project", array_p);
 						responseMessage.put("size", allActivities.size());
 						responseMessage.put("ok", true);
+						chartJSON = new JSONArray(sb.toString());
+						responseMessage.put("chartDataJSON", chartJSON);
+						responseMessage.put("chartData", sb.toString());
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}

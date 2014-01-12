@@ -82,10 +82,11 @@ public class DailyTimeSheetDaoImpl extends GenericDaoImpl<DailyTimeSheet> implem
 		return q.getResultList();
 	}
 
-	public List<DailyTimeSheet> loadFromInterval(Date from, Date to) {
-		Query q = em.createQuery("Select d from DailyTimeSheet d where d.date > :from and d.date < :to");
+	public List<DailyTimeSheet> loadFromInterval(Employee e, Date from, Date to) {
+		Query q = em.createQuery("Select d from DailyTimeSheet d where d.date > :from and d.date < :to and d.owner.id = :id");
 		q.setParameter("from", from);
 		q.setParameter("to", to);
+		q.setParameter("id", e.getId());
 		
 		return q.getResultList();
 	}

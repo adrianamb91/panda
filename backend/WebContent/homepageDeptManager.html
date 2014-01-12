@@ -21,6 +21,27 @@
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
     <link rel="stylesheet"
           href="http://jqueryui.com/resources/demos/style.css" />
+          
+          
+    <!-- Chestii pentru piechart -->      
+    <link class="include" rel="stylesheet" type="text/css" href="pie-charts/jquery.jqplot.min.css" />
+    <link rel="stylesheet" type="text/css" href="pie-charts/examples.min.css" />
+    <link type="text/css" rel="stylesheet" href="pie-charts/syntaxhighlighter/styles/shCoreDefault.min.css" />
+    <link type="text/css" rel="stylesheet" href="pie-charts/syntaxhighlighter/styles/shThemejqPlot.min.css" />   
+    
+<!--     <script class="include" type="text/javascript" src="pie-charts/jquery.min.js"></script>    -->
+    
+    <script class="include" type="text/javascript" src="pie-charts/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="pie-charts/syntaxhighlighter/scripts/shCore.min.js"></script>
+    <script type="text/javascript" src="pie-charts/syntaxhighlighter/scripts/shBrushJScript.min.js"></script>
+    <script type="text/javascript" src="pie-charts/syntaxhighlighter/scripts/shBrushXml.min.js"></script>
+    
+    <script class="include" type="text/javascript" src="pie-charts/jqplot.pieRenderer.min.js"></script>
+<!--     <script type="text/javascript" src="pie-charts/example.min.js"></script> -->
+    
+    <!-- End of chestii pentru piechart -->
+          
+          
     <script type="text/javascript" src="js/homepageDeptManager.js"></script>
 
     <style>
@@ -248,11 +269,26 @@
             <label>to: </label>
             <input class="datepicker" id="selection_date_to" type="text">
             
-            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review work</button>
+            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review summary</button>
+            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
             
-            
+            <label>Sumar:</label>
             <div id="interval-entries-contain" class="ui-widget">
-					<table id="interval-entries-table" class="ui-widget ui-widget-content">
+					<table id="interval-entries-table" style="float: left" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Project</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
+            
+            <label>Detalii:</label>
+            <div id="interval-entries-contain" class="ui-widget">
+					<table id="interval-entries-table" style="float: left" class="ui-widget ui-widget-content">
 						<thead>
 							<tr class="ui-widget-header ">
 								<th>Date</th>
@@ -265,7 +301,8 @@
 						</tbody>
 					</table>
 			</div>
-            
+			
+			<div id="chart1" style="float: right; margin-top:20px; margin-left:20px; width:800px; height:800px;"></div>
             
         </div>
         
