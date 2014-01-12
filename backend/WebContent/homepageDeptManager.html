@@ -130,8 +130,9 @@
         <li><a href="#view1">Daily Timesheet</a></li>
         <li><a href="#view2">Monthly Timesheet</a></li>
         <li><a href="#view3">Employees Timesheet</a></li>
-        <li><a href="#view4">Manage Employees</a></li>
-        <li><a href="#view5">Manage clients and projects</a></li>
+        <li><a href="#view4">Report 1</a></li>
+        <li><a href="#view5">Manage Employees</a></li>
+        <li><a href="#view6">Manage clients and projects</a></li>
     </ul>
     <div class="tabcontents">
         <div id="view1">
@@ -232,9 +233,46 @@
 					</table>
 			</div>
 		</div>
+		
+		<!--         report -->
         <div id="view4">
+        	
+        	<label>Select employee: </label>
+			<select id="clerkDrop_report" class="text ui-widget-content ui-corner-all">
+            	<option>Select an employee</option>
+            </select>
+            
+            <label>from: </label>
+            <input class="datepicker" id="selection_date_from" type="text">
+            
+            <label>to: </label>
+            <input class="datepicker" id="selection_date_to" type="text">
+            
+            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review work</button>
+            
+            
+            <div id="interval-entries-contain" class="ui-widget">
+					<table id="interval-entries-table" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Date</th>
+								<th>Duration</th>
+								<th>Description</th>
+								<th>Project</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
+            
+            
         </div>
+        
+
         <div id="view5">
+        </div>
+        <div id="view6">
             <div id="add-client-dialog" class="dialog-form" title="Add new client">
                 <p class="validateTips">All form fields are required.</p>
 

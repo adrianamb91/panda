@@ -72,10 +72,91 @@ public class DepartmentManagerServlet extends HttpServlet {
 			break;
 		case "reviewLastMTS":
 			processReviewLastMTS(request, responseMessage, response);
+			break;
+		case "reviewMTSforUserInInterval":
+			processReviewMTSforUserInInterval(request, responseMessage, response);
 		default:
 			break;
 		}
 
+	}
+
+	private void processReviewMTSforUserInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		String ename = request.getParameter("name");
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+		
+		System.out.println("from: " + from + "\n" + "to: " + to);
+		
+		if (TSMUtil.isNotEmptyOrNull(ename)) {
+			Employee e = employeeService.findEmployeeByFirstAndLastName(ename);
+			if (e != null) {
+				List<DailyTimeSheet> dtsheets = dTimesheetService.loadDTSinInterval(TSMUtil.convertStringToDate(from),
+						TSMUtil.convertStringToDate(to));
+				if (dtsheets != null) {
+
+					List<Activity> crtActivities = new ArrayList<Activity>();
+					List<Activity> allActivities = new ArrayList<Activity>();
+
+					for (DailyTimeSheet dts : dtsheets) {
+						crtActivities = activityService.findActivitiesByDTS(dts);
+						if (crtActivities != null && crtActivities.size() > 0) {
+							allActivities.addAll(crtActivities);
+						}
+					}
+
+					ArrayList<String> dateArray = new ArrayList<String>();
+					ArrayList<String> durationArray = new ArrayList<String>();
+					ArrayList<String> descriptionArray = new ArrayList<String>();
+					ArrayList<String> projectArray = new ArrayList<String>();
+
+					JSONArray array_du, array_de, array_p, array_da;
+
+					for (Activity a : allActivities) {
+						dateArray.add(TSMUtil.formatDate(a.getTimesheet().getDate()));
+						durationArray.add(a.getDuration().toString());
+						descriptionArray.add(a.getDescription());
+						projectArray.add(a.getProject().getName());
+					}
+
+					array_da = new JSONArray(dateArray);
+					array_du = new JSONArray(durationArray);
+					array_de = new JSONArray(descriptionArray);
+					array_p = new JSONArray(projectArray);
+
+					try {
+						responseMessage.put("date", array_da);
+						responseMessage.put("description", array_de);
+						responseMessage.put("duration", array_du);
+						responseMessage.put("project", array_p);
+						responseMessage.put("size", allActivities.size());
+						responseMessage.put("ok", true);
+					} catch (JSONException e1) {
+						e1.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					responseMessage.put("ok", false);
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	private void processReviewLastMTS(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
@@ -131,7 +212,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 							responseMessage.put("duration", array_du);
 							responseMessage.put("project", array_p);
 							responseMessage.put("size", allActivities.size());
-							responseMessage.put("ok",true);
+							responseMessage.put("ok", true);
 						} catch (JSONException e1) {
 							e1.printStackTrace();
 						}

@@ -132,6 +132,7 @@ function loadEmployees() {
 			console.log(data);
 			if (data.ok == true) {
 				populateDropdown(data, "clerkDrop");
+				populateDropdown(data, "clerkDrop_report");
 			} else {
 				alert("No employees");
 			}
@@ -910,4 +911,54 @@ function populateAllActivitiesTable(data) {
 		}
 	}	
 	return false;
+}
+
+function reviewWorkFromEmployeeInInterval() {
+	
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var enameDrop = document.getElementById('clerkDrop_report');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	console.log("to: " + to + " from: " + from);
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewMTSforUserInInterval",
+				name: "" + empname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("REVIEW MTS INTERVAL: ");
+			console.log(data);
+			populateIntervalActivitiesTable(data);
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function populateIntervalActivitiesTable(data) {
+	
+	console.log("populateIntervalActivitiesTable:");
+	
+	var table = $('#interval-entries-table');
+	$('#interval-entries-table > tbody').empty();
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							'<td>' + data.date[i] + "</td>" + 
+							"<td>" + data.duration[i] + "</td>" + 
+							"<td>" + data.description[i] + "</td>" + 
+							"<td>" + data.project[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+	
 }
