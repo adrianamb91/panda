@@ -929,9 +929,6 @@ function reviewWorkFromEmployeeInInterval() {
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
 	
-	//from = "06/01/2014";
-	//to = "20/01/2014";
-	
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
 	
@@ -951,8 +948,7 @@ function reviewWorkFromEmployeeInInterval() {
 			console.log("REVIEW MTS INTERVAL: ");
 			console.log(data);
 			populateIntervalActivitiesTable(data);
-			
-			generatePieChart(data.chartDataJSON);
+			generatePieChart(data.chartDataJSON, 'chart1');
 		},
 		error: function() {
 			alert("general failure!");
@@ -981,16 +977,17 @@ function populateIntervalActivitiesTable(data) {
 	return false;
 }
 
-function generatePieChart(entries) {
+function generatePieChart(entries, elementId) {
 	
+	$('#' + elementId).show();
 	console.log("PLOT: ");
 	console.log(entries);
 	
-	plot2 = jQuery.jqplot('chart1', entries,
+	plot2 = jQuery.jqplot(elementId, entries,
 		{
 			title : ' ',
 			seriesDefaults : {
-				shadow : false,
+				shadow : true,
 				renderer : jQuery.jqplot.PieRenderer,
 				rendererOptions : {
 					startAngle : 180,
@@ -1076,7 +1073,7 @@ function reviewWorkForProjectInInterval() {
 			console.log("PROJECT SUMMARY WORK: ");
 			console.log(data);
 			populateProjectSummaryWorkTable(data);
-			
+			generatePieChart(data.chartDataJSON, 'chart2');
 		},
 		error: function() {
 			alert("general failure!");
@@ -1106,8 +1103,8 @@ function populateProjectSummaryWorkTable(data) {
 
 function reviewWorkInDepartmentInInterval() {
 	
-	var from = $('#selection_date_from_proj').val();
-	var to = $('#selection_date_to_proj').val();
+	var from = $('#selection_date_from_dept').val();
+	var to = $('#selection_date_to_dept').val();
 	
 	$.ajax({
 		type: "GET", 
@@ -1120,6 +1117,7 @@ function reviewWorkInDepartmentInInterval() {
 			console.log("DEPARTMENT SUMMARY WORK: ");
 			console.log(data);
 			populateDepartmentSummaryWorkTable(data);
+			generatePieChart(data.chartDataJSON, 'chart3');
 			
 		},
 		error: function() {
@@ -1146,6 +1144,99 @@ function populateDepartmentSummaryWorkTable(data) {
 		}
 	}	
 	return false;
+}
+
+function exportProjectSummaryToPDF() {
+	
+	var from = $('#selection_date_from_proj').val();
+	var to = $('#selection_date_to_proj').val();
+	
+	var projDrop = document.getElementById('project_drop_report');
+	var projname = projDrop.options[projDrop.selectedIndex].text;
+	
+	if (from == '' || to == '' || projname == '') {
+		alert("Nu ai selectat datele necesare!");
+		return false;
+	}
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "exportProjectSummaryToPDF",
+				from: "" + from, 
+				to: "" + to,
+				name: "" + projname
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log(data);
+			if(data.ok == true) {
+				alert("Raportul a fost generat cu success in format pdf");
+			}
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function exportWorkFromEmployeeInInterval() {
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var enameDrop = document.getElementById('clerkDrop_report');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	if (from == '' || to == '' || empname == '') {
+		alert ("Nu ai selectat datele necesare");
+		return false;
+	} 
+ 	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "exportMTSforUserInIntervaltoPDF",
+				name: "" + empname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("REVIEW MTS INTERVAL: ");
+			console.log(data);
+			if (data.ok == true) {
+				alert ("Fisierul a fost salvat cu succes!");
+			}
+			
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function exportWorkInDepartmentInInterval() {
+	var from = $('#selection_date_from_dept').val();
+	var to = $('#selection_date_to_dept').val();
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "exportWorkInDepartmentInInterval",
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("DEPARTMENT SUMMARY WORK: ");
+			console.log(data);
+			if (data.ok == true) {
+				alert ("Fisierul a fost generat cu success");
+			}
+			
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+	
 }
 
 

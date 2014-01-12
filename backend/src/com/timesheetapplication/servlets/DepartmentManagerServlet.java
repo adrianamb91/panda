@@ -1,5 +1,6 @@
 package com.timesheetapplication.servlets;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,28 @@ import com.timesheetapplication.service.EmployeeService;
 import com.timesheetapplication.service.MonthlyTimeSheetService;
 import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
+
+
+
+import java.io.FileOutputStream;
+import java.util.Date;
+
+import com.itextpdf.text.Anchor;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chapter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.ListItem;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Section;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 
 /**
  * Servlet implementation class DepartmentManagerServlet
@@ -90,10 +113,286 @@ public class DepartmentManagerServlet extends HttpServlet {
 		case "reviewWorkInDepartmentInInterval":
 			processReviewWordAtDepartment(request, responseMessage, response);
 			break;
+		case "exportProjectSummaryToPDF":
+			processExportProjectSummaryToPDF(request, responseMessage, response);
+			break;
+		case "exportMTSforUserInIntervaltoPDF" : 
+			processExportMTSforUserInIntervaltoPDF(request, responseMessage, response);
+			break;
+		case "exportWorkInDepartmentInInterval" : 
+			processExportWorkInDepartmentInInterval(request, responseMessage, response);
+			break;
 		default:
 			break;
 		}
 
+	}
+
+	private void processExportWorkInDepartmentInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		/**
+		 * exporta la nivel de toate departamentele
+		 */
+		
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+
+		List<Project> projects = projectService.getProjectsForDepartment(loggedInUser.getDepartment());
+
+		try {
+			if (projects != null) {
+
+				Map<String, Float> map = new HashMap<String, Float>();
+
+				for (Project p : projects) {
+					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from), TSMUtil.convertStringToDate(to));
+					for (Activity a : activities) {
+						if (!map.containsKey(p.getName())) {
+							map.put(p.getName(), a.getDuration());
+						} else {
+							Float oldDuration = map.get(p.getName());
+							map.put(p.getName(), oldDuration + a.getDuration());
+						}
+					}
+				}
+				
+				String formatted_from = from.replace("/", "-");
+				String formatted_to = to.replace("/", "-");
+				
+				Document document = new Document();
+				try {
+					PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + loggedInUser.getDepartment().getName() + "_" + formatted_from + "_" + formatted_to + ".pdf"));
+				} catch (FileNotFoundException e2) {
+					e2.printStackTrace();
+				} catch (DocumentException e2) {
+					e2.printStackTrace();
+				}
+				document.open();
+				Paragraph preface = new Paragraph();
+				TSMUtil.addEmptyLine(preface, 1);
+				preface.add(new Paragraph("Report", TSMUtil.catFont));
+				PdfPTable table = new PdfPTable(2);
+				PdfPCell c1 = new PdfPCell(new Phrase("PROJECT"));
+				c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				table.addCell(c1);
+				c1 = new PdfPCell(new Phrase("WORKING HOURS"));
+				c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				table.addCell(c1);
+				
+				for (String proj : map.keySet()) {
+					table.addCell(proj);
+					table.addCell(map.get(proj).toString());
+				}
+				responseMessage.put("ok", true);
+				document.add(table);
+				document.close();
+			}
+			else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private void processExportMTSforUserInIntervaltoPDF(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		/**
+		 * exporta la nivel de user (detaliat)
+		 */
+		
+		String ename = request.getParameter("name");
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		System.out.println("from: " + from + "\n" + "to: " + to);
+
+		if (TSMUtil.isNotEmptyOrNull(ename)) {
+			Employee e = employeeService.findEmployeeByFirstAndLastName(ename);
+			if (e != null) {
+				List<DailyTimeSheet> dtsheets = dTimesheetService.loadDTSinInterval(e, TSMUtil.convertStringToDate(from),
+						TSMUtil.convertStringToDate(to));
+				if (dtsheets != null) {
+
+					List<Activity> crtActivities = new ArrayList<Activity>();
+					List<Activity> allActivities = new ArrayList<Activity>();
+
+					for (DailyTimeSheet dts : dtsheets) {
+						crtActivities = activityService.findActivitiesByDTS(dts);
+						if (crtActivities != null && crtActivities.size() > 0) {
+							allActivities.addAll(crtActivities);
+						}
+					}
+
+					String formatted_from = from.replace("/", "-");
+					String formatted_to = to.replace("/", "-");
+					
+					Document document = new Document();
+					try {
+						PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + e.getUsername() + "_" + formatted_from + "_" + formatted_to + ".pdf"));
+					} catch (FileNotFoundException e2) {
+						e2.printStackTrace();
+					} catch (DocumentException e2) {
+						e2.printStackTrace();
+					}
+					document.open();
+					Paragraph preface = new Paragraph();
+					TSMUtil.addEmptyLine(preface, 1);
+					preface.add(new Paragraph("Report", TSMUtil.catFont));
+					PdfPTable table = new PdfPTable(4);
+					PdfPCell c1 = new PdfPCell(new Phrase("DATA"));
+					c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+					table.addCell(c1);
+					c1 = new PdfPCell(new Phrase("WORKING HOURS"));
+					c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+					table.addCell(c1);
+					c1 = new PdfPCell(new Phrase("PROJECT"));
+					c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+					table.addCell(c1);
+					c1 = new PdfPCell(new Phrase("DESCRIPTION"));
+					c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+					table.addCell(c1);
+					
+					for (Activity a : allActivities) {
+						table.addCell(TSMUtil.formatDate(a.getTimesheet().getDate()));
+						table.addCell(a.getDuration().toString());
+						table.addCell(a.getDescription());
+						table.addCell(a.getProject().getName());
+					}
+					try {
+						responseMessage.put("ok", true);
+						document.add(table);
+						document.close();
+					} catch (JSONException e1) {
+						e1.printStackTrace();
+					} catch (DocumentException e1) {
+						e1.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					responseMessage.put("ok", false);
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		
+	}
+
+	private void processExportProjectSummaryToPDF(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+		
+		/*
+		 * Exporta la nivel de proiect
+		 * 
+		 */
+		
+		
+		String pname = request.getParameter("name");
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+		
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");		
+
+		try {
+			if (TSMUtil.isNotEmptyOrNull(pname)) {
+				
+				Project p = projectService.findProjectByName(pname);
+				if (p != null) {
+					List<Activity> acts = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
+							TSMUtil.convertStringToDate(to));
+
+					Map<String, Float> projSumData = new HashMap<String, Float>();
+
+					if (acts != null && acts.size() > 0) {
+						for (Activity a : acts) {
+							String firstAndLastName = a.getTimesheet().getOwner().getFirstName() + " " + a.getTimesheet().getOwner().getLastName();
+							if (!projSumData.containsKey(firstAndLastName)) {
+								projSumData.put(firstAndLastName, a.getDuration());
+							} else {
+								Float oldDur = projSumData.get(firstAndLastName);
+								projSumData.put(firstAndLastName, oldDur + a.getDuration());
+							}
+						}
+
+						/**
+						 * EXPORT PDF SHIZZLE
+						 */
+						
+						Document document = new Document();
+						PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + loggedInUser.getUsername() + "_" + pname + ".pdf"));
+						document.open();
+						
+						// adding page title;
+						Paragraph preface = new Paragraph();
+						TSMUtil.addEmptyLine(preface, 1);
+						preface.add(new Paragraph("Report", TSMUtil.catFont));
+						
+						PdfPTable table = new PdfPTable(2);
+						
+						PdfPCell c1 = new PdfPCell(new Phrase("EMPLOYEE NAME"));
+						c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+						table.addCell(c1);
+						
+						c1 = new PdfPCell(new Phrase("WORKING HOURS"));
+						c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+						table.addCell(c1);
+						
+						
+						for (String s : projSumData.keySet()) {
+//							owners.add(s);
+//							durations.add(projSumData.get(s).toString());
+//							
+							table.addCell(s);
+							table.addCell(projSumData.get(s).toString());
+						}
+
+						document.add(table);
+						document.close();
+						
+						responseMessage.put("ok", true);
+					}
+				} else {
+					responseMessage.put("ok", false);
+				}
+			} else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+
+		
 	}
 
 	private void processReviewWordAtDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
@@ -121,6 +420,24 @@ public class DepartmentManagerServlet extends HttpServlet {
 						}
 					}
 				}
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append("[[");
+				int iter = 0;
+				for (String empl : map.keySet()) {
+					sb.append("['");
+					sb.append(empl);
+					sb.append("', ");
+					sb.append(map.get(empl));
+					sb.append("]");
+					if (iter < map.keySet().size() - 1) {
+						sb.append(", ");
+					}
+					iter++;
+				}
+				sb.append("]]");
+				JSONArray chartJSON = new JSONArray(sb.toString());
+				responseMessage.put("chartDataJSON", chartJSON);
 
 				List<String> projectNames = new ArrayList<String>();
 				List<String> durations = new ArrayList<String>();
@@ -169,8 +486,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 
 					if (acts != null && acts.size() > 0) {
 						for (Activity a : acts) {
-							String firstAndLastName = a.getTimesheet().getOwner().getFirstName() + a.getTimesheet().getOwner().getLastName();
-
+							String firstAndLastName = a.getTimesheet().getOwner().getFirstName() + " " + a.getTimesheet().getOwner().getLastName();
 							if (!projSumData.containsKey(firstAndLastName)) {
 								projSumData.put(firstAndLastName, a.getDuration());
 							} else {
@@ -179,6 +495,25 @@ public class DepartmentManagerServlet extends HttpServlet {
 							}
 						}
 
+						StringBuilder sb = new StringBuilder();
+						sb.append("[[");
+						int iter = 0;
+						for (String empl : projSumData.keySet()) {
+							sb.append("['");
+							sb.append(empl);
+							sb.append("', ");
+							sb.append(projSumData.get(empl));
+							sb.append("]");
+							if (iter < projSumData.keySet().size() - 1) {
+								sb.append(", ");
+							}
+							iter++;
+						}
+						sb.append("]]");
+						
+						JSONArray chartJSON = new JSONArray(sb.toString());
+						responseMessage.put("chartDataJSON", chartJSON);
+						
 						for (String s : projSumData.keySet()) {
 							owners.add(s);
 							durations.add(projSumData.get(s).toString());
@@ -350,10 +685,8 @@ public class DepartmentManagerServlet extends HttpServlet {
 					System.out.println(chartFormat);
 
 					JSONArray chartJSON = null;
-
 					StringBuilder sb = new StringBuilder();
 					sb.append("[[");
-
 					int iter = 0;
 					for (String p : chartData.keySet()) {
 						sb.append("['");
@@ -366,9 +699,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 						}
 						iter++;
 					}
-
 					sb.append("]]");
-
 					try {
 						responseMessage.put("date", array_da);
 						responseMessage.put("description", array_de);
