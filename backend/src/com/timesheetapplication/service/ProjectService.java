@@ -34,8 +34,8 @@ public class ProjectService {
 	}
 
 	public List<Project> getProjectsForDepartment(Department department) {
-		// TODO Auto-generated method stub
 		return projectDao.findProjectsForDepartment(department);
 	}
+
 
 }

@@ -54,4 +54,10 @@ public class ActivityDaoImpl extends GenericDaoImpl<Activity> implements Activit
 		return q.getResultList();
 	}
 
+	public List<Activity> findActivitiesByProject(Project p) {
+		Query q = em.createQuery("Select m from Activity m where m.project.id = :pid");
+		q.setParameter("pid", p.getId());
+		return q.getResultList();
+	}
+
 }
