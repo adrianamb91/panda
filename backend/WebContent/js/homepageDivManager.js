@@ -13,6 +13,9 @@ $(document).ready(function() {
     mainContent = document.getElementById('view_page').innerHTML;
 
     getLoginDataFromServer();
+    loadTodaysTimesheetForUser();
+
+    loadAllMTimesheetsForUser();
 
 
     $('#settingsBtn').click(function() {
@@ -70,6 +73,24 @@ function getLoginDataFromServer() {
     });
 }
 
+function endSession() {
+    $.ajax({
+        type : "GET",
+        url : "HomepageServlet",
+        data : {
+            phase : "done"
+        },
+        success : function(data, textStatus, jqXHR) {
+            window.open('http://' + serverIp
+                + '/TimesheetManagement/login.html', '_self', false);
+        },
+        error : function() {
+            alert("failure: end session");
+            console.log('There is an error');
+        }
+    });
+}
+
 //Initializari: STOP
 
 // Own daily timesheet: stuff
@@ -87,7 +108,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 
     $.ajax({
         type : "GET",
-        url : "HomepageServlet",
+        url : "DivManagerServlet",
         data : {
             phase : "saveActivity",
             duration : "" + duration,
@@ -111,6 +132,52 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
         error : function() {
             alert("failure");
             console.log('There is an error');
+        }
+    });
+}
+
+function loadTodaysTimesheetForUser(dateWanted) {
+
+    // delete all rows from the table
+    // don't worry, they'll be brought back from the server
+    $('#entries-table > tbody').empty();
+
+    console.log('s-a facut un clean!');
+
+    $.ajax({
+        type : "GET",
+        url : "DivManagerServlet",
+        data : {
+            phase : "loadDTS",
+            date : dateWanted
+        },
+        success : function(data, textStatus, jqXHR) {
+            console.log(data);
+            var tsTable = $('#entries-table');
+            var noEntries = $('#no-entries');
+            var existingEntries = $('#exist-entries');
+
+            if (data.ok == true) {
+                tsTable.show();
+                noEntries.hide();
+                existingEntries.show();
+                for (var i = 0; i < data.size; i++) {
+                    // index = 0 -> selects table head so this row should be
+                    // skipped
+                    var rowIndex = i + 1;
+                    tsTable.append("<tr>" + '<td class="edit">' + data.date
+                        + "</td>" + "<td>" + data.duration[i] + "</td>"
+                        + "<td>" + data.description[i] + "</td>" + "<td>"
+                        + '<a href="#" onClick="editActivity(' + rowIndex
+                        + ')">edit</a>' + "<td>"
+                        + '<a href="#" onClick="removeActivity(' + rowIndex
+                        + ')">remove</a>' + "</tr>");
+                }
+            } else {
+                noEntries.show();
+                tsTable.hide();
+                existingEntries.hide();
+            }
         }
     });
 }
@@ -184,17 +251,6 @@ $(function() {
         return isValid;
     }
 
-    function validateSelectedProject(o, n) {
-        var isValid = true;
-        console.log(o.selectedIndex);
-        if (o.selectedIndex == 0) {
-            console.log("N-ai selectat proiect");
-            updateTips(n);
-            isValid = false;
-        }
-        return isValid;
-    }
-
     function validateFields(form) {
         var bValid = true;
         var date = $('[name="selection_date"]', form);
@@ -206,10 +262,86 @@ $(function() {
             && checkRegexp(duration, /^([0-9.])+$/i,
             "Duration should be expressed in number of hours");
 
-        var project = document.getElementById('projectDrop');
-        bValid = bValid
-            && validateSelectedProject(project, "You must select a project");
 
         return bValid;
     }
 });
+
+$(function() {
+    $(".datepicker").datepicker(
+        {
+            dateFormat : "dd/mm/yy",
+            // maxDate: "+1d",
+            onSelect : function(dateText, inst) {
+                var date = $.datepicker.parseDate(inst.settings.dateFormat
+                    || $.datepicker._defaults.dateFormat, dateText,
+                    inst.settings);
+                var dateText1 = $.datepicker.formatDate("dd/mm/yy", date,
+                    inst.settings);
+            }
+        });
+});
+// Chestii de DTS: end!
+
+// Chestii de own MTS: Start
+function loadAllMTimesheetsForUser() {
+
+    // delete all rows from the table
+    // don't worry, they'll be brought back from the server
+    $("#monthly-entries > tbody").empty();
+    $.ajax({
+        type : "GET",
+        url : "HomepageServlet",
+        data : {
+            phase : "loadAllMTimesheets"
+        },
+        success : function(data, textStatus, jqXHR) {
+            console.log("monthly");
+            console.log(data);
+            var tsTable = $('#monthly-entries');
+
+            for (var i = 0; i < data.size; i++) {
+                if (data.status[i] == 'OPEN') {
+                    console.log("dat2: " + data.date[i]);
+                    tsTable.append("<tr>" + "<td>"
+                        + data.date[i] + "</td>"
+                        + "<td>" + '<a href="# onclick="editMTSstatus(' + i + 1 + ')>'
+                        + data.status[i]
+                        + '</a> <button id="submitMTS" style="float: right" onclick="submitMTS('
+                        + i + 1 + ')">Submit</button>' + "</td>" + "</tr>");
+                    } else {
+                        tsTable.append("<tr>" + "<td>" + data.date[i]
+                            + "</td>" + "<td>"
+                            + '<a href="# onclick="editMTSstatus(' + i
+                            + 1 + ')>' + data.status[i] + '</a>'
+                            + "</td>" + "</tr>");
+                    }
+            }
+        }
+    });
+}
+
+function submitMTS(i) {
+    var table = $('#monthly-entries');
+    var selectorValue = 'tr:eq(' + i + ')';
+    var row = $(selectorValue, table);
+
+    $.ajax({
+        type : "GET",
+        url : "HomepageServlet",
+        data : {
+            phase : "submitMTSByDeptM",
+            date : "" + row[0].cells[0].innerHTML
+        },
+        success : function(data, textStatus, jqXHR) {
+            alert('s-a dus!');
+            if (data.ok == true) {
+                loadAllMTimesheetsForUser();
+            }
+        },
+        error : function() {
+            alert("failure");
+            console.log('There is an error');
+        }
+    });
+}

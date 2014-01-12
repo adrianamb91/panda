@@ -284,7 +284,6 @@ function submitMTS(i) {
 			console.log('There is an error');
 		}
 	});
-
 }
 
 function removeActivity(i) {
