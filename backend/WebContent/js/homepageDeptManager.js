@@ -1058,8 +1058,8 @@ function populateSummaryWorkTable(data) {
 
 function reviewWorkForProjectInInterval() {
 	
-	var from = $('#selection_date_from').val();
-	var to = $('#selection_date_to').val();
+	var from = $('#selection_date_from_proj').val();
+	var to = $('#selection_date_to_proj').val();
 	
 	var projDrop = document.getElementById('project_drop_report');
 	var projname = projDrop.options[projDrop.selectedIndex].text;
@@ -1103,3 +1103,49 @@ function populateProjectSummaryWorkTable(data) {
 	}	
 	return false;
 }
+
+function reviewWorkInDepartmentInInterval() {
+	
+	var from = $('#selection_date_from_proj').val();
+	var to = $('#selection_date_to_proj').val();
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewWorkInDepartmentInInterval",
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("DEPARTMENT SUMMARY WORK: ");
+			console.log(data);
+			populateDepartmentSummaryWorkTable(data);
+			
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+	
+}
+
+function populateDepartmentSummaryWorkTable(data) {
+	//summary_interval-dept-table
+	
+	var table = $('#summary_interval-dept-table');
+	$('#summary_interval-dept-table > tbody').empty();
+	
+	console.log("DEPARTMENT SUMMARY DATA:");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							"<td>" + data.projects[i] + "</td>" + 
+							"<td>" + data.durations[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}
+
+

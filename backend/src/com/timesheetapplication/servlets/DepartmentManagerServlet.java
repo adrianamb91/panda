@@ -86,10 +86,68 @@ public class DepartmentManagerServlet extends HttpServlet {
 			break;
 		case "reviewSummaryWorkForProjectInInterval":
 			processReviewProjectWorkInInterval(request, responseMessage, response);
+			break;
+		case "reviewWorkInDepartmentInInterval":
+			processReviewWordAtDepartment(request, responseMessage, response);
+			break;
 		default:
 			break;
 		}
 
+	}
+
+	private void processReviewWordAtDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+
+		List<Project> projects = projectService.getProjectsForDepartment(loggedInUser.getDepartment());
+
+		try {
+			if (projects != null) {
+
+				Map<String, Float> map = new HashMap<String, Float>();
+
+				for (Project p : projects) {
+					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from), TSMUtil.convertStringToDate(to));
+					for (Activity a : activities) {
+						if (!map.containsKey(p.getName())) {
+							map.put(p.getName(), a.getDuration());
+						} else {
+							Float oldDuration = map.get(p.getName());
+							map.put(p.getName(), oldDuration + a.getDuration());
+						}
+					}
+				}
+
+				List<String> projectNames = new ArrayList<String>();
+				List<String> durations = new ArrayList<String>();
+				for (String proj : map.keySet()) {
+					projectNames.add(proj);
+					durations.add(map.get(proj).toString());
+				}
+
+				JSONArray array_p, array_d;
+				array_p = new JSONArray(projectNames);
+				array_d = new JSONArray(durations);
+
+				responseMessage.put("ok", true);
+				responseMessage.put("size", projectNames.size());
+				responseMessage.put("projects", array_p);
+				responseMessage.put("durations", array_d);
+			}
+			else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void processReviewProjectWorkInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
@@ -106,22 +164,21 @@ public class DepartmentManagerServlet extends HttpServlet {
 
 					List<String> owners = new ArrayList<String>();
 					List<String> durations = new ArrayList<String>();
-					
+
 					Map<String, Float> projSumData = new HashMap<String, Float>();
-					
+
 					if (acts != null && acts.size() > 0) {
 						for (Activity a : acts) {
 							String firstAndLastName = a.getTimesheet().getOwner().getFirstName() + a.getTimesheet().getOwner().getLastName();
-							
+
 							if (!projSumData.containsKey(firstAndLastName)) {
 								projSumData.put(firstAndLastName, a.getDuration());
-							}
-							else {
+							} else {
 								Float oldDur = projSumData.get(firstAndLastName);
 								projSumData.put(firstAndLastName, oldDur + a.getDuration());
 							}
 						}
-						
+
 						for (String s : projSumData.keySet()) {
 							owners.add(s);
 							durations.add(projSumData.get(s).toString());

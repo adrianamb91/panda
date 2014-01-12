@@ -49,4 +49,8 @@ public class ActivityService {
 		return activityDao.findWorkPutIntoProject(p, from, to);
 	}
 
+	public List<Activity> findActivitiesByProject(Project p) {
+		return activityDao.findActivitiesByProject(p);
+	}
+
 }

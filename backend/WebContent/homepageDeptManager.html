@@ -257,7 +257,118 @@
 		
 		<!--         report -->
         <div id="view4">
-        </div>
+
+        	
+        	<label>Select employee: </label>
+			<select id="clerkDrop_report" class="text ui-widget-content ui-corner-all">
+            	<option>Select an employee</option>
+            </select>
+            
+             <label>from: </label>
+            <input class="datepicker" id="selection_date_from" type="text">
+            
+            <label>to: </label>
+            <input class="datepicker" id="selection_date_to" type="text">
+            
+            <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">review summary</button>
+            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
+
+			
+            <div id="summary-interval-entries-contain" class="ui-widget">
+					<label>Sumar:</label>
+					<table id="summary_interval-entries-table" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Project</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
+            <br>
+
+			<br>
+			<br>
+            <div id="interval-entries-contain" class="ui-widget">
+					<label>Detalii:</label>
+					<table id="interval-entries-table" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Date</th>
+								<th>Duration</th>
+								<th>Description</th>
+								<th>Project</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
+			<br>
+			
+			<div id="chart1" style="width:1000px; height:1000px;"></div>
+            
+            <label>Select PROJECT: </label>
+			<select id="project_drop_report" class="text ui-widget-content ui-corner-all">
+            	<option>Select a project</option>
+            </select>
+            
+            <label>from: </label>
+            <input class="datepicker" id="selection_date_from_proj" type="text">
+            
+            <label>to: </label>
+            <input class="datepicker" id="selection_date_to_proj" type="text">
+            
+            <button id="reviewWordButton" onclick="reviewWorkForProjectInInterval()">review work at project</button>
+            
+			<label>Sumar proiect:</label>
+            <div id="summary-interval-project-contain" class="ui-widget">
+					<table id="summary_interval-project-table" style="float: left" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>Owner</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+			</div>
+
+			<br>
+			<br>
+			<br>
+				<div>
+					<label>from: </label> 
+					<input class="datepicker"
+						id="selection_date_from_dept" type="text"> <label>to:
+					</label> 
+					<input class="datepicker" id="selection_date_to_dept" type="text">
+
+					<button id="reviewWordButton"
+						onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
+
+					<label>Sumar proiect:</label>
+					<div id="summary-interval-project-contain" class="ui-widget">
+						<table id="summary_interval-dept-table" class="ui-widget ui-widget-content">
+							<thead>
+								<tr class="ui-widget-header ">
+									<th>Project</th>
+									<th>Work</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+
+			</div>
+        
 
         <div id="view5">
         </div>
