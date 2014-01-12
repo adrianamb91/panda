@@ -932,8 +932,7 @@ function populateEmployeesTable(data) {
 								"<td>" + data.emails[i] + "</td>" + 
 								"<td>" + data.jobs[i] + "</td>" + 
 								"<td>" + data.departments[i] + "</td>" + 
-								"<td>" + '<a href="#" onClick="editActivity(' + rowIndex + ')">edit</a>' + 
-								"<td>" + '<a href="#" onClick="removeEmployee(' + rowIndex + ')">remove</a>' + 
+								"<td>" + '<a href="#" onClick="removeEmployee(' + rowIndex + ')">remove</a> </td>' + 
 							"</tr>");
 		} 
 	} else {
