@@ -23,11 +23,13 @@ import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Department;
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.model.MonthlyTimesheet;
+import com.timesheetapplication.model.Project;
 import com.timesheetapplication.service.ActivityService;
 import com.timesheetapplication.service.DailyTimesheetService;
 import com.timesheetapplication.service.DepartmentService;
 import com.timesheetapplication.service.EmployeeService;
 import com.timesheetapplication.service.MonthlyTimeSheetService;
+import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
 
 /**
@@ -47,6 +49,8 @@ public class DepartmentManagerServlet extends HttpServlet {
 	DailyTimesheetService dTimesheetService = new DailyTimesheetService();
 
 	ActivityService activityService = new ActivityService();
+
+	ProjectService projectService = new ProjectService();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -76,8 +80,155 @@ public class DepartmentManagerServlet extends HttpServlet {
 			break;
 		case "reviewMTSforUserInInterval":
 			processReviewMTSforUserInInterval(request, responseMessage, response);
+			break;
+		case "reviewSummaryWorkFromEmployeeInInterval":
+			processReviewSummaryForUSerInInterval(request, responseMessage, response);
+			break;
+		case "reviewSummaryWorkForProjectInInterval":
+			processReviewProjectWorkInInterval(request, responseMessage, response);
 		default:
 			break;
+		}
+
+	}
+
+	private void processReviewProjectWorkInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+		String pname = request.getParameter("name");
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		try {
+			if (TSMUtil.isNotEmptyOrNull(pname)) {
+				Project p = projectService.findProjectByName(pname);
+				if (p != null) {
+					List<Activity> acts = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
+							TSMUtil.convertStringToDate(to));
+
+					List<String> owners = new ArrayList<String>();
+					List<String> durations = new ArrayList<String>();
+					
+					Map<String, Float> projSumData = new HashMap<String, Float>();
+					
+					if (acts != null && acts.size() > 0) {
+						for (Activity a : acts) {
+							String firstAndLastName = a.getTimesheet().getOwner().getFirstName() + a.getTimesheet().getOwner().getLastName();
+							
+							if (!projSumData.containsKey(firstAndLastName)) {
+								projSumData.put(firstAndLastName, a.getDuration());
+							}
+							else {
+								Float oldDur = projSumData.get(firstAndLastName);
+								projSumData.put(firstAndLastName, oldDur + a.getDuration());
+							}
+						}
+						
+						for (String s : projSumData.keySet()) {
+							owners.add(s);
+							durations.add(projSumData.get(s).toString());
+						}
+
+						JSONArray array_ow, array_du;
+						array_ow = new JSONArray(owners);
+						array_du = new JSONArray(durations);
+
+						responseMessage.put("ok", true);
+						responseMessage.put("size", owners.size());
+						responseMessage.put("owners", array_ow);
+						responseMessage.put("durations", array_du);
+					}
+				} else {
+					responseMessage.put("ok", false);
+				}
+			} else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void processReviewSummaryForUSerInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		String ename = request.getParameter("name");
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		System.out.println("from: " + from + "\n" + "to: " + to);
+
+		if (TSMUtil.isNotEmptyOrNull(ename)) {
+			Employee e = employeeService.findEmployeeByFirstAndLastName(ename);
+			if (e != null) {
+				List<DailyTimeSheet> dtsheets = dTimesheetService.loadDTSinInterval(e, TSMUtil.convertStringToDate(from),
+						TSMUtil.convertStringToDate(to));
+				if (dtsheets != null) {
+
+					List<Activity> crtActivities = new ArrayList<Activity>();
+					List<Activity> allActivities = new ArrayList<Activity>();
+					Map<String, Float> chartData = new HashMap<String, Float>();
+
+					for (DailyTimeSheet dts : dtsheets) {
+						crtActivities = activityService.findActivitiesByDTS(dts);
+						if (crtActivities != null && crtActivities.size() > 0) {
+							allActivities.addAll(crtActivities);
+						}
+					}
+
+					ArrayList<String> durationArray = new ArrayList<String>();
+					ArrayList<String> projectArray = new ArrayList<String>();
+
+					JSONArray array_du, array_de, array_p, array_da;
+
+					for (Activity a : allActivities) {
+						if (!chartData.containsKey(a.getProject().getName())) {
+							chartData.put(a.getProject().getName(), a.getDuration());
+						} else {
+							Float oldValue = chartData.get(a.getProject().getName());
+							chartData.put(a.getProject().getName(), oldValue + a.getDuration());
+						}
+					}
+
+					for (String p : chartData.keySet()) {
+						projectArray.add(p);
+						durationArray.add(chartData.get(p).toString());
+					}
+
+					array_du = new JSONArray(durationArray);
+					array_p = new JSONArray(projectArray);
+
+					try {
+						responseMessage.put("duration", array_du);
+						responseMessage.put("project", array_p);
+						responseMessage.put("size", chartData.size());
+						responseMessage.put("ok", true);
+					} catch (JSONException e1) {
+						e1.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					responseMessage.put("ok", false);
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 
 	}
@@ -87,9 +238,9 @@ public class DepartmentManagerServlet extends HttpServlet {
 		String ename = request.getParameter("name");
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
-		
+
 		System.out.println("from: " + from + "\n" + "to: " + to);
-		
+
 		if (TSMUtil.isNotEmptyOrNull(ename)) {
 			Employee e = employeeService.findEmployeeByFirstAndLastName(ename);
 			if (e != null) {
@@ -120,33 +271,32 @@ public class DepartmentManagerServlet extends HttpServlet {
 						durationArray.add(a.getDuration().toString());
 						descriptionArray.add(a.getDescription());
 						projectArray.add(a.getProject().getName());
-						
+
 						if (!chartData.containsKey(a.getProject().getName())) {
 							chartData.put(a.getProject().getName(), a.getDuration());
-						}
-						else {
+						} else {
 							Float oldValue = chartData.get(a.getProject().getName());
 							chartData.put(a.getProject().getName(), oldValue + a.getDuration());
 						}
-					}	
+					}
 
 					array_da = new JSONArray(dateArray);
 					array_du = new JSONArray(durationArray);
 					array_de = new JSONArray(descriptionArray);
 					array_p = new JSONArray(projectArray);
-					
+
 					System.out.println(array_da);
 					System.out.println(chartData);
-					
+
 					JSONObject chartFormat = new JSONObject(chartData);
 					System.out.println(chartFormat.toString());
 					System.out.println(chartFormat);
-					
+
 					JSONArray chartJSON = null;
-					
+
 					StringBuilder sb = new StringBuilder();
 					sb.append("[[");
-					
+
 					int iter = 0;
 					for (String p : chartData.keySet()) {
 						sb.append("['");
@@ -157,11 +307,11 @@ public class DepartmentManagerServlet extends HttpServlet {
 						if (iter < chartData.keySet().size() - 1) {
 							sb.append(", ");
 						}
-						iter ++ ;
+						iter++;
 					}
-					
+
 					sb.append("]]");
-					
+
 					try {
 						responseMessage.put("date", array_da);
 						responseMessage.put("description", array_de);

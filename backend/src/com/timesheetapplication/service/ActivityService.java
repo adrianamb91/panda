@@ -45,4 +45,8 @@ public class ActivityService {
 		return activityDao.findActivitiesByDTS(crtDTS);
 	}
 
+	public List<Activity> findWorkPutIntoProject(Project p, Date from, Date to) {
+		return activityDao.findWorkPutIntoProject(p, from, to);
+	}
+
 }
