@@ -68,17 +68,17 @@ public class ClientProjectServlet extends HttpServlet {
 			processSaveProject(request, responseMessage, response);
 			break;
 		case "loadAllProjects":
-			processLoadAllProjects(responseMessage, response);
+			processLoadAllProjects(loggedInUser, responseMessage, response);
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void processLoadAllProjects(JSONObject responseMessage,
+	private void processLoadAllProjects(Employee loggedInUser, JSONObject responseMessage,
 			HttpServletResponse response) {
-		//TODO: query by department name
-		List<Project> projects = projectService.loadAllProjects();
+		Department d = loggedInUser.getDepartment();
+		List<Project> projects = projectService.getProjectsForDepartment(d);
 		ArrayList<String> projectNames = new ArrayList<String>();
 		ArrayList<String> clientNames = new ArrayList<String>();
 		ArrayList<String> departmentNames = new ArrayList<String>();
