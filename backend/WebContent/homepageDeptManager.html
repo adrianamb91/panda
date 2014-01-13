@@ -238,7 +238,11 @@
             </select>
             
             <br>
-            <button id="viewMTS" onclick="viewMTS()">Examine timesheet</button>
+            <button id="viewMTS" onclick="viewMTS()">Examine last timesheet</button>
+            <br>
+            <button id="viewSubmittedMTS" onclick="viewSubmittedMTS()">Examine last submitted/appropved timesheet</button>
+			
+			<div id="last-mts-status-div"></div>
 				
 			<div id="all-entries-contain" class="ui-widget">
 					<table id="all-entries-table" class="ui-widget ui-widget-content">
@@ -272,8 +276,8 @@
             <input class="datepicker" id="selection_date_to" type="text">
             
             <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">review summary</button>
-            <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
-            <button id="reviewWordButton" onclick="exportWorkFromEmployeeInInterval()">export detailed to pdf</button>
+            <button id="reviewWordButton1" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
+            <button id="reviewWordButton2" onclick="exportWorkFromEmployeeInInterval()">export detailed to pdf</button>
             
             <div id="summary-interval-entries-contain" class="ui-widget">
 					<label>Sumar:</label>
@@ -322,7 +326,7 @@
             <label>to: </label>
             <input class="datepicker" id="selection_date_to_proj" type="text">
             
-            <button id="reviewWordButton" onclick="reviewWorkForProjectInInterval()">review work at project</button>
+            <button id="reviewWordButton3" onclick="reviewWorkForProjectInInterval()">review work at project</button>
             <button id="exportProjectSummaryToPDF" onclick="exportProjectSummaryToPDF()">export to PDF</button>
             
 			<label>Sumar proiect:</label>
@@ -350,7 +354,7 @@
 					</label> 
 					<input class="datepicker" id="selection_date_to_dept" type="text">
 
-					<button id="reviewWordButton"
+					<button id="reviewWordButton4"
 						onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
 						
 					<button id="exportDepWorkButton"

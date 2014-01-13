@@ -155,6 +155,8 @@ function viewMTS() {
 //	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
 //	var empname = $('#clerkDrop').options[$('#clerkDrop').selectedIndex].text;
 	
+	$('#last-mts-status-div').html("");
+	
 	var enameDrop = document.getElementById('clerkDrop');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
 	
@@ -1235,7 +1237,98 @@ function exportWorkInDepartmentInInterval() {
 			alert("general failure!");
 		}
 	});
+}
+
+function viewSubmittedMTS() {
+    var enameDrop = document.getElementById('clerkDrop');
+    var empname = enameDrop.options[enameDrop.selectedIndex].text;
+
+    console.log("requesting MTS for " + empname);
+
+    $.ajax({
+        type: "GET",
+        url: "DepartmentManagerServlet",
+        data: {phase: "reviewLastSubmittedMTS",
+            name: empname},
+        success: function (data, textStatus, jqXHR) {
+            console.log("REVIEW MTS: ");
+            console.log(data);
+
+            if (data.ok == true) {
+            	if (data.status == 'SUBMITTED') {
+                    var dateString = data.mtsDate + "";
+                    console.log("Date string: ");
+                    console.log(dateString);
+            		$('#last-mts-status-div').html("Status: " + data.status  + 
+            				' <a href="#" onClick="approveMTS('
+							+ ')">APPROVE</a>' + 
+							' <a href="#" onClick="rejectMTS(' 
+							+ ')">REJECT</a>');
+            	}
+            	else {
+            		$('#last-mts-status-div').html("Status: " + data.status);
+            	}
+                populateAllActivitiesTable(data);
+            } else {
+            	$('#all-entries-table > tbody').empty();
+            	$('#last-mts-status-div').html("");
+            }
+        },
+        error: function() {
+            alert("general failure!");
+        }
+    });
+}
+
+function approveMTS() {
+	console.log("Vreau sa approve");
+	var enameDrop = document.getElementById('clerkDrop');
+    var empname = enameDrop.options[enameDrop.selectedIndex].text;
 	
+	$.ajax({
+        type: "GET",
+        url: "DepartmentManagerServlet",
+        data: {phase: "changeMTSStatus",
+        	emp: empname,
+        	newstatus: "APPROVED"},
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            if (data.ok == true) {
+            	alert("Approved!");
+            } else {
+            	alert("Failure!");
+            }
+        },
+        error: function() {
+            alert("general failure!");
+        }
+    });
+}
+
+function rejectMTS(mtsDate) {
+	console.log("Vreau sa reject");
+	console.log("Vreau sa approve");
+	var enameDrop = document.getElementById('clerkDrop');
+    var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	$.ajax({
+        type: "GET",
+        url: "DepartmentManagerServlet",
+        data: {phase: "changeMTSStatus",
+        	emp: empname,
+        	newstatus: "REJECTED"},
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            if (data.ok == true) {
+            	alert("Rejected!");
+            } else {
+            	alert("Failure!");
+            }
+        },
+        error: function() {
+            alert("general failure!");
+        }
+    });
 }
 
 
