@@ -18,7 +18,6 @@ $(document).ready(function() {
 
     getLoginDataFromServer();
 
-    //TODO: decomenteaza atunci cand o sa mearga
     loadEmployees();
 
     loadTodaysTimesheetForUser();
@@ -354,8 +353,6 @@ function submitMTS(i) {
 
 //Chestii legate de toti employees
 function loadEmployees() {
-	//TODO: review, nu merge!
-    console.log("Vreau sa iau employees, help!");
     $.ajax({
         type : "GET",
         url : "DivManagerServlet",

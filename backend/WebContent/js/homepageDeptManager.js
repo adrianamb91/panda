@@ -47,8 +47,8 @@ $(document).ready(function() {
 
 function populateHeaderData(name, date, job) {
 	document.getElementById('topBarInfo').innerHTML = date
-			+ "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp You are logged in as:"
-			+ name + "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Job:" + job;
+	+ "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp You are logged in as:"
+	+ name + "; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Job:" + job;
 }
 
 function getLoginDataFromServer() {
@@ -128,7 +128,7 @@ function loadEmployees() {
 			phase : "loadEmployees"
 		},
 		success : function(data, textStatus, jqXHR) {
-			
+
 			console.log("ALL CLERKS: ");
 			console.log(data);
 			if (data.ok == true) {
@@ -154,25 +154,27 @@ function viewMTS() {
 //	var projectDropdown = document.getElementById('projectDrop');
 //	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
 //	var empname = $('#clerkDrop').options[$('#clerkDrop').selectedIndex].text;
-	
+
+	$('#last-mts-status-div').html("");
+
 	var enameDrop = document.getElementById('clerkDrop');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
-	
+
 	console.log("requesting MTS for " + empname);
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "reviewLastMTS",
 			name: empname},
-		success: function (data, textStatus, jqXHR) {
-			console.log("REVIEW MTS: ");
-			console.log(data);
-			populateAllActivitiesTable(data);
-		},
-		error: function() {
-			alert("general failure!");
-		}
+			success: function (data, textStatus, jqXHR) {
+				console.log("REVIEW MTS: ");
+				console.log(data);
+				populateAllActivitiesTable(data);
+			},
+			error: function() {
+				alert("general failure!");
+			}
 	});
 }
 
@@ -220,45 +222,45 @@ function loadAllMTimesheetsForUser() {
 	// don't worry, they'll be brought back from the server
 	$("#monthly-entries > tbody").empty();
 	$
-			.ajax({
-				type : "GET",
-				url : "HomepageServlet",
-				data : {
-					phase : "loadAllMTimesheets"
-				},
-				success : function(data, textStatus, jqXHR) {
-					console.log("monthly");
-					console.log(data);
-					var tsTable = $('#monthly-entries');
+	.ajax({
+		type : "GET",
+		url : "HomepageServlet",
+		data : {
+			phase : "loadAllMTimesheets"
+		},
+		success : function(data, textStatus, jqXHR) {
+			console.log("monthly");
+			console.log(data);
+			var tsTable = $('#monthly-entries');
 
-					for (var i = 0; i < data.size; i++) {
-						if (data.status[i] == 'OPEN') {
-							console.log("dat2: " + data.date[i]);
-							tsTable
-									.append("<tr>"
-											+ "<td>"
-											+ data.date[i]
-											+ "</td>"
-											+ "<td>"
-											+ '<a href="# onclick="editMTSstatus('
-											+ i
-											+ 1
-											+ ')>'
-											+ data.status[i]
-											+ '</a> <button id="submitMTS" style="float: right" onclick="submitMTS('
-											+ i + 1 + ')">Submit</button>'
-											+ "</td>" + "</tr>");
-						} else {
-							tsTable.append("<tr>" + "<td>" + data.date[i]
-									+ "</td>" + "<td>"
-									+ '<a href="# onclick="editMTSstatus(' + i
-									+ 1 + ')>' + data.status[i] + '</a>'
-									+ "</td>" + "</tr>");
-						}
-
-					}
+			for (var i = 0; i < data.size; i++) {
+				if (data.status[i] == 'OPEN') {
+					console.log("dat2: " + data.date[i]);
+					tsTable
+					.append("<tr>"
+							+ "<td>"
+							+ data.date[i]
+							+ "</td>"
+							+ "<td>"
+							+ '<a href="# onclick="editMTSstatus('
+							+ i
+							+ 1
+							+ ')>'
+							+ data.status[i]
+							+ '</a> <button id="submitMTS" style="float: right" onclick="submitMTS('
+							+ i + 1 + ')">Submit</button>'
+							+ "</td>" + "</tr>");
+				} else {
+					tsTable.append("<tr>" + "<td>" + data.date[i]
+					+ "</td>" + "<td>"
+					+ '<a href="# onclick="editMTSstatus(' + i
+					+ 1 + ')>' + data.status[i] + '</a>'
+					+ "</td>" + "</tr>");
 				}
-			});
+
+			}
+		}
+	});
 }
 
 function submitMTS(i) {
@@ -313,7 +315,7 @@ function removeActivity(i) {
 	return false;
 }
 
-// for the moment this doesn't really work
+//for the moment this doesn't really work
 function editActivity(i) {
 
 	var table = $('#entries-table');
@@ -457,7 +459,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
 	});
 }
 
-// De aici incepe managementul clientilor si al proiectelor
+//De aici incepe managementul clientilor si al proiectelor
 
 function saveClient() {
 	var name = document.getElementById('clientName').value;
@@ -499,7 +501,7 @@ function populateClientsTable(data) {
 		for (var i = 0; i < data.size; i++) {
 			var rowIndex = i + 1;
 			tsTable.append("<tr>" + '<td class="edit">' + data.elements[i]
-					+ "</td>" + "</tr>");
+			+ "</td>" + "</tr>");
 		}
 	} else {
 		noEntries.show();
@@ -601,7 +603,7 @@ function populateProjectsTable(data) {
 		for (var i = 0; i < data.size; i++) {
 			var rowIndex = i + 1;
 			tsTable.append("<tr>" + '<td class="edit">' + data.elements[i]
-					+ "</td>" + "<td>" + data.clients[i] + "</td>" + "</tr>");
+			+ "</td>" + "<td>" + data.clients[i] + "</td>" + "</tr>");
 		}
 	} else {
 		noEntries.show();
@@ -698,7 +700,7 @@ $(function() {
 	}
 });
 
-// form for entries in daily timesheet
+//form for entries in daily timesheet
 $(function() {
 	var form = $('#new_project'), allFields = $(':text', form);
 	$("#add-project-dialog").dialog({
@@ -799,7 +801,7 @@ $(function() {
 			});
 });
 
-// form function
+//form function
 $(function() {
 	var form = $('#new_entry'), allFields = $(':text', form);
 	$("#dialog-form").dialog({
@@ -888,8 +890,8 @@ $(function() {
 
 		bValid = bValid && checkLength(description, "description", 1, 250);
 		bValid = bValid
-				&& checkRegexp(duration, /^([0-9.])+$/i,
-						"Duration should be expressed in number of hours");
+		&& checkRegexp(duration, /^([0-9.])+$/i,
+		"Duration should be expressed in number of hours");
 
 		//var project = document.getElementById('projectDrop');
 		//bValid = bValid
@@ -901,9 +903,9 @@ $(function() {
 
 
 function populateAllActivitiesTable(data) {
-	
+
 	console.log("populateAllActivitiesTable:");
-	
+
 	var table = $('#all-entries-table');
 	$('#all-entries-table > tbody').empty();
 	console.log("ALL ACTIVITIES: ");
@@ -912,11 +914,11 @@ function populateAllActivitiesTable(data) {
 		for (var i = 0; i < data.size; i ++) {
 			console.log("intra aici");
 			table.append("<tr>" + 
-							'<td>' + data.date[i] + "</td>" + 
-							"<td>" + data.duration[i] + "</td>" + 
-							"<td>" + data.description[i] + "</td>" + 
-							"<td>" + data.project[i] + "</td>" + 
-						"</tr>");
+					'<td>' + data.date[i] + "</td>" + 
+					"<td>" + data.duration[i] + "</td>" + 
+					"<td>" + data.description[i] + "</td>" + 
+					"<td>" + data.project[i] + "</td>" + 
+			"</tr>");
 		}
 	}	
 	return false;
@@ -924,25 +926,25 @@ function populateAllActivitiesTable(data) {
 
 
 function reviewWorkFromEmployeeInInterval() {
-	
+
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
-	
+
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
-	
+
 	console.log("to: " + to + " from: " + from);
-	
+
 	//generatePieChart();
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "reviewMTSforUserInInterval",
-				name: "" + empname,
-				from: "" + from, 
-				to: "" + to
-				},
+			name: "" + empname,
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("REVIEW MTS INTERVAL: ");
 			console.log(data);
@@ -956,9 +958,9 @@ function reviewWorkFromEmployeeInInterval() {
 }
 
 function populateIntervalActivitiesTable(data) {
-	
+
 	console.log("populateIntervalActivitiesTable:");
-	
+
 	var table = $('#interval-entries-table');
 	$('#interval-entries-table > tbody').empty();
 	console.log("DETAILED MTS: ");
@@ -966,57 +968,57 @@ function populateIntervalActivitiesTable(data) {
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
 			table.append("<tr>" + 
-							'<td>' + data.date[i] + "</td>" + 
-							"<td>" + data.duration[i] + "</td>" + 
-							"<td>" + data.description[i] + "</td>" + 
-							"<td>" + data.project[i] + "</td>" + 
-						"</tr>");
+					'<td>' + data.date[i] + "</td>" + 
+					"<td>" + data.duration[i] + "</td>" + 
+					"<td>" + data.description[i] + "</td>" + 
+					"<td>" + data.project[i] + "</td>" + 
+			"</tr>");
 		}
 	}	
 	return false;
 }
 
 function generatePieChart(entries, elementId) {
-	
+
 	$('#' + elementId).show();
 	console.log("PLOT: ");
 	console.log(entries);
-	
+
 	plot2 = jQuery.jqplot(elementId, entries,
-		{
-			title : ' ',
-			seriesDefaults : {
-				shadow : true,
-				renderer : jQuery.jqplot.PieRenderer,
-				rendererOptions : {
-					startAngle : 180,
-					sliceMargin : 4,
-					showDataLabels : true
-				}
-			},
-			legend : {
-				show : true,
-				location : 'w'
+			{
+		title : ' ',
+		seriesDefaults : {
+			shadow : true,
+			renderer : jQuery.jqplot.PieRenderer,
+			rendererOptions : {
+				startAngle : 180,
+				sliceMargin : 4,
+				showDataLabels : true
 			}
-		});
+		},
+		legend : {
+			show : true,
+			location : 'w'
+		}
+			});
 }
 
 function reviewSummaryWorkFromEmployeeInInterval() {
-	
+
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
-	
+
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "reviewSummaryWorkFromEmployeeInInterval",
-				name: "" + empname,
-				from: "" + from, 
-				to: "" + to
-				},
+			name: "" + empname,
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("SUMMARY WORK: ");
 			console.log(data);
@@ -1032,18 +1034,18 @@ function reviewSummaryWorkFromEmployeeInInterval() {
 
 function populateSummaryWorkTable(data) {
 	//summary_interval-entries-table
-	
+
 	var table = $('#summary_interval-entries-table');
 	$('#summary_interval-entries-table > tbody').empty();
-	
+
 	console.log("SUMMARY DATA:");
 	console.log(data);
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
 			table.append("<tr>" + 
-							"<td>" + data.project[i] + "</td>" + 
-							"<td>" + data.duration[i] + "</td>" + 
-						"</tr>");
+					"<td>" + data.project[i] + "</td>" + 
+					"<td>" + data.duration[i] + "</td>" + 
+			"</tr>");
 		}
 	}	
 	return false;
@@ -1052,21 +1054,21 @@ function populateSummaryWorkTable(data) {
 
 
 function reviewWorkForProjectInInterval() {
-	
+
 	var from = $('#selection_date_from_proj').val();
 	var to = $('#selection_date_to_proj').val();
-	
+
 	var projDrop = document.getElementById('project_drop_report');
 	var projname = projDrop.options[projDrop.selectedIndex].text;
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "reviewSummaryWorkForProjectInInterval",
-				name: "" + projname,
-				from: "" + from, 
-				to: "" + to
-				},
+			name: "" + projname,
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("PROJECT SUMMARY WORK: ");
 			console.log(data);
@@ -1077,92 +1079,92 @@ function reviewWorkForProjectInInterval() {
 			alert("general failure!");
 		}
 	});
-	
+
 }
 
 function populateProjectSummaryWorkTable(data) {
 	var table = $('#summary_interval-project-table');
 	$('#summary_interval-project-table > tbody').empty();
-	
+
 	console.log("PROJECT SUMMARY DATA:");
 	console.log(data);
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
 			table.append("<tr>" + 
-							"<td>" + data.owners[i] + "</td>" + 
-							"<td>" + data.durations[i] + "</td>" + 
-						"</tr>");
+					"<td>" + data.owners[i] + "</td>" + 
+					"<td>" + data.durations[i] + "</td>" + 
+			"</tr>");
 		}
 	}	
 	return false;
 }
 
 function reviewWorkInDepartmentInInterval() {
-	
+
 	var from = $('#selection_date_from_dept').val();
 	var to = $('#selection_date_to_dept').val();
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "reviewWorkInDepartmentInInterval",
-				from: "" + from, 
-				to: "" + to
-				},
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("DEPARTMENT SUMMARY WORK: ");
 			console.log(data);
 			populateDepartmentSummaryWorkTable(data);
 			generatePieChart(data.chartDataJSON, 'chart3');
-			
+
 		},
 		error: function() {
 			alert("general failure!");
 		}
 	});
-	
+
 }
 
 function populateDepartmentSummaryWorkTable(data) {
 	//summary_interval-dept-table
-	
+
 	var table = $('#summary_interval-dept-table');
 	$('#summary_interval-dept-table > tbody').empty();
-	
+
 	console.log("DEPARTMENT SUMMARY DATA:");
 	console.log(data);
 	if (data.ok == true) {
 		for (var i = 0; i < data.size; i ++) {
 			table.append("<tr>" + 
-							"<td>" + data.projects[i] + "</td>" + 
-							"<td>" + data.durations[i] + "</td>" + 
-						"</tr>");
+					"<td>" + data.projects[i] + "</td>" + 
+					"<td>" + data.durations[i] + "</td>" + 
+			"</tr>");
 		}
 	}	
 	return false;
 }
 
 function exportProjectSummaryToPDF() {
-	
+
 	var from = $('#selection_date_from_proj').val();
 	var to = $('#selection_date_to_proj').val();
-	
+
 	var projDrop = document.getElementById('project_drop_report');
 	var projname = projDrop.options[projDrop.selectedIndex].text;
-	
+
 	if (from == '' || to == '' || projname == '') {
 		alert("Nu ai selectat datele necesare!");
 		return false;
 	}
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "exportProjectSummaryToPDF",
-				from: "" + from, 
-				to: "" + to,
-				name: "" + projname
-				},
+			from: "" + from, 
+			to: "" + to,
+			name: "" + projname
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log(data);
 			if(data.ok == true) {
@@ -1178,30 +1180,30 @@ function exportProjectSummaryToPDF() {
 function exportWorkFromEmployeeInInterval() {
 	var from = $('#selection_date_from').val();
 	var to = $('#selection_date_to').val();
-	
+
 	var enameDrop = document.getElementById('clerkDrop_report');
 	var empname = enameDrop.options[enameDrop.selectedIndex].text;
-	
+
 	if (from == '' || to == '' || empname == '') {
 		alert ("Nu ai selectat datele necesare");
 		return false;
 	} 
- 	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "exportMTSforUserInIntervaltoPDF",
-				name: "" + empname,
-				from: "" + from, 
-				to: "" + to
-				},
+			name: "" + empname,
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("REVIEW MTS INTERVAL: ");
 			console.log(data);
 			if (data.ok == true) {
 				alert ("Fisierul a fost salvat cu succes!");
 			}
-			
+
 		},
 		error: function() {
 			alert("general failure!");
@@ -1212,21 +1214,21 @@ function exportWorkFromEmployeeInInterval() {
 function exportWorkInDepartmentInIntervalPDF() {
 	var from = $('#selection_date_from_dept').val();
 	var to = $('#selection_date_to_dept').val();
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "exportWorkInDepartmentInInterval",
-				from: "" + from, 
-				to: "" + to
-				},
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("DEPARTMENT SUMMARY WORK: ");
 			console.log(data);
 			if (data.ok == true) {
 				alert ("Fisierul a fost generat cu success");
 			}
-			
+
 		},
 		error: function() {
 			alert("general failure!");
@@ -1260,14 +1262,14 @@ function exportMTStoXLS() {
 function exportWorkInDepartmentInIntervalXLS() {
 	var from = $('#selection_date_from_dept').val();
 	var to = $('#selection_date_to_dept').val();
-	
+
 	$.ajax({
 		type: "GET", 
 		url: "DepartmentManagerServlet",
 		data: {phase: "exportWorkInDepartmentInIntervalXLS",
-				from: "" + from, 
-				to: "" + to
-				},
+			from: "" + from, 
+			to: "" + to
+		},
 		success: function (data, textStatus, jqXHR) {
 			console.log("DEPARTMENT SUMMARY WORK: ");
 			console.log(data);
@@ -1278,6 +1280,98 @@ function exportWorkInDepartmentInIntervalXLS() {
 		error: function() {
 			alert("general failure!");
 		}
+	});
+}
+
+function viewSubmittedMTS() {
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+
+	console.log("requesting MTS for " + empname);
+
+	$.ajax({
+		type: "GET",
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewLastSubmittedMTS",
+			name: empname},
+			success: function (data, textStatus, jqXHR) {
+				console.log("REVIEW MTS: ");
+				console.log(data);
+
+				if (data.ok == true) {
+					if (data.status == 'SUBMITTED') {
+						var dateString = data.mtsDate + "";
+						console.log("Date string: ");
+						console.log(dateString);
+						$('#last-mts-status-div').html("Status: " + data.status  + 
+								' <a href="#" onClick="approveMTS('
+								+ ')">APPROVE</a>' + 
+								' <a href="#" onClick="rejectMTS(' 
+								+ ')">REJECT</a>');
+					}
+					else {
+						$('#last-mts-status-div').html("Status: " + data.status);
+					}
+					populateAllActivitiesTable(data);
+				} else {
+					$('#all-entries-table > tbody').empty();
+					$('#last-mts-status-div').html("");
+				}
+			},
+			error: function() {
+				alert("general failure!");
+			}
+	});
+}
+
+function approveMTS() {
+	console.log("Vreau sa approve");
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+
+	$.ajax({
+		type: "GET",
+		url: "DepartmentManagerServlet",
+		data: {phase: "changeMTSStatus",
+			emp: empname,
+			newstatus: "APPROVED"},
+			success: function (data, textStatus, jqXHR) {
+				console.log(data);
+				if (data.ok == true) {
+					alert("Approved!");
+				} else {
+					alert("Failure!");
+				}
+			},
+			error: function() {
+				alert("general failure!");
+			}
+	});
+}
+
+function rejectMTS(mtsDate) {
+	console.log("Vreau sa reject");
+	console.log("Vreau sa approve");
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+
+	$.ajax({
+		type: "GET",
+		url: "DepartmentManagerServlet",
+		data: {phase: "changeMTSStatus",
+			emp: empname,
+			newstatus: "REJECTED"},
+			success: function (data, textStatus, jqXHR) {
+				console.log(data);
+				if (data.ok == true) {
+					alert("Rejected!");
+				} else {
+					alert("Failure!");
+				}
+			},
+			error: function() {
+				alert("general failure!");
+			}
 	});
 }
 

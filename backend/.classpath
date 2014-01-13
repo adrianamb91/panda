@@ -15,7 +15,5 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="C:/Users/ktaDinca/Desktop/hibernate-3.2.7.ga.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ktaDinca/Desktop/hibernate-core-3.3.2.GA.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ktaDinca/Documents/GitHub/panda/backend/WebContent/WEB-INF/lib/itextpdf-5.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ktaDinca/Documents/GitHub/panda/backend/WebContent/WEB-INF/lib/poi-3.9-20121203.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

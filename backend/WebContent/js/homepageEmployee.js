@@ -97,18 +97,22 @@ function submitMTS(i) {
 	var table = $('#monthly-entries');
 	var selectorValue = 'tr:eq(' + i + ')';
 	var row = $(selectorValue, table);
+
+    console.log(row);
 	
 	$.ajax({
 		type: "GET",
 		url : "HomepageServlet",
 		data : {phase : "submitMTSByClerk",
-			date : "" + row[0].cells[0].innerHTML,
+			date : "" + row[0].cells[0].innerHTML
 		},
 		success : function(data, textStatus, jqXHR) {
 			alert('s-a dus!');
 			if (data.ok == true) {
 				loadAllMTimesheetsForUser();
-			}
+			} else {
+                alert("problem");
+            }
 		},
 		error : function() {
 			alert("failure");
@@ -170,10 +174,11 @@ function loadAllMTimesheetsForUser() {
 
 			for (var i = 0; i < data.size; i++) {
 				if (data.status[i] == 'OPEN' ) {
+                    var index = i+1;
 					tsTable.append("<tr>" + 
 							"<td>" + data.date[i] + "</td>" +
 							"<td>" + data.status[i] 
-							+ '<button id="submitMTS" style="float: right" onclick="submitMTS(' + i + 1 + ')">Submit</button>' 
+							+ '<button id="submitMTS" style="float: right" onclick="submitMTS(' + index + ')">Submit</button>'
 							+ "</td>" + 
 					"</tr>");
 				} else {

@@ -34,6 +34,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.timesheetapplication.enums.MonthlyTimesheetStatus;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Department;
@@ -121,14 +122,168 @@ public class DepartmentManagerServlet extends HttpServlet {
 		case "exportWorkInDepartmentInIntervalXLS":
 			processexportWorkInDepartmentInIntervalXLS(request, responseMessage, response);
 			break;
+		case "reviewLastSubmittedMTS":
+			processReviewLastSubmittedMTS(request, responseMessage, response);
+			break;
+		case "changeMTSStatus":
+			processChangeMTSStatus(request, responseMessage, response);
+			break;
 		default:
 			break;
 		}
 
 	}
 
+	private void processChangeMTSStatus(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		String ename = request.getParameter("emp");
+		String newStatus = request.getParameter("newstatus");
+
+		Employee emp = employeeService.findEmployeeByFirstAndLastName(ename);
+
+		Date maxDate = null;
+		MonthlyTimesheet mts = null;
+
+		List<MonthlyTimesheet> mtss = mTimesheetService.findAllMTSforUser(emp);
+		if (mtss != null) {
+
+			for (MonthlyTimesheet m: mtss) {
+				if (m.getStatus().equals(MonthlyTimesheetStatus.APPROVED) || m.getStatus().equals(MonthlyTimesheetStatus.SUBMITTED)) {
+					if (maxDate == null) {
+						maxDate = m.getDate();
+						mts = m;
+					} else {
+						if (maxDate.compareTo(m.getDate()) < 0) {
+							maxDate = m.getDate();
+							mts = m;
+						}
+					}
+				}
+			}
+		}
+
+		try {
+			if (mts != null) {
+				mts.setStatus(MonthlyTimesheetStatus.valueOf(newStatus));
+				mTimesheetService.saveOrUpdate(mts);
+				responseMessage.put("ok", true);
+			} else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void processReviewLastSubmittedMTS(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		String ename = request.getParameter("name");
+
+		System.out.println("requested last submitted/approved mts for user:" + ename);
+
+		Employee e = null;
+
+		if (TSMUtil.isNotEmptyOrNull(ename)) {
+			e = employeeService.findEmployeeByFirstAndLastName(ename);
+			if (e != null) {
+				List<MonthlyTimesheet> mts = mTimesheetService.findAllMTSforUser(e);
+				if (mts != null) {
+					Date maxDate = null;
+					MonthlyTimesheet mtsTheOneIWant = null;
+					for (MonthlyTimesheet m: mts) {
+						if (m.getStatus().equals(MonthlyTimesheetStatus.APPROVED) || m.getStatus().equals(MonthlyTimesheetStatus.SUBMITTED)) {
+							if (maxDate == null) {
+								maxDate = m.getDate();
+								mtsTheOneIWant = m;
+							} else {
+								if (maxDate.compareTo(m.getDate()) < 0) {
+									maxDate = m.getDate();
+									mtsTheOneIWant = m;
+								}
+							}
+						}
+					}
+					if (maxDate == null) {
+						//n-avem decat open
+						System.out.println("n-avem monthlytimesheet");
+					} else {
+						List<DailyTimeSheet> dts = null;
+						dts = dTimesheetService.findAllDTFromMTS(mtsTheOneIWant);
+						if (dts == null) {
+							System.out.println("n-avem niciun dailytimesheet");
+						} else {
+							List <Activity> acts = new ArrayList<Activity>();
+							System.out.println("avem " + dts.size() + " pentru mts dorit");
+							for (DailyTimeSheet d: dts) {
+								List<Activity> auxAct = activityService.findActivitiesByDTS(d);
+								System.out.println("avem " + auxAct.size() + " pentru dts " + d.getDate().toString());
+								acts.addAll(auxAct);
+							}
+							if (acts.size() == 0) {
+								System.out.println("n-avem nicio activitate");
+								//degeaba
+							} else {
+								ArrayList<String> dateArray = new ArrayList<String>();
+								ArrayList<String> durationArray = new ArrayList<String>();
+								ArrayList<String> descriptionArray = new ArrayList<String>();
+								ArrayList<String> projectArray = new ArrayList<String>();
+
+								JSONArray array_du, array_de, array_p, array_da;
+
+								for (Activity a : acts) {
+									dateArray.add(TSMUtil.formatDate(a.getTimesheet().getDate()));
+									durationArray.add(a.getDuration().toString());
+									descriptionArray.add(a.getDescription());
+									projectArray.add(a.getProject().getName());
+								}
+
+								array_da = new JSONArray(dateArray);
+								array_du = new JSONArray(durationArray);
+								array_de = new JSONArray(descriptionArray);
+								array_p = new JSONArray(projectArray);
+
+								try {
+									responseMessage.put("date", array_da);
+									responseMessage.put("description", array_de);
+									responseMessage.put("duration", array_du);
+									responseMessage.put("project", array_p);
+									responseMessage.put("size", acts.size());
+									responseMessage.put("ok", true);
+									responseMessage.put("mtsDate", mtsTheOneIWant.getDate().toString());
+									responseMessage.put("status", mtsTheOneIWant.getStatus().toString());
+
+									response.setContentType("application/json; charset=UTF-8");
+									response.getWriter().write(responseMessage.toString());
+
+									return;
+								} catch (JSONException | IOException e1) {
+									e1.printStackTrace();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		try {
+			responseMessage.put("ok", false);
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+
+		} catch (JSONException | IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+
 	private void processexportWorkInDepartmentInIntervalXLS(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
-		
+
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
 
