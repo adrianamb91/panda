@@ -4,6 +4,9 @@
 var serverIp = "localhost:8080";
 
 $(document).ready(function() {
+	
+	var buttonpressed = 0;
+	
 	console.log("document ready");
 	mainContent = document.getElementById('view_page').innerHTML;
 
@@ -13,6 +16,15 @@ $(document).ready(function() {
 	loadDepartments();
 	loadEmployees();
 	loadJobs();
+	
+	$('#auditStateBtn').click(function() {
+		if (buttonpressed % 2 == 0) {
+			$('#stateDiv').html('<font color="green">ACTIVE</font>');
+		} else {
+			$('#stateDiv').html('<font color="red">INACTIVE</font>');
+		}
+		buttonpressed ++;
+	});
 
 	$('#settingsBtn').click(function() {
 		// $('#view_page').load("settings.html #view_settings");
