@@ -1,7 +1,10 @@
 package com.timesheetapplication.servlets;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,10 +18,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
 import com.timesheetapplication.model.Department;
@@ -32,28 +47,6 @@ import com.timesheetapplication.service.EmployeeService;
 import com.timesheetapplication.service.MonthlyTimeSheetService;
 import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
-
-
-
-import java.io.FileOutputStream;
-import java.util.Date;
-
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chapter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Section;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 
 /**
  * Servlet implementation class DepartmentManagerServlet
@@ -116,11 +109,17 @@ public class DepartmentManagerServlet extends HttpServlet {
 		case "exportProjectSummaryToPDF":
 			processExportProjectSummaryToPDF(request, responseMessage, response);
 			break;
-		case "exportMTSforUserInIntervaltoPDF" : 
+		case "exportMTSforUserInIntervaltoPDF":
 			processExportMTSforUserInIntervaltoPDF(request, responseMessage, response);
 			break;
-		case "exportWorkInDepartmentInInterval" : 
+		case "exportWorkInDepartmentInInterval":
 			processExportWorkInDepartmentInInterval(request, responseMessage, response);
+			break;
+		case "exportXLSwithReviewLastMTS":
+			processExportXLSwithReviewLastMTS(request, responseMessage, response);
+			break;
+		case "exportWorkInDepartmentInIntervalXLS":
+			processexportWorkInDepartmentInIntervalXLS(request, responseMessage, response);
 			break;
 		default:
 			break;
@@ -128,11 +127,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 
 	}
 
-	private void processExportWorkInDepartmentInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
-
-		/**
-		 * exporta la nivel de toate departamentele
-		 */
+	private void processexportWorkInDepartmentInIntervalXLS(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
 		
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
@@ -147,7 +142,8 @@ public class DepartmentManagerServlet extends HttpServlet {
 				Map<String, Float> map = new HashMap<String, Float>();
 
 				for (Project p : projects) {
-					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from), TSMUtil.convertStringToDate(to));
+					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
+							TSMUtil.convertStringToDate(to));
 					for (Activity a : activities) {
 						if (!map.containsKey(p.getName())) {
 							map.put(p.getName(), a.getDuration());
@@ -157,13 +153,181 @@ public class DepartmentManagerServlet extends HttpServlet {
 						}
 					}
 				}
-				
+
 				String formatted_from = from.replace("/", "-");
 				String formatted_to = to.replace("/", "-");
-				
+
+				HSSFWorkbook workbook = new HSSFWorkbook();
+				HSSFSheet sheet = workbook.createSheet("First sheet");
+				int rownum = 0;
+				Row row = sheet.createRow(rownum++);
+				Cell cell1 = row.createCell(1);
+				cell1.setCellValue("PROJECT");
+				Cell cell2 = row.createCell(2);
+				cell2.setCellValue("WORKING HOURS");
+
+				for (String proj : map.keySet()) {
+					row = sheet.createRow(rownum++);
+					cell1 = row.createCell(1);
+					cell1.setCellValue(proj);
+					cell2 = row.createCell(2);
+					cell2.setCellValue(map.get(proj).toString());
+				}
+				try {
+					FileOutputStream out = new FileOutputStream(new File("C:\\temp\\" + loggedInUser.getDepartment().getName() + "_" + formatted_from + "_" + formatted_to + ".xls"));
+					workbook.write(out);
+					out.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
+				responseMessage.put("ok", true);
+			} else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processExportXLSwithReviewLastMTS(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		/**
+		 * Export XLS la nivel de EMPLOYEE
+		 */
+
+		String ename = request.getParameter("name");
+
+		Employee e = null;
+		List<DailyTimeSheet> dts = null;
+		List<Activity> allActivities = new ArrayList<Activity>();
+		List<Activity> crtActivities = new ArrayList<Activity>();
+
+		if (TSMUtil.isNotEmptyOrNull(ename)) {
+			e = employeeService.findEmployeeByFirstAndLastName(ename);
+
+			if (e != null) {
+
+				// aici se afiseaza numai pentru luna curenta pentru ca din alta
+				// luna e prea greu... fac maine cu iubi:X:X
+				Date date = TSMUtil.truncateDateToMonthsFirst(new Date());
+				MonthlyTimesheet mts = mTimesheetService.findMTSByDateAndUser(date, e);
+
+				if (mts != null && mts.getId() != null) {
+					dts = dTimesheetService.findAllDTFromMTS(mts);
+					if (dts != null) {
+						for (DailyTimeSheet crtDTS : dts) {
+							crtActivities = activityService.findActivitiesByDTS(crtDTS);
+							if (crtActivities != null && crtActivities.size() > 0) {
+								allActivities.addAll(crtActivities);
+							}
+						}
+
+						HSSFWorkbook workbook = new HSSFWorkbook();
+						HSSFSheet sheet = workbook.createSheet("First sheet");
+						int rownum = 0;
+						Row row = sheet.createRow(rownum++);
+						Cell cell1 = row.createCell(1);
+						cell1.setCellValue("DATA");
+						Cell cell2 = row.createCell(2);
+						cell2.setCellValue("WORKING HOURS");
+						Cell cell3 = row.createCell(3);
+						cell3.setCellValue("DESCRIPTION'");
+						Cell cell4 = row.createCell(4);
+						cell4.setCellValue("PROJECT");
+						for (Activity a : allActivities) {
+							row = sheet.createRow(rownum++);
+							cell1 = row.createCell(1);
+							cell1.setCellValue(TSMUtil.formatDate(a.getTimesheet().getDate()));
+							cell2 = row.createCell(2);
+							cell2.setCellValue(a.getDuration().toString());
+							cell3 = row.createCell(3);
+							cell3.setCellValue(a.getDescription());
+							cell4 = row.createCell(4);
+							cell4.setCellValue(a.getProject().getName());
+						}
+						try {
+							String formattedDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
+							FileOutputStream out = new FileOutputStream(new File("C:\\temp\\" + e.getUsername() + "_" + formattedDate + ".xls"));
+							workbook.write(out);
+							out.close();
+						} catch (FileNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (IOException e2) {
+							e2.printStackTrace();
+						}
+						try {
+							responseMessage.put("ok", true);
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+					} else {
+						try {
+							responseMessage.put("ok", false);
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		} else {
+			try {
+				responseMessage.put("ok", false);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void processExportWorkInDepartmentInInterval(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
+
+		/**
+		 * exporta la nivel de toate departamentele
+		 */
+
+		String from = request.getParameter("from");
+		String to = request.getParameter("to");
+
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
+
+		List<Project> projects = projectService.getProjectsForDepartment(loggedInUser.getDepartment());
+
+		try {
+			if (projects != null) {
+
+				Map<String, Float> map = new HashMap<String, Float>();
+
+				for (Project p : projects) {
+					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
+							TSMUtil.convertStringToDate(to));
+					for (Activity a : activities) {
+						if (!map.containsKey(p.getName())) {
+							map.put(p.getName(), a.getDuration());
+						} else {
+							Float oldDuration = map.get(p.getName());
+							map.put(p.getName(), oldDuration + a.getDuration());
+						}
+					}
+				}
+
+				String formatted_from = from.replace("/", "-");
+				String formatted_to = to.replace("/", "-");
+
 				Document document = new Document();
 				try {
-					PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + loggedInUser.getDepartment().getName() + "_" + formatted_from + "_" + formatted_to + ".pdf"));
+					PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + loggedInUser.getDepartment().getName() + "_" + formatted_from
+							+ "_" + formatted_to + ".pdf"));
 				} catch (FileNotFoundException e2) {
 					e2.printStackTrace();
 				} catch (DocumentException e2) {
@@ -180,7 +344,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 				c1 = new PdfPCell(new Phrase("WORKING HOURS"));
 				c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 				table.addCell(c1);
-				
+
 				for (String proj : map.keySet()) {
 					table.addCell(proj);
 					table.addCell(map.get(proj).toString());
@@ -188,8 +352,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 				responseMessage.put("ok", true);
 				document.add(table);
 				document.close();
-			}
-			else {
+			} else {
 				responseMessage.put("ok", false);
 			}
 			response.setContentType("application/json; charset=UTF-8");
@@ -201,7 +364,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void processExportMTSforUserInIntervaltoPDF(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
@@ -209,7 +372,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 		/**
 		 * exporta la nivel de user (detaliat)
 		 */
-		
+
 		String ename = request.getParameter("name");
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
@@ -235,10 +398,11 @@ public class DepartmentManagerServlet extends HttpServlet {
 
 					String formatted_from = from.replace("/", "-");
 					String formatted_to = to.replace("/", "-");
-					
+
 					Document document = new Document();
 					try {
-						PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + e.getUsername() + "_" + formatted_from + "_" + formatted_to + ".pdf"));
+						PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + e.getUsername() + "_" + formatted_from + "_" + formatted_to
+								+ ".pdf"));
 					} catch (FileNotFoundException e2) {
 						e2.printStackTrace();
 					} catch (DocumentException e2) {
@@ -261,7 +425,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 					c1 = new PdfPCell(new Phrase("DESCRIPTION"));
 					c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 					table.addCell(c1);
-					
+
 					for (Activity a : allActivities) {
 						table.addCell(TSMUtil.formatDate(a.getTimesheet().getDate()));
 						table.addCell(a.getDuration().toString());
@@ -299,28 +463,24 @@ public class DepartmentManagerServlet extends HttpServlet {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		
-		
+
 	}
 
 	private void processExportProjectSummaryToPDF(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
-		
+
 		/*
 		 * Exporta la nivel de proiect
-		 * 
 		 */
-		
-		
+
 		String pname = request.getParameter("name");
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
-		
-		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");		
+
+		Employee loggedInUser = (Employee) session.getAttribute("loggedInUser");
 
 		try {
 			if (TSMUtil.isNotEmptyOrNull(pname)) {
-				
+
 				Project p = projectService.findProjectByName(pname);
 				if (p != null) {
 					List<Activity> acts = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
@@ -342,38 +502,37 @@ public class DepartmentManagerServlet extends HttpServlet {
 						/**
 						 * EXPORT PDF SHIZZLE
 						 */
-						
+
 						Document document = new Document();
 						PdfWriter.getInstance(document, new FileOutputStream("c:/temp/" + loggedInUser.getUsername() + "_" + pname + ".pdf"));
 						document.open();
-						
+
 						// adding page title;
 						Paragraph preface = new Paragraph();
 						TSMUtil.addEmptyLine(preface, 1);
 						preface.add(new Paragraph("Report", TSMUtil.catFont));
-						
+
 						PdfPTable table = new PdfPTable(2);
-						
+
 						PdfPCell c1 = new PdfPCell(new Phrase("EMPLOYEE NAME"));
 						c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 						table.addCell(c1);
-						
+
 						c1 = new PdfPCell(new Phrase("WORKING HOURS"));
 						c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 						table.addCell(c1);
-						
-						
+
 						for (String s : projSumData.keySet()) {
-//							owners.add(s);
-//							durations.add(projSumData.get(s).toString());
-//							
+							// owners.add(s);
+							// durations.add(projSumData.get(s).toString());
+							//
 							table.addCell(s);
 							table.addCell(projSumData.get(s).toString());
 						}
 
 						document.add(table);
 						document.close();
-						
+
 						responseMessage.put("ok", true);
 					}
 				} else {
@@ -392,7 +551,6 @@ public class DepartmentManagerServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		
 	}
 
 	private void processReviewWordAtDepartment(HttpServletRequest request, JSONObject responseMessage, HttpServletResponse response) {
@@ -410,7 +568,8 @@ public class DepartmentManagerServlet extends HttpServlet {
 				Map<String, Float> map = new HashMap<String, Float>();
 
 				for (Project p : projects) {
-					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from), TSMUtil.convertStringToDate(to));
+					List<Activity> activities = activityService.findWorkPutIntoProject(p, TSMUtil.convertStringToDate(from),
+							TSMUtil.convertStringToDate(to));
 					for (Activity a : activities) {
 						if (!map.containsKey(p.getName())) {
 							map.put(p.getName(), a.getDuration());
@@ -420,7 +579,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 						}
 					}
 				}
-				
+
 				StringBuilder sb = new StringBuilder();
 				sb.append("[[");
 				int iter = 0;
@@ -454,8 +613,7 @@ public class DepartmentManagerServlet extends HttpServlet {
 				responseMessage.put("size", projectNames.size());
 				responseMessage.put("projects", array_p);
 				responseMessage.put("durations", array_d);
-			}
-			else {
+			} else {
 				responseMessage.put("ok", false);
 			}
 			response.setContentType("application/json; charset=UTF-8");
@@ -510,10 +668,10 @@ public class DepartmentManagerServlet extends HttpServlet {
 							iter++;
 						}
 						sb.append("]]");
-						
+
 						JSONArray chartJSON = new JSONArray(sb.toString());
 						responseMessage.put("chartDataJSON", chartJSON);
-						
+
 						for (String s : projSumData.keySet()) {
 							owners.add(s);
 							durations.add(projSumData.get(s).toString());

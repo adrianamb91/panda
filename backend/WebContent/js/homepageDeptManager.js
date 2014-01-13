@@ -1023,7 +1023,6 @@ function reviewSummaryWorkFromEmployeeInInterval() {
 			if (data.ok == true) {
 				populateSummaryWorkTable(data);
 			}
-		
 		},
 		error: function() {
 			alert("general failure!");
@@ -1082,8 +1081,6 @@ function reviewWorkForProjectInInterval() {
 }
 
 function populateProjectSummaryWorkTable(data) {
-	//summary_interval-entries-table
-	
 	var table = $('#summary_interval-project-table');
 	$('#summary_interval-project-table > tbody').empty();
 	
@@ -1212,7 +1209,7 @@ function exportWorkFromEmployeeInInterval() {
 	});
 }
 
-function exportWorkInDepartmentInInterval() {
+function exportWorkInDepartmentInIntervalPDF() {
 	var from = $('#selection_date_from_dept').val();
 	var to = $('#selection_date_to_dept').val();
 	
@@ -1235,7 +1232,53 @@ function exportWorkInDepartmentInInterval() {
 			alert("general failure!");
 		}
 	});
+}
+
+function exportMTStoXLS() {
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	$.ajax({
+		type : "GET",
+		url : "DepartmentManagerServlet",
+		data : {
+			phase : "exportXLSwithReviewLastMTS",
+			name : empname
+		},
+		success : function(data, textStatus, jqXHR) {
+			console.log("export XLS: ");
+			console.log(data);
+			if (data.ok == true) {
+				alert("Fisierul xls a fost generat cu succes!");
+			}
+		},
+		error : function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function exportWorkInDepartmentInIntervalXLS() {
+	var from = $('#selection_date_from_dept').val();
+	var to = $('#selection_date_to_dept').val();
 	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "exportWorkInDepartmentInIntervalXLS",
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("DEPARTMENT SUMMARY WORK: ");
+			console.log(data);
+			if (data.ok == true) {
+				alert ("Fisierul xls a fost generat cu success");
+			}
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
 }
 
 

@@ -18,6 +18,7 @@ $(document).ready(function() {
     loadAllMTimesheetsForUser();
 
     loadEmployees();
+    loadProjects();
 
     $('#settingsBtn').click(function() {
         // $('#view_page').load("settings.html #view_settings");
@@ -357,11 +358,10 @@ function loadEmployees() {
         },
         success : function(data, textStatus, jqXHR) {
             console.log("ALL CLERKS: ");
-
             console.log(data);
             if (data.ok == true) {
-                populateDropdown(data, "clerkDrop");
-                //populateDropdown(data, "clerkDrop_report");
+                populateDropdown(data, 'clerkDrop');
+                populateDropdown(data, 'clerkDrop_report');
             } else {
                 alert("No employees");
             }
@@ -374,12 +374,30 @@ function loadEmployees() {
     });
 }
 
+function loadProjects() {
+	$.ajax({
+		type : "GET",
+		url : "DivManagerServlet",
+		data : {
+			phase : "loadAllProjectsFromDivision"
+		},
+		success : function(data, textStatus, jqXHR) {
+			console.log("LOAD ALL PROJECTS RESP:");
+			console.log(data);
+			if (data.ok == true) {
+				//populateProjectsTable(data);
+				//populateDropdown(data, 'projectDrop');
+				populateDropdown(data, 'project_drop_report');
+			}
+		},
+		error : function() {
+			alert("failure");
+			console.log('There is an error');
+		}
+	});
+}
+
 function viewMTS() {
-
-//	var projectDropdown = document.getElementById('projectDrop');
-//	var projectName = projectDropdown.options[projectDropdown.selectedIndex].text;
-//	var empname = $('#clerkDrop').options[$('#clerkDrop').selectedIndex].text;
-
     var enameDrop = document.getElementById('clerkDrop');
     var empname = enameDrop.options[enameDrop.selectedIndex].text;
 
@@ -438,3 +456,205 @@ function populateDropdown(data, elementId) {
     }
 }
 //End of chestii generale
+
+function exportMTStoXLS() {
+	var enameDrop = document.getElementById('clerkDrop');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	$.ajax({
+		type : "GET",
+		url : "DepartmentManagerServlet",
+		data : {
+			phase : "exportXLSwithReviewLastMTS",
+			name : empname
+		},
+		success : function(data, textStatus, jqXHR) {
+			console.log("export XLS: ");
+			console.log(data);
+			if (data.ok == true) {
+				alert("Fisierul xls a fost generat cu succes!");
+			}
+		},
+		error : function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function reviewSummaryWorkFromEmployeeInInterval() {
+	
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var enameDrop = document.getElementById('clerkDrop_report');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewSummaryWorkFromEmployeeInInterval",
+				name: "" + empname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("SUMMARY WORK: ");
+			console.log(data);
+			if (data.ok == true) {
+				if (data.size == 0) {
+					alert("Angajatul selectat nu are nici o activitate");
+					return false;
+				}
+				else {
+					populateSummaryWorkTable(data);
+				}
+			}
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+
+function populateSummaryWorkTable(data) {
+	//summary_interval-entries-table
+	
+	var table = $('#summary_interval-entries-table');
+	$('#summary_interval-entries-table > tbody').empty();
+	
+	console.log("SUMMARY DATA:");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							"<td>" + data.project[i] + "</td>" + 
+							"<td>" + data.duration[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}
+
+function reviewWorkFromEmployeeInInterval() {
+	
+	var from = $('#selection_date_from').val();
+	var to = $('#selection_date_to').val();
+	
+	var enameDrop = document.getElementById('clerkDrop_report');
+	var empname = enameDrop.options[enameDrop.selectedIndex].text;
+	
+	console.log("to: " + to + " from: " + from);
+	
+	//generatePieChart();
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewMTSforUserInInterval",
+				name: "" + empname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("REVIEW MTS INTERVAL: ");
+			console.log(data);
+			populateIntervalActivitiesTable(data);
+			generatePieChart(data.chartDataJSON, 'chart1');
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function populateIntervalActivitiesTable(data) {
+	
+	console.log("populateIntervalActivitiesTable:");
+	
+	var table = $('#interval-entries-table');
+	$('#interval-entries-table > tbody').empty();
+	console.log("DETAILED MTS: ");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							'<td>' + data.date[i] + "</td>" + 
+							"<td>" + data.duration[i] + "</td>" + 
+							"<td>" + data.description[i] + "</td>" + 
+							"<td>" + data.project[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}
+
+function generatePieChart(entries, elementId) {
+	$('#' + elementId).show();
+	console.log("PLOT: ");
+	console.log(entries);
+	
+	plot2 = jQuery.jqplot(elementId, entries,
+		{
+			title : ' ',
+			seriesDefaults : {
+				shadow : true,
+				renderer : jQuery.jqplot.PieRenderer,
+				rendererOptions : {
+					startAngle : 180,
+					sliceMargin : 4,
+					showDataLabels : true
+				}
+			},
+			legend : {
+				show : true,
+				location : 'w'
+			}
+		});
+}
+
+function reviewWorkForProjectInInterval() {
+	
+	var from = $('#selection_date_from_proj').val();
+	var to = $('#selection_date_to_proj').val();
+	
+	var projDrop = document.getElementById('project_drop_report');
+	var projname = projDrop.options[projDrop.selectedIndex].text;
+	
+	$.ajax({
+		type: "GET", 
+		url: "DepartmentManagerServlet",
+		data: {phase: "reviewSummaryWorkForProjectInInterval",
+				name: "" + projname,
+				from: "" + from, 
+				to: "" + to
+				},
+		success: function (data, textStatus, jqXHR) {
+			console.log("PROJECT SUMMARY WORK: ");
+			console.log(data);
+			populateProjectSummaryWorkTable(data);
+			generatePieChart(data.chartDataJSON, 'chart2');
+		},
+		error: function() {
+			alert("general failure!");
+		}
+	});
+}
+
+function populateProjectSummaryWorkTable(data) {
+	//summary_interval-entries-table
+	
+	var table = $('#summary_interval-project-table');
+	$('#summary_interval-project-table > tbody').empty();
+	
+	console.log("PROJECT SUMMARY DATA:");
+	console.log(data);
+	if (data.ok == true) {
+		for (var i = 0; i < data.size; i ++) {
+			table.append("<tr>" + 
+							"<td>" + data.owners[i] + "</td>" + 
+							"<td>" + data.durations[i] + "</td>" + 
+						"</tr>");
+		}
+	}	
+	return false;
+}

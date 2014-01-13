@@ -239,6 +239,7 @@
             
             <br>
             <button id="viewMTS" onclick="viewMTS()">Examine timesheet</button>
+            <button id="viewMTS" onclick="exportMTStoXLS()">export timesheet as XLS</button>
 				
 			<div id="all-entries-contain" class="ui-widget">
 					<table id="all-entries-table" class="ui-widget ui-widget-content">
@@ -353,8 +354,12 @@
 					<button id="reviewWordButton"
 						onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
 						
-					<button id="exportDepWorkButton"
-						onclick="exportWorkInDepartmentInInterval()">export to PDF</button>
+					<button id="exportDepWorkButtonPDF"
+						onclick="exportWorkInDepartmentInIntervalPDF()">export to PDF</button>
+						
+					<button id="exportDepWorkButtonXLS"
+						onclick="exportWorkInDepartmentInIntervalXLS()">export to XLS</button>
+						
 
 					<label>Sumar proiect:</label>
 					<div id="summary-interval-project-contain" class="ui-widget">
