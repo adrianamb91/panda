@@ -151,9 +151,10 @@
         <li><a href="#view1">Daily Timesheet</a></li>
         <li><a href="#view2">Monthly Timesheet</a></li>
         <li><a href="#view3">Employees Timesheet</a></li>
-        <li><a href="#view4">Report 1</a></li>
-        <li><a href="#view5">Manage Employees</a></li>
-        <li><a href="#view6">Manage clients and projects</a></li>
+        <li><a href="#view4">R1</a></li>
+        <li><a href="#view5">R2</a></li>
+        <li><a href="#view6">R3</a></li>
+        <li><a href="#view7">Manage clients and projects</a></li>
     </ul>
     <div class="tabcontents">
         <div id="view1">
@@ -263,21 +264,20 @@
 		<!--         report -->
         <div id="view4">
 
-        	
         	<label>Select employee: </label>
 			<select id="clerkDrop_report" class="text ui-widget-content ui-corner-all">
             	<option>Select an employee</option>
             </select>
             
-             <label>from: </label>
+            <label>from: </label>
             <input class="datepicker" id="selection_date_from" type="text">
             
             <label>to: </label>
             <input class="datepicker" id="selection_date_to" type="text">
             
-            <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">review summary</button>
-            <button id="reviewWordButton1" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
-            <button id="reviewWordButton2" onclick="exportWorkFromEmployeeInInterval()">export detailed to pdf</button>
+            <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">Review-Summary</button>
+            <button id="reviewWordButton1" onclick="reviewWorkFromEmployeeInInterval()">Review-Detailed</button>
+            <button id="reviewWordButton2" onclick="exportWorkFromEmployeeInInterval()">Export detailed to PDF</button>
             
             <div id="summary-interval-entries-contain" class="ui-widget">
 					<label>Sumar:</label>
@@ -314,73 +314,76 @@
 			<br>
 			
 			<div id="chart1" style="width:800px; height:500px;display: none"></div>
-            
+
+        </div>
+        <div id="view5">
+
             <label>Select PROJECT: </label>
-			<select id="project_drop_report" class="text ui-widget-content ui-corner-all">
-            	<option>Select a project</option>
+            <select id="project_drop_report" class="text ui-widget-content ui-corner-all">
+                <option>Select a project</option>
             </select>
-            
+
             <label>from: </label>
             <input class="datepicker" id="selection_date_from_proj" type="text">
-            
+
             <label>to: </label>
             <input class="datepicker" id="selection_date_to_proj" type="text">
-            
-            <button id="reviewWordButton3" onclick="reviewWorkForProjectInInterval()">review work at project</button>
-            <button id="exportProjectSummaryToPDF" onclick="exportProjectSummaryToPDF()">export to PDF</button>
-            
-			<label>Sumar proiect:</label>
+
+            <button id="reviewWordButton3" onclick="reviewWorkForProjectInInterval()">Review work at project</button>
+            <button id="exportProjectSummaryToPDF" onclick="exportProjectSummaryToPDF()">Export to PDF</button>
+
+            <label>Sumar proiect:</label>
             <div id="summary-interval-project-contain" class="ui-widget">
-					<table id="summary_interval-project-table" style="float: left" class="ui-widget ui-widget-content">
-						<thead>
-							<tr class="ui-widget-header ">
-								<th>Owner</th>
-								<th>Duration</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-					<div id="chart2" style="width:800px; height:500px;display: none"></div>
-			</div>
+                <table id="summary_interval-project-table" class="ui-widget ui-widget-content">
+                    <thead>
+                    <tr class="ui-widget-header ">
+                        <th>Owner</th>
+                        <th>Duration</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
 
-			<br>
-			<br>
-			<br>
-				<div>
-					<label>from: </label> 
-					<input class="datepicker"
-						id="selection_date_from_dept" type="text"> <label>to:
-					</label> 
-					<input class="datepicker" id="selection_date_to_dept" type="text">
+            <br>
+            <div id="chart2" style="width:800px; height:500px;display: none"></div>
+            <br>
 
-					<button id="reviewWordButton4"
-						onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
-						
-					<button id="exportDepWorkButton"
-						onclick="exportWorkInDepartmentInInterval()">export to PDF</button>
-
-					<label>Sumar proiect:</label>
-					<div id="summary-interval-project-contain" class="ui-widget">
-						<table id="summary_interval-dept-table" class="ui-widget ui-widget-content">
-							<thead>
-								<tr class="ui-widget-header ">
-									<th>Project</th>
-									<th>Work</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-					<div id="chart3" style="width:800px; height:500px;display: none"></div>
-				</div>
-			</div>
-
-        <div id="view5">
         </div>
 
         <div id="view6">
+            <div>
+                <label>from: </label>
+                <input class="datepicker"
+                       id="selection_date_from_dept" type="text"> <label>to:
+            </label>
+                <input class="datepicker" id="selection_date_to_dept" type="text">
+
+                <button id="reviewWordButton4"
+                        onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
+
+                <button id="exportDepWorkButton"
+                        onclick="exportWorkInDepartmentInInterval()">export to PDF</button>
+
+                <label>Sumar proiect:</label>
+                <div id="summary-interval-project-contain" class="ui-widget">
+                    <table id="summary_interval-dept-table" class="ui-widget ui-widget-content">
+                        <thead>
+                        <tr class="ui-widget-header ">
+                            <th>Project</th>
+                            <th>Work</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="chart3" style="width:800px; height:500px;display: none"></div>
+            </div>
+        </div>
+
+        <div id="view7">
             <div id="add-client-dialog" class="dialog-form" title="Add new client">
                 <p class="validateTips">All form fields are required.</p>
 
