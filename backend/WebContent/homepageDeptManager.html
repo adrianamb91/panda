@@ -273,8 +273,8 @@
             
             <button id="reviewWordButton" onclick="reviewSummaryWorkFromEmployeeInInterval()">review summary</button>
             <button id="reviewWordButton" onclick="reviewWorkFromEmployeeInInterval()">review detailed</button>
-
-			
+            <button id="reviewWordButton" onclick="exportWorkFromEmployeeInInterval()">export detailed to pdf</button>
+            
             <div id="summary-interval-entries-contain" class="ui-widget">
 					<label>Sumar:</label>
 					<table id="summary_interval-entries-table" class="ui-widget ui-widget-content">
@@ -309,7 +309,7 @@
 			</div>
 			<br>
 			
-			<div id="chart1" style="width:1000px; height:1000px;"></div>
+			<div id="chart1" style="width:800px; height:500px;display: none"></div>
             
             <label>Select PROJECT: </label>
 			<select id="project_drop_report" class="text ui-widget-content ui-corner-all">
@@ -323,6 +323,7 @@
             <input class="datepicker" id="selection_date_to_proj" type="text">
             
             <button id="reviewWordButton" onclick="reviewWorkForProjectInInterval()">review work at project</button>
+            <button id="exportProjectSummaryToPDF" onclick="exportProjectSummaryToPDF()">export to PDF</button>
             
 			<label>Sumar proiect:</label>
             <div id="summary-interval-project-contain" class="ui-widget">
@@ -336,6 +337,7 @@
 						<tbody>
 						</tbody>
 					</table>
+					<div id="chart2" style="width:800px; height:500px;display: none"></div>
 			</div>
 
 			<br>
@@ -350,6 +352,9 @@
 
 					<button id="reviewWordButton"
 						onclick="reviewWorkInDepartmentInInterval()">review work in department</button>
+						
+					<button id="exportDepWorkButton"
+						onclick="exportWorkInDepartmentInInterval()">export to PDF</button>
 
 					<label>Sumar proiect:</label>
 					<div id="summary-interval-project-contain" class="ui-widget">
@@ -364,6 +369,7 @@
 							</tbody>
 						</table>
 					</div>
+					<div id="chart3" style="width:800px; height:500px;display: none"></div>
 				</div>
 			</div>
 
