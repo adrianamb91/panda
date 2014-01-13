@@ -20,11 +20,16 @@ import org.json.JSONObject;
 
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.DailyTimeSheet;
+import com.timesheetapplication.model.Department;
+import com.timesheetapplication.model.Division;
 import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.model.MonthlyTimesheet;
 import com.timesheetapplication.model.Project;
 import com.timesheetapplication.service.ActivityService;
 import com.timesheetapplication.service.DailyTimesheetService;
+import com.timesheetapplication.service.DepartmentService;
+import com.timesheetapplication.service.DivisionService;
+import com.timesheetapplication.service.EmployeeService;
 import com.timesheetapplication.service.MonthlyTimeSheetService;
 import com.timesheetapplication.service.ProjectService;
 import com.timesheetapplication.utils.TSMUtil;
@@ -35,22 +40,22 @@ import com.timesheetapplication.utils.TSMUtil;
 @WebServlet("/DivManagerServlet")
 public class DivManagerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
 	HttpSession session;
 
 	private ActivityService activityService = new ActivityService();
-
 	private DailyTimesheetService dtimesheetService = new DailyTimesheetService();
-
 	private MonthlyTimeSheetService mtimesheetService = new MonthlyTimeSheetService();
+	private DivisionService divisionService = new DivisionService();
+	private DepartmentService departmentService = new DepartmentService();
+	private EmployeeService employeeService = new EmployeeService();
 
-	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DivManagerServlet() {
-        super();
-    }
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public DivManagerServlet() {
+		super();
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,7 +64,7 @@ public class DivManagerServlet extends HttpServlet {
 		session = request.getSession();
 
 		JSONObject responseMessage = new JSONObject();
-		
+
 		String phase = new String(request.getParameter("phase").toString());
 		switch (phase) {
 		case "loadDTS":
@@ -71,17 +76,149 @@ public class DivManagerServlet extends HttpServlet {
 		case "loadEmployees":
 			loadEmployeesFromDivision(request, responseMessage, response);
 			break;
+		case "loadEmployeesForCEO":
+			loadAllEmployeesForCEO(request, responseMessage, response);
+			break;
 		default:
 			break;
 		}
+
+	}
+
+	private void loadAllEmployeesForCEO(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		List<Employee> employees = employeeService.loadAllEmployees();
+
+		if (employees.size() == 0) {
+			try {
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			return;
+		}
+
+		List<String> names = new ArrayList<String>();
+
+		for (Employee e : employees) {
+			names.add(e.getFirstName() + " " + e.getLastName());
+		}
+
+		JSONArray _usernames = new JSONArray(names);
+
+		try {
+			responseMessage.put("elements", _usernames);
+			responseMessage.put("size", employees.size());
+			responseMessage.put("ok", true);
+
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException | IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void loadAllEmployees(HttpServletRequest request,
+			JSONObject responseMessage, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		System.out.println("Am intrat in functie");
+		List<Employee> employees = employeeService.loadAllEmployees();
+		
+		try {
+			if (employees != null) {
+				ArrayList<String> empsNames = new ArrayList<String>();
+				for (Employee e: employees) {
+					empsNames.add(e.getFirstName() + " " + e.getLastName());
+				}
+				
+				JSONArray empsJSON = new JSONArray(empsNames);
+				System.out.println(empsJSON.toString());
+				responseMessage.put("ok", true);
+				responseMessage.put("elements", empsJSON);
+				responseMessage.put("size", empsNames.size());
+			}
+			else {
+				System.out.println("N-avem employees");
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+			}
+			
+		} catch (JSONException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		
 	}
 
+	@SuppressWarnings("null")
 	private void loadEmployeesFromDivision(HttpServletRequest request,
 			JSONObject responseMessage, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		Employee loggedInUser = (Employee)session.getAttribute("loggedInUser");
+
+		Division div = divisionService.findDivisionByManager(loggedInUser);
+		if (div == null) {
+			try {
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+			} catch (JSONException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		System.out.println("Found division: " + div.getName() + " by manager:" + loggedInUser.getUsername());
+
+		List<Department> depts = departmentService.loadAllFromDivision(div);
+		if (depts == null || depts.size() == 0) {
+			try {
+				responseMessage.put("ok", false);
+				response.setContentType("application/json; charset=UTF-8");
+				response.getWriter().write(responseMessage.toString());
+			} catch (JSONException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
 		
+		List<Employee> emps = new ArrayList<Employee>();
+		for (Department d: depts) {
+			List<Employee> auxEmps = employeeService.findAllEmployeesByDepartment(d);
+			if (auxEmps != null) {
+				emps.addAll(auxEmps);
+			}
+		}
+
+		ArrayList<String> employeesFLN = new ArrayList<String>();
+		for (Employee e : emps) {
+			employeesFLN.add(e.getFirstName() + " " + e.getLastName());
+		}
+
+		try {
+			if (employeesFLN.size() > 0) {
+				responseMessage.put("ok", true);
+				JSONArray empsJSON = new JSONArray(employeesFLN);
+				System.out.println(emps.toString());
+				responseMessage.put("elements", empsJSON);
+				responseMessage.put("size", employeesFLN.size());
+			} else {
+				responseMessage.put("ok", false);
+			}
+			response.setContentType("application/json; charset=UTF-8");
+			response.getWriter().write(responseMessage.toString());
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void saveActivity(HttpServletRequest request,
@@ -97,9 +234,9 @@ public class DivManagerServlet extends HttpServlet {
 		if (TSMUtil.isValidString(request.getParameter("old_duration"))
 				&& TSMUtil.isValidString(request
 						.getParameter("old_description"))
-				&& TSMUtil.isValidString(request
-						.getParameter("old_projectName"))
-				&& TSMUtil.isValidString(request.getParameter("old_date"))) {
+						&& TSMUtil.isValidString(request
+								.getParameter("old_projectName"))
+								&& TSMUtil.isValidString(request.getParameter("old_date"))) {
 
 			oldDuration = Float
 					.parseFloat(request.getParameter("old_duration"));
@@ -127,7 +264,7 @@ public class DivManagerServlet extends HttpServlet {
 			mts.setOwner(currentUser);
 		} 
 		mtimesheetService.saveOrUpdate(mts);
-		
+
 		DailyTimeSheet dts = dtimesheetService.findDTSbyDateAndUser(
 				currentDate, currentUser);
 
@@ -140,13 +277,13 @@ public class DivManagerServlet extends HttpServlet {
 			dts.setmTimesheet(mts);
 		}
 		dtimesheetService.saveOrUpdateEvent(dts);
-		
+
 		a = new Activity();
 		a.setDescription(description);
 		a.setDuration(Float.parseFloat(duration));
 		a.setIsExtra(Boolean.parseBoolean(isExtra));
 		a.setTimesheet(dts);
-		
+
 		activityService.saveOrUpdate(a);
 
 		try {
@@ -191,7 +328,7 @@ public class DivManagerServlet extends HttpServlet {
 				e1.printStackTrace();
 			}
 		}
-		
+
 		List<Activity> acts = activityService.findActivitiesByDTS(dts);
 		if (acts == null || acts.size() == 0) {
 			try {
@@ -205,7 +342,7 @@ public class DivManagerServlet extends HttpServlet {
 				e1.printStackTrace();
 			}
 		}
-		
+
 
 		try {
 			ArrayList<String> durationArray = new ArrayList<String>();
@@ -236,7 +373,7 @@ public class DivManagerServlet extends HttpServlet {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
 
 	/**

@@ -36,4 +36,9 @@ public class DepartmentService {
 		return departmentDao.findByManager(e.getId());
 	}
 
+	public List<Department> loadAllFromDivision(Division d) {
+		// TODO Auto-generated method stub
+		return departmentDao.loadAllFromDivision(d);
+	}
+
 }

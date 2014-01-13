@@ -27,7 +27,11 @@ function sendLoginInfoToServer(un, pswd) {
 					window.open('http://' + serverIp
 							+ '/TimesheetManagement/homepageDivManager.html',
 							'_self', false);
-				}
+				} else if (data.job == 'CEO') {
+                    window.open('http://' + serverIp
+                        + '/TimesheetManagement/homepageCEO.html',
+                        '_self', false);
+                }
 			} 
 			else if (data.access === 'wrong_password'){
 				$('#errorMessage').text("Invalid password");

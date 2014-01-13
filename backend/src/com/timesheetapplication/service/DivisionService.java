@@ -5,6 +5,7 @@ import java.util.List;
 import com.timesheetapplication.dao.EntityManagerHolder;
 import com.timesheetapplication.dao.impl.DivisionDaoImpl;
 import com.timesheetapplication.model.Division;
+import com.timesheetapplication.model.Employee;
 import com.timesheetapplication.utils.TSMUtil;
 
 public class DivisionService {
@@ -47,6 +48,11 @@ public class DivisionService {
 			return true;
 		}
 		return false;
+	}
+
+	public Division findDivisionByManager(Employee loggedInUser) {
+		// TODO Auto-generated method stub
+		return divisionDao.findByManager(loggedInUser);
 	}
 
 }

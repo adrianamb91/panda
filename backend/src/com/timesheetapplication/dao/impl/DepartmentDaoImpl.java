@@ -43,4 +43,11 @@ public class DepartmentDaoImpl extends GenericDaoImpl<Department> implements
 		}
 		return null;
 	}
+
+	public List<Department> loadAllFromDivision(Division d) {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("Select d from Department d where d.division.id = :id order by d.name");
+		q.setParameter("id", d.getId());
+		return q.getResultList();
+	}
 }

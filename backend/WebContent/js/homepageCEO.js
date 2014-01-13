@@ -1,4 +1,8 @@
 /**
+ * Created by Adri on 1/13/14.
+ */
+
+/**
  * Created by Adri on 1/12/14.
  */
 
@@ -14,10 +18,11 @@ $(document).ready(function() {
 
     getLoginDataFromServer();
 
+    //TODO: decomenteaza atunci cand o sa mearga
+    loadEmployees();
+
     loadTodaysTimesheetForUser();
     loadAllMTimesheetsForUser();
-
-    loadEmployees();
 
     $('#settingsBtn').click(function() {
         // $('#view_page').load("settings.html #view_settings");
@@ -118,7 +123,7 @@ function saveActivity(olddate, oldduration, olddescription, oldProjectName) {
             date : "" + date,
             old_date : "" + olddate,
             old_duration : "" + oldduration,
-            old_description : "" + olddescription,
+            old_description : "" + olddescription
         },
         success : function(data, textStatus, jqXHR) {
             console.log("SAVE ACTIVITY:");
@@ -310,13 +315,13 @@ function loadAllMTimesheetsForUser() {
                         + data.status[i]
                         + '</a> <button id="submitMTS" style="float: right" onclick="submitMTS('
                         + i + 1 + ')">Submit</button>' + "</td>" + "</tr>");
-                    } else {
-                        tsTable.append("<tr>" + "<td>" + data.date[i]
-                            + "</td>" + "<td>"
-                            + '<a href="# onclick="editMTSstatus(' + i
-                            + 1 + ')>' + data.status[i] + '</a>'
-                            + "</td>" + "</tr>");
-                    }
+                } else {
+                    tsTable.append("<tr>" + "<td>" + data.date[i]
+                        + "</td>" + "<td>"
+                        + '<a href="# onclick="editMTSstatus(' + i
+                        + 1 + ')>' + data.status[i] + '</a>'
+                        + "</td>" + "</tr>");
+                }
             }
         }
     });
@@ -347,13 +352,15 @@ function submitMTS(i) {
     });
 }
 
-//Chestii legate de toti employees din divizie
+//Chestii legate de toti employees
 function loadEmployees() {
+	//TODO: review, nu merge!
+    console.log("Vreau sa iau employees, help!");
     $.ajax({
         type : "GET",
         url : "DivManagerServlet",
         data : {
-            phase : "loadEmployees"
+            phase : "loadEmployeesForCEO"
         },
         success : function(data, textStatus, jqXHR) {
             console.log("ALL CLERKS: ");
@@ -365,7 +372,6 @@ function loadEmployees() {
             } else {
                 alert("No employees");
             }
-
         },
         error : function() {
             alert("failure");

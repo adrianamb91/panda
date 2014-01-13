@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import com.timesheetapplication.dao.DivisionDao;
 import com.timesheetapplication.model.Activity;
 import com.timesheetapplication.model.Division;
+import com.timesheetapplication.model.Employee;
 
 public class DivisionDaoImpl extends GenericDaoImpl<Division> implements
 		DivisionDao {
@@ -27,6 +28,17 @@ public class DivisionDaoImpl extends GenericDaoImpl<Division> implements
 		
 		List<Division> results = q.getResultList();
 		
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
+	}
+
+	public Division findByManager(Employee loggedInUser) {
+		Query q = em.createQuery("Select d from Division d where d.manager.id = :id");
+		q.setParameter("id", loggedInUser.getId());
+		
+		List<Division> results = q.getResultList();
 		if (results != null && results.size() > 0) {
 			return results.get(0);
 		}
